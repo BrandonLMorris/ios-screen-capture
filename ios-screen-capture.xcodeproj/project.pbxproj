@@ -7,7 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E74ED4D22B85629A0079AE68 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = E74ED4D12B85629A0079AE68 /* main.swift */; };
+		E7D372E22B8563C0004EE79D /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = E7D372E12B8563C0004EE79D /* ArgumentParser */; };
+		E7D372E42B8563C0004EE79D /* generate-manual in Frameworks */ = {isa = PBXBuildFile; productRef = E7D372E32B8563C0004EE79D /* generate-manual */; };
+		E7D372E62B856733004EE79D /* RecordCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372E52B856733004EE79D /* RecordCommand.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -24,7 +26,7 @@
 
 /* Begin PBXFileReference section */
 		E74ED4CE2B85629A0079AE68 /* ios-screen-capture */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ios-screen-capture"; sourceTree = BUILT_PRODUCTS_DIR; };
-		E74ED4D12B85629A0079AE68 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
+		E7D372E52B856733004EE79D /* RecordCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCommand.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -32,6 +34,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7D372E22B8563C0004EE79D /* ArgumentParser in Frameworks */,
+				E7D372E42B8563C0004EE79D /* generate-manual in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,9 +61,17 @@
 		E74ED4D02B85629A0079AE68 /* ios-screen-capture */ = {
 			isa = PBXGroup;
 			children = (
-				E74ED4D12B85629A0079AE68 /* main.swift */,
+				E7D372E72B8567B3004EE79D /* Sources */,
 			);
 			path = "ios-screen-capture";
+			sourceTree = "<group>";
+		};
+		E7D372E72B8567B3004EE79D /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				E7D372E52B856733004EE79D /* RecordCommand.swift */,
+			);
+			path = Sources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -78,6 +90,10 @@
 			dependencies = (
 			);
 			name = "ios-screen-capture";
+			packageProductDependencies = (
+				E7D372E12B8563C0004EE79D /* ArgumentParser */,
+				E7D372E32B8563C0004EE79D /* generate-manual */,
+			);
 			productName = "ios-screen-capture";
 			productReference = E74ED4CE2B85629A0079AE68 /* ios-screen-capture */;
 			productType = "com.apple.product-type.tool";
@@ -106,6 +122,9 @@
 				Base,
 			);
 			mainGroup = E74ED4C52B85629A0079AE68;
+			packageReferences = (
+				E7D372E02B8563C0004EE79D /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
+			);
 			productRefGroup = E74ED4CF2B85629A0079AE68 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -120,7 +139,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E74ED4D22B85629A0079AE68 /* main.swift in Sources */,
+				E7D372E62B856733004EE79D /* RecordCommand.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -285,6 +304,30 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		E7D372E02B8563C0004EE79D /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		E7D372E12B8563C0004EE79D /* ArgumentParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E7D372E02B8563C0004EE79D /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
+			productName = ArgumentParser;
+		};
+		E7D372E32B8563C0004EE79D /* generate-manual */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E7D372E02B8563C0004EE79D /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
+			productName = "generate-manual";
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E74ED4C62B85629A0079AE68 /* Project object */;
 }
