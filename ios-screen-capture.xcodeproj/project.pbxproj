@@ -10,6 +10,7 @@
 		E7D372E22B8563C0004EE79D /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = E7D372E12B8563C0004EE79D /* ArgumentParser */; };
 		E7D372E42B8563C0004EE79D /* generate-manual in Frameworks */ = {isa = PBXBuildFile; productRef = E7D372E32B8563C0004EE79D /* generate-manual */; };
 		E7D372E62B856733004EE79D /* RecordCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372E52B856733004EE79D /* RecordCommand.swift */; };
+		E7D372EB2B856B8B004EE79D /* ScreenCaptureDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,6 +28,7 @@
 /* Begin PBXFileReference section */
 		E74ED4CE2B85629A0079AE68 /* ios-screen-capture */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ios-screen-capture"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7D372E52B856733004EE79D /* RecordCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCommand.swift; sourceTree = "<group>"; };
+		E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureDevice.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -69,9 +71,26 @@
 		E7D372E72B8567B3004EE79D /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				E7D372E92B856AF1004EE79D /* USB */,
+				E7D372E82B856AC9004EE79D /* ScreenCapture */,
 				E7D372E52B856733004EE79D /* RecordCommand.swift */,
 			);
 			path = Sources;
+			sourceTree = "<group>";
+		};
+		E7D372E82B856AC9004EE79D /* ScreenCapture */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ScreenCapture;
+			sourceTree = "<group>";
+		};
+		E7D372E92B856AF1004EE79D /* USB */ = {
+			isa = PBXGroup;
+			children = (
+				E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */,
+			);
+			path = USB;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -139,6 +158,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7D372EB2B856B8B004EE79D /* ScreenCaptureDevice.swift in Sources */,
 				E7D372E62B856733004EE79D /* RecordCommand.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
