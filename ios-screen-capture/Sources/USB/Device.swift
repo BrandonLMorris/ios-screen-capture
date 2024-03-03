@@ -37,6 +37,19 @@ final internal class USBDevice {
     }
   }
 
+  func registryEntry(forKey key: String) -> String? {
+    for regEntry in IOIterator.forRegistryEntries(on: self.serviceHandle) {
+      defer { IOObjectRelease(regEntry) }
+      var deviceProperties: Unmanaged<CFMutableDictionary>?
+      IORegistryEntryCreateCFProperties(regEntry, &deviceProperties, kCFAllocatorDefault, 0)
+      if let properties = deviceProperties?.takeRetainedValue() as? [String: Any] {
+        if let serial = properties[key] as? String {
+          return serial
+        }
+      }
+    }
+    return nil
+  }
 }
 
 /// Device protocol implementation.
@@ -49,12 +62,12 @@ extension USBDevice: Device {
     return connected
   }
 
-  func open() throws { /* TODO */ }
-  func close() { /* TODO */ }
+  func open() throws { /* TODO */  }
+  func close() { /* TODO */  }
 }
 
-private extension PluginInterface {
-  var deviceInterface: DeviceInterface? {
+extension PluginInterface {
+  fileprivate var deviceInterface: DeviceInterface? {
     guard let plugin = self.unwrapped else { return nil }
     var deviceInterface = DeviceInterface()
     // Do a little type system dance to work with C's void* while we query the interface.
@@ -78,7 +91,8 @@ extension USBDevice {
     var pluginInterface = PluginInterface()
     var score: sint32 = 0
     let kr = IOCreatePlugInInterfaceForService(
-      self.serviceHandle, kIOUSBDeviceUserClientTypeID, kIOCFPlugInInterfaceID, &pluginInterface.wrapped, &score)
+      self.serviceHandle, kIOUSBDeviceUserClientTypeID, kIOCFPlugInInterfaceID,
+      &pluginInterface.wrapped, &score)
     guard kr == KERN_SUCCESS, let plugin = pluginInterface.unwrapped else {
       os_log(.error, "Failed to create plugin interface: %d", kr)
       return nil
@@ -88,4 +102,3 @@ extension USBDevice {
     return pluginInterface.deviceInterface?.unwrapped
   }
 }
-
