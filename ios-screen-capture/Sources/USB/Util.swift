@@ -3,6 +3,17 @@ import os.log
 
 let log = OSLog(subsystem: "dev.brandonmorris.screencapture", category: "tool")
 
+/// Generic for a pointer to a pointer to an object.
+///
+/// IOKit uses the extra indirection to abstract both creation and memory management.
+struct DoublePointer<T> {
+  init() { wrapped = nil }
+  var wrapped: UnsafeMutablePointer<UnsafeMutablePointer<T>?>?
+  var unwrapped: T? { wrapped?.pointee?.pointee ?? nil }
+}
+typealias PluginInterface = DoublePointer<IOCFPlugInInterface>
+typealias DeviceInterface = DoublePointer<IOUSBDeviceInterface>
+
 let kIOUSBDeviceUserClientTypeID = CFUUIDCreateFromString(
   kCFAllocatorDefault, "9dc7b780-9ec0-11d4-a54f-000a27052861" as CFString)
 
@@ -38,7 +49,7 @@ extension IOIterator {
     }
     return IOIterator.forDevices(matching: matchingDict)
   }
-  
+
   /// Create an iterator for registry entries.
   static func forRegistryEntries(on device: io_object_t) -> IOIterator {
     var res = IOIterator()
@@ -48,6 +59,6 @@ extension IOIterator {
   }
 }
 
-enum USBError : Error {
+enum USBError: Error {
   case generic(_ msg: String)
 }

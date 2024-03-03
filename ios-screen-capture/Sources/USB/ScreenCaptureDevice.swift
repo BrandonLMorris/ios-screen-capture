@@ -5,15 +5,15 @@ import IOKit.usb.IOUSBLib
 import os.log
 
 class ScreenCaptureDevice {
-  private let services: [io_object_t]
+  private let service: io_object_t
 
-  private init(services: [io_object_t]) {
-    self.services = services
-    self.services.forEach { IOObjectRetain($0) }
+  private init(service: io_object_t) {
+    self.service = service
+    IOObjectRetain(self.service)
   }
 
   deinit {
-    self.services.forEach { IOObjectRelease($0) }
+    IOObjectRelease(self.service)
   }
 
   static func obtainDevice(withUdid udid: String) throws -> ScreenCaptureDevice {
@@ -32,10 +32,14 @@ class ScreenCaptureDevice {
         IOObjectRelease(device)
       }
     }
-    if matching.isEmpty {
+    guard !matching.isEmpty else {
       throw ScreenCaptureError.deviceNotFound("Could not find device with udid \(udid)")
     }
-    return ScreenCaptureDevice(services: matching)
+    guard matching.count == 1 else {
+      throw ScreenCaptureError.multipleDevicesFound(
+        "\(matching.count) services matching udid \(udid). Unsure how to proceed; aborting.")
+    }
+    return ScreenCaptureDevice(service: matching.first!)
   }
 
   private static func getUdid(for device: io_object_t) -> String? {
@@ -55,5 +59,6 @@ class ScreenCaptureDevice {
 
 internal enum ScreenCaptureError: Error {
   case deviceNotFound(_ msg: String)
+  case multipleDevicesFound(_ msg: String)
   case recordingConfigError(_ msg: String)
 }

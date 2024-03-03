@@ -6,48 +6,86 @@ import os.log
 
 protocol Device {
   var isOpen: Bool { get }
-  
-  static func getConnected() -> [Self]
+
+  static func getConnected() throws -> [Self]
 
   func open() throws
   func close()
 }
 
-extension Device {
-  // default implementations go here
+final internal class USBDevice {
+  var isOpen = false
+
+  private var serviceHandle: io_object_t
+  private var _deviceInterface: IOUSBDeviceInterface?
+
+  init(_ service: io_object_t) {
+    serviceHandle = service
+    IOObjectRetain(serviceHandle)
+  }
+
+  deinit {
+    IOObjectRelease(serviceHandle)
+  }
+
+  var deviceInterface: IOUSBDeviceInterface? {
+    if let iface = _deviceInterface {
+      return iface
+    } else {
+      _deviceInterface = getDeviceInterface()
+      return _deviceInterface
+    }
+  }
+
 }
 
-internal func usbInterface() throws -> IOUSBDeviceInterface {
-  for service in try IOIterator.usbDevices() {
-    var pluginPtrPtr = UnsafeMutablePointer<UnsafeMutablePointer<IOCFPlugInInterface>?>(nil)
-    // Score is how close the returned interface matches, but we don't use it.
-    var score: sint32 = 0
-    var kr = IOCreatePlugInInterfaceForService(
-      service, kIOUSBDeviceUserClientTypeID, kIOCFPlugInInterfaceID, &pluginPtrPtr, &score)
-    guard kr == KERN_SUCCESS, let plugin = pluginPtrPtr?.pointee?.pointee else {
-      os_log(.error, "Failed to create plugin interface: %d", kr)
-      continue
+/// Device protocol implementation.
+extension USBDevice: Device {
+  static func getConnected() throws -> [USBDevice] {
+    var connected = [USBDevice]()
+    for service in try IOIterator.usbDevices() {
+      connected.append(USBDevice(service))
     }
+    return connected
+  }
 
-    defer {
-      _ = plugin.Release(pluginPtrPtr)
-    }
+  func open() throws { /* TODO */ }
+  func close() { /* TODO */ }
+}
 
+private extension PluginInterface {
+  var deviceInterface: DeviceInterface? {
+    guard let plugin = self.unwrapped else { return nil }
+    var deviceInterface = DeviceInterface()
     // Do a little type system dance to work with C's void* while we query the interface.
-    var interfacePtrPtr: UnsafeMutablePointer<UnsafeMutablePointer<IOUSBDeviceInterface>?>?
-    kr = withUnsafeMutablePointer(to: &interfacePtrPtr) {
+    let kr = withUnsafeMutablePointer(to: &deviceInterface.wrapped) {
       $0.withMemoryRebound(to: Optional<LPVOID>.self, capacity: 1) { voidStar in
-        plugin.QueryInterface(pluginPtrPtr, CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID), voidStar)
+        plugin.QueryInterface(self.wrapped, CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID), voidStar)
       }
     }
-
-    guard kr == S_OK, let interface = interfacePtrPtr?.pointee?.pointee else {
-      os_log(.error, "Failed querying the interface: %d", kr)
-      continue
+    guard kr == S_OK, let _ = deviceInterface.unwrapped else {
+      return nil
     }
-
-    os_log(.info, "Obtained device interface")
-    return interface
+    return deviceInterface
   }
-  throw USBError.generic("Failed to create plugin interface for any usb service")
+
+  // TODO We're gonna need an InterfaceInterface in order to transfer data
 }
+
+extension USBDevice {
+  fileprivate func getDeviceInterface() -> IOUSBDeviceInterface? {
+    // First, we have to get the PlugIn interface
+    var pluginInterface = PluginInterface()
+    var score: sint32 = 0
+    let kr = IOCreatePlugInInterfaceForService(
+      self.serviceHandle, kIOUSBDeviceUserClientTypeID, kIOCFPlugInInterfaceID, &pluginInterface.wrapped, &score)
+    guard kr == KERN_SUCCESS, let plugin = pluginInterface.unwrapped else {
+      os_log(.error, "Failed to create plugin interface: %d", kr)
+      return nil
+    }
+    defer { _ = plugin.Release(pluginInterface.wrapped) }
+    // Now use the plugin interface to obtain the device interface.
+    return pluginInterface.deviceInterface?.unwrapped
+  }
+}
+

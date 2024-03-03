@@ -6,6 +6,8 @@ struct RecordCommand: ParsableCommand {
   var udid: String
 
   mutating func run() throws {
-    let _ = try usbInterface()
+    let _ = try ScreenCaptureDevice.obtainDevice(withUdid: udid)
+    let device = try USBDevice.getConnected().first!
+    print("Device interface is... \(String(describing: device.deviceInterface!))")
   }
 }
