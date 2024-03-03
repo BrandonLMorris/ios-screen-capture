@@ -11,6 +11,8 @@
 		E7D372E42B8563C0004EE79D /* generate-manual in Frameworks */ = {isa = PBXBuildFile; productRef = E7D372E32B8563C0004EE79D /* generate-manual */; };
 		E7D372E62B856733004EE79D /* RecordCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372E52B856733004EE79D /* RecordCommand.swift */; };
 		E7D372EB2B856B8B004EE79D /* ScreenCaptureDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */; };
+		E7D372FA2B93E5DA004EE79D /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372F92B93E5DA004EE79D /* Device.swift */; };
+		E7D372FC2B941218004EE79D /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372FB2B941218004EE79D /* Util.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -29,6 +31,8 @@
 		E74ED4CE2B85629A0079AE68 /* ios-screen-capture */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ios-screen-capture"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E7D372E52B856733004EE79D /* RecordCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCommand.swift; sourceTree = "<group>"; };
 		E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureDevice.swift; sourceTree = "<group>"; };
+		E7D372F92B93E5DA004EE79D /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		E7D372FB2B941218004EE79D /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -89,6 +93,8 @@
 			isa = PBXGroup;
 			children = (
 				E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */,
+				E7D372F92B93E5DA004EE79D /* Device.swift */,
+				E7D372FB2B941218004EE79D /* Util.swift */,
 			);
 			path = USB;
 			sourceTree = "<group>";
@@ -158,8 +164,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7D372FA2B93E5DA004EE79D /* Device.swift in Sources */,
 				E7D372EB2B856B8B004EE79D /* ScreenCaptureDevice.swift in Sources */,
 				E7D372E62B856733004EE79D /* RecordCommand.swift in Sources */,
+				E7D372FC2B941218004EE79D /* Util.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -287,6 +295,7 @@
 		E74ED4D62B85629A0079AE68 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "ios-screen-capture/ios-screen-capture.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -296,6 +305,7 @@
 		E74ED4D72B85629A0079AE68 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "ios-screen-capture/ios-screen-capture.entitlements";
 				CODE_SIGN_STYLE = Automatic;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;

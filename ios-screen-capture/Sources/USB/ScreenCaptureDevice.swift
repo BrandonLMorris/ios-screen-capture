@@ -1,39 +1,41 @@
 import Foundation
 import IOKit
 import IOKit.usb
+import IOKit.usb.IOUSBLib
 import os.log
 
-let log = OSLog(subsystem: "dev.brandonmorris.screencapture", category: "tool")
+class ScreenCaptureDevice {
+  private let services: [io_object_t]
 
-struct ScreenCaptureDevice {
-  private let deviceHandle: io_object_t
-
-  private init(deviceHandle: io_object_t) {
-    self.deviceHandle = deviceHandle
+  private init(services: [io_object_t]) {
+    self.services = services
+    self.services.forEach { IOObjectRetain($0) }
   }
 
-  static func obtainDevice(withUdid udid: String) throws {
-    var deviceFound = false
+  deinit {
+    self.services.forEach { IOObjectRelease($0) }
+  }
+
+  static func obtainDevice(withUdid udid: String) throws -> ScreenCaptureDevice {
     // Hyphens are removed in the USB properties
-    let udidFixed = udid.replacingOccurrences(of: "-", with: "")
+    let udidNoHyphens = udid.replacingOccurrences(of: "-", with: "")
 
     guard let matchingDict = IOServiceMatching(kIOUSBDeviceClassName) else {
       throw ScreenCaptureError.deviceNotFound("No usb devices found")
     }
+    var matching = [io_object_t]()
     for device in IOIterator.forDevices(matching: matchingDict) {
-      defer { IOObjectRelease(device) }
-      guard let deviceUdid = getUdid(for: device) else {
-        continue
-      }
-      if deviceUdid == udidFixed {
-        // This is the device we want
-        os_log(.info, "device acquired: %s", deviceUdid)
-        deviceFound = true
+      if let deviceUdid = getUdid(for: device), deviceUdid == udidNoHyphens {
+        os_log(.info, "Found matching service for device udid: %s", deviceUdid)
+        matching.append(device)
+      } else {
+        IOObjectRelease(device)
       }
     }
-    if !deviceFound {
+    if matching.isEmpty {
       throw ScreenCaptureError.deviceNotFound("Could not find device with udid \(udid)")
     }
+    return ScreenCaptureDevice(services: matching)
   }
 
   private static func getUdid(for device: io_object_t) -> String? {
@@ -47,39 +49,11 @@ struct ScreenCaptureDevice {
         }
       }
     }
-    _ = IOIterator()
     return nil
   }
 }
 
-/// Generic iterator for IOKit objects.
-private struct IOIterator: IteratorProtocol, Sequence {
-  private var itr: io_iterator_t = 0
-  mutating func next() -> io_object_t? {
-    guard case let entry = IOIteratorNext(itr), entry != IO_OBJECT_NULL else {
-      return nil
-    }
-    return entry
-  }
-}
-
-extension IOIterator {
-  /// Create an iterator for devices.
-  static func forDevices(matching matchingDict: CFDictionary) -> IOIterator {
-    var res = IOIterator()
-    IOServiceGetMatchingServices(kIOMainPortDefault, matchingDict, &res.itr)
-    return res
-  }
-
-  /// Create an iterator for registry entries.
-  static func forRegistryEntries(on device: io_object_t) -> IOIterator {
-    var res = IOIterator()
-    IORegistryEntryCreateIterator(
-      device, kIOServicePlane, IOOptionBits(kIORegistryIterateRecursively), &res.itr)
-    return res
-  }
-}
-
-enum ScreenCaptureError: Error {
+internal enum ScreenCaptureError: Error {
   case deviceNotFound(_ msg: String)
+  case recordingConfigError(_ msg: String)
 }
