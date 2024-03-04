@@ -1,7 +1,7 @@
 import Foundation
 import os.log
 
-let log = OSLog(subsystem: "dev.brandonmorris.screencapture", category: "tool")
+let logger = Logger(subsystem: "dev.brandonmorris.screencapture", category: "tool")
 
 /// Generic for a pointer to a pointer to an object.
 ///
@@ -14,12 +14,17 @@ struct DoublePointer<T> {
 typealias PluginInterface = DoublePointer<IOCFPlugInInterface>
 typealias DeviceInterface = DoublePointer<IOUSBDeviceInterface>
 
+// Values for USB control transfers
+let enableRecordingIndex: UInt16 = 0x02
+let disableRecordingIndex: UInt16 = 0x0
+
+let recordingUsbConfiguration = 6
+
+// UUIDs for matching to our USB types.
 let kIOUSBDeviceUserClientTypeID = CFUUIDCreateFromString(
   kCFAllocatorDefault, "9dc7b780-9ec0-11d4-a54f-000a27052861" as CFString)
-
 let kIOUSBDeviceInterfaceID = CFUUIDCreateFromString(
   kCFAllocatorDefault, "5c8187d0-9ef3-11D4-8b45-000a27052861" as CFString)
-
 let kIOCFPlugInInterfaceID = CFUUIDCreateFromString(
   kCFAllocatorDefault, "C244E858-109C-11D4-91D4-0050E4C6426F" as CFString)
 
