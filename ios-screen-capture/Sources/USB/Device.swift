@@ -148,6 +148,20 @@ extension USBDevice: Device {
     isOpen = false
     Thread.sleep(forTimeInterval: TimeInterval(0.5))
   }
+
+  func setConfiguration(config: UInt8) {
+    let count = configCount
+    guard count >= config else {
+      logger.error("Cannot set configuration \(config); only \(count) found")
+      return
+    }
+    let res = deviceInterface.unwrapped?.SetConfiguration(deviceInterface.wrapped!, config)
+    guard let res = res, res == kIOReturnSuccess else {
+      logger.error("Error settting configuration \(config): \(String(describing: res))")
+      return
+    }
+    logger.info("Configuration \(config) successfully set")
+  }
 }
 
 extension PluginInterface {

@@ -34,39 +34,49 @@ struct ScreenCaptureDevice {
   /// N.b. This action causes a disconnect, and it takes about 1 second before we can reconnect.
   /// Any previous reference to the device are invalid and should not be used.
   func activate() throws -> ScreenCaptureDevice {
-    try! device.open()
-    logger.info("Starting with \(device.configCount) configurations")
-    if device.configCount == recordingUsbConfiguration {
-      return self
-    }
-    device.control(index: enableRecordingIndex)
-    device.hardReset()
+    controlActivation(activate: true)
+    let newRef = try! obtain(withRetries: 10, recordingInterface: true)
+    newRef.device.setConfiguration(config: recordingConfig)
+    logger.info("Current configuration is \(newRef.device.activeConfig)")
+    return newRef
+  }
 
+  /// Enable the USB configuration for screen recording.
+  func deactivate() {
+    controlActivation(activate: false)
+  }
+
+  private func controlActivation(activate: Bool) {
+    try! device.open()
+    device.control(index: activate ? enableRecordingIndex : disableRecordingIndex)
+    device.hardReset()
+  }
+
+  private func obtain(withRetries maxAttempts: Int = 0, recordingInterface: Bool = false) throws
+    -> ScreenCaptureDevice
+  {
     var newDevice: ScreenCaptureDevice? = nil
     var attemptCount = 0
     repeat {
       newDevice = try? ScreenCaptureDevice.obtainDevice(withUdid: self.udid)
       try? newDevice?.device.open()
       attemptCount += 1
-      if let d = newDevice, d.device.configCount >= 6 {
+      if let d = newDevice, recordingInterface && d.device.configCount >= 6 {
         // The third eye has opened.
-        logger.info("Successfully enabled hidden screen recording configuration")
+        logger.info("Successfully revealed hidden screen recording configuration")
         break
       } else {
         newDevice?.device.close()
         newDevice = nil
         Thread.sleep(forTimeInterval: 0.4)
       }
-    } while newDevice == nil  && attemptCount < 10
+    } while newDevice == nil && attemptCount < maxAttempts
     guard newDevice != nil else {
-      throw ScreenCaptureError.recordingConfigError(
-        "Unable to reconnect after sending control signal")
+      throw ScreenCaptureError.recordingConfigError("Unable to connect")
     }
     logger.info("There are now \(newDevice!.device.configCount) configurations")
     return newDevice!
   }
-
-  func deactivate() { /* TODO */  }
 }
 
 internal enum ScreenCaptureError: Error {
