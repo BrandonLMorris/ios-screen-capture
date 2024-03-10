@@ -29,7 +29,7 @@ final internal class USBDevice {
   }
 
   lazy var deviceInterface: DeviceInterface = {
-    return try! getDeviceInterfaceWithRetries()
+    try! getDeviceInterfaceWithRetries()
   }()
 
   func registryEntry(forKey key: String) -> String? {
@@ -49,16 +49,26 @@ final internal class USBDevice {
     return nil
   }
 
+  func getInterface(withSubclass subclass: UInt8, withAlt alt: UInt8) -> InterfaceInterface? {
+    for ifaceHandle in deviceInterface.interfaceIterator(req: anyInterfaceRequest) {
+      let iface = try! getInterfaceInterface(for: ifaceHandle)
+      if iface.subclass == subclass && iface.alt == alt {
+        return iface
+      }
+    }
+    return nil
+  }
+
   /// Retreive the currently active USB configuration.
   func activeConfig(refresh: Bool = false) -> Int {
-    if (refresh || activeConfig == -1) {
-      activeConfig = Int(deviceInterface.getConfiguration())
+    if refresh || activeConfig == -1 {
+      activeConfig = Int(deviceInterface.configuration)
     }
     return activeConfig
   }
 
   var configCount: Int {
-    let count = deviceInterface.configCount()
+    let count = deviceInterface.configCount
     if count == 0 {
       logger.error("Failed to get the number of configurations")
       return -1
@@ -150,11 +160,8 @@ extension USBDevice: Device {
 }
 
 extension PluginInterface {
-  private static var _deviceInterface: DeviceInterface? = nil
+
   fileprivate var deviceInterface: DeviceInterface? {
-    if let cached = PluginInterface._deviceInterface {
-      return cached
-    }
     var deviceInterface = DeviceInterface()
     // Do a little type system dance to work with C's void* while we query the interface.
     let kr = withUnsafeMutablePointer(to: &deviceInterface.wrapped) {
@@ -163,14 +170,28 @@ extension PluginInterface {
       }
     }
     guard kr == S_OK else {
+      let code = String(format: "0x%08x", kr)
+      logger.error("Error querying the device interface: \(code)")
       return nil
     }
-    // Cache for future references
-    PluginInterface._deviceInterface = deviceInterface
     return deviceInterface
   }
 
-  // TODO We're gonna need an InterfaceInterface in order to transfer data
+  fileprivate var interfaceInterface: InterfaceInterface? {
+    var interfaceInterface = InterfaceInterface()
+    // Do a little type system dance to work with C's void* while we query the interface.
+    let kr = withUnsafeMutablePointer(to: &interfaceInterface.wrapped) {
+      $0.withMemoryRebound(to: Optional<LPVOID>.self, capacity: 1) { voidStar in
+        unwrapped.QueryInterface(wrapped, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID), voidStar)
+      }
+    }
+    guard kr == S_OK else {
+      let code = String(format: "0x%08x", kr)
+      logger.error("Error querying the interface interface: \(code)")
+      return nil
+    }
+    return interfaceInterface
+  }
 }
 
 extension USBDevice {
@@ -191,6 +212,27 @@ extension USBDevice {
     }
     return deviceInterface
   }
+
+  fileprivate func getInterfaceInterface(for ifaceHandle: io_service_t) throws
+    -> InterfaceInterface
+  {
+    // First, we have to get the PlugIn interface
+    var pluginInterface = PluginInterface()
+    var score: sint32 = 0
+    let kr = IOCreatePlugInInterfaceForService(
+      ifaceHandle, kIOUSBInterfaceUserClientTypeID, kIOCFPlugInInterfaceID,
+      &pluginInterface.wrapped, &score)
+    guard kr == KERN_SUCCESS else {
+      throw USBError.generic("Failed to create plugin interface: \(kr)")
+    }
+    defer { _ = pluginInterface.unwrapped.Release(pluginInterface.wrapped) }
+    // Now use the plugin interface to obtain the device interface.
+    guard let interfaceInterface = pluginInterface.interfaceInterface else {
+      throw USBError.generic("Error obtaining the interface interface")
+    }
+    logger.info("Successfully obtianed the interface interface: \(interfaceInterface)")
+    return interfaceInterface
+  }
 }
 
 // Wrappers for IOUSBDeviceInterface functions.
@@ -201,25 +243,92 @@ extension DeviceInterface {
   func hardReset() -> IOReturn { unwrapped.USBDeviceReEnumerate(wrapped, 0) }
   func setConfiguration(config: UInt8) -> IOReturn { unwrapped.SetConfiguration(wrapped, config) }
   func deviceRequest(_ request: IOUSBDevRequest) -> IOReturn {
-    var req = request // Must be mutable to pass by ref
+    var req = request  // Reassign to var to pass by ref
     return unwrapped.DeviceRequest(wrapped, &req)
   }
 
-  func configCount() -> UInt8 {
+  var configCount: UInt8 {
     var count = UInt8(0)
-    if case let res = unwrapped.GetNumberOfConfigurations(wrapped, &count), res != kIOReturnSuccess {
+    if case let res = unwrapped.GetNumberOfConfigurations(wrapped, &count), res != kIOReturnSuccess
+    {
       // Caller will know something is wrong if there are 0 configurations.
       return UInt8(0)
     }
     return count
   }
 
-  func getConfiguration() -> UInt8 {
+  var configuration: UInt8 {
     var config: UInt8 = 0
     if case let res = unwrapped.GetConfiguration(wrapped, &config), res != kIOReturnSuccess {
       logger.error("Error getting the current configuration: (\(returnString(res)))")
       return 0
     }
     return config
+  }
+
+  func interfaceIterator(req: IOUSBFindInterfaceRequest) -> IOIterator {
+    // Assign to var so we can pass by ref
+    var req = req
+    var itr: io_iterator_t = 0
+    if case let res = unwrapped.CreateInterfaceIterator(wrapped, &req, &itr),
+      res != kIOReturnSuccess
+    {
+      logger.error("Failed to create the interface iterator: \(returnString(res))")
+      return IOIterator()
+    }
+    return IOIterator(itr: itr)
+  }
+}
+
+// Wrappers for IOUSBDeviceInterface functions.
+extension InterfaceInterface: CustomStringConvertible {
+
+  var description: String {
+    return "iface(class=\(clazz), subclass=\(subclass), protocol=\(proto), alt=\(alt))"
+  }
+
+  var clazz: UInt8 {
+    var count = UInt8(0)
+    if case let res = unwrapped.GetInterfaceClass(wrapped, &count), res != kIOReturnSuccess {
+      logger.error("Failed to get the interface class: \(returnString(res))")
+      return UInt8(0)
+    }
+    return count
+  }
+
+  var subclass: UInt8 {
+    var subclass = UInt8(0)
+    if case let res = unwrapped.GetInterfaceSubClass(wrapped, &subclass), res != kIOReturnSuccess {
+      logger.error("Failed to get the interface subclass: \(returnString(res))")
+      return UInt8(0)
+    }
+    return subclass
+  }
+
+  var proto: UInt8 {
+    var proto = UInt8(0)
+    if case let res = unwrapped.GetInterfaceProtocol(wrapped, &proto), res != kIOReturnSuccess {
+      logger.error("Failed to get the interface protocol: \(returnString(res))")
+      return UInt8(0)
+    }
+    return proto
+  }
+
+  var alt: UInt8 {
+    var alt = UInt8(0)
+    if case let res = unwrapped.GetInterfaceProtocol(wrapped, &alt), res != kIOReturnSuccess {
+      logger.error("Failed to get the interface protocol: \(returnString(res))")
+      return UInt8(0)
+    }
+    return alt
+  }
+
+  var endpointCount: UInt8 {
+    var count = UInt8(0)
+    if case let res = unwrapped.GetNumEndpoints(wrapped, &count), res != kIOReturnSuccess {
+      logger.error("Failed to get the number of endpoints: \(returnString(res))")
+      return UInt8(0)
+    }
+    return count
   }
 }

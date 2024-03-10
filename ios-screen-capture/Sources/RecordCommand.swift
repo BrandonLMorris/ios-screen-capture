@@ -9,6 +9,8 @@ struct RecordCommand: ParsableCommand {
     var screenCaptureDevice = try ScreenCaptureDevice.obtainDevice(withUdid: udid)
     // I solemnly swear I am up to no good...
     screenCaptureDevice = try screenCaptureDevice.activate()
+    print("Activated. We are clear for launch.")
+    screenCaptureDevice.initializeRecording()
     print("Press enter to stop...", terminator: "")
     _ = readLine()
     // ...mischief managed.

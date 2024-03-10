@@ -6,6 +6,8 @@ import os.log
 
 private let udidRegistryKey = "USB Serial Number"
 private let recordingConfig = UInt8(6)
+private let recordingInterfaceSubclass: UInt8 = 0x2a
+private let recordingInterfaceAlt: UInt8 = 0xff
 
 struct ScreenCaptureDevice {
   private let udid: String
@@ -45,6 +47,11 @@ struct ScreenCaptureDevice {
   /// Enable the USB configuration for screen recording.
   func deactivate() {
     controlActivation(activate: false)
+  }
+
+  func initializeRecording() {
+    _ = device.getInterface(
+      withSubclass: recordingInterfaceSubclass, withAlt: recordingInterfaceAlt)
   }
 
   private func controlActivation(activate: Bool) {
