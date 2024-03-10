@@ -14,29 +14,23 @@ protocol Device {
 }
 
 final internal class USBDevice {
-  var isOpen = false
+  private(set) var isOpen = false
 
   private var serviceHandle: io_object_t
-  private var _deviceInterface: DeviceInterface!
+  private var activeConfig = -1
 
   init(_ service: io_object_t) {
     serviceHandle = service
     IOObjectRetain(serviceHandle)
-    try? getDeviceInterfaceWithRetries()
   }
 
   deinit {
     IOObjectRelease(serviceHandle)
   }
 
-  var deviceInterface: DeviceInterface! {
-    if let iface = _deviceInterface {
-      return iface
-    } else {
-      try! getDeviceInterfaceWithRetries()
-      return _deviceInterface
-    }
-  }
+  lazy var deviceInterface: DeviceInterface = {
+    return try! getDeviceInterfaceWithRetries()
+  }()
 
   func registryEntry(forKey key: String) -> String? {
     for regEntry in IOIterator.forRegistryEntries(on: self.serviceHandle) {
@@ -56,19 +50,16 @@ final internal class USBDevice {
   }
 
   /// Retreive the currently active USB configuration.
-  var activeConfig: Int {
-    var config: UInt8 = 0
-    let kr = deviceInterface.unwrapped!.GetConfiguration(deviceInterface.wrapped, &config)
-    if kr != kIOReturnSuccess {
-      logger.error("Failed to get the active configuration")
+  func activeConfig(refresh: Bool = false) -> Int {
+    if (refresh || activeConfig == -1) {
+      activeConfig = Int(deviceInterface.getConfiguration())
     }
-    return Int(config)
+    return activeConfig
   }
 
   var configCount: Int {
-    var count: UInt8 = 0
-    let kr = deviceInterface.unwrapped!.GetNumberOfConfigurations(deviceInterface.wrapped, &count)
-    if kr != kIOReturnSuccess {
+    let count = deviceInterface.configCount()
+    if count == 0 {
       logger.error("Failed to get the number of configurations")
       return -1
     }
@@ -83,26 +74,26 @@ final internal class USBDevice {
     req.wIndex = index
     // No actual payload in our request.
 
-    let res = deviceInterface.unwrapped?.DeviceRequest(deviceInterface.wrapped, &req)
-    if res != kIOReturnSuccess {
-      logger.error("Error sending control message! \(String(describing: res))")
+    if case let res = deviceInterface.deviceRequest(req), res != kIOReturnSuccess {
+      logger.error("Error sending control message! \(returnString(res))")
     }
   }
 
-  private func getDeviceInterfaceWithRetries() throws {
-    _deviceInterface = nil
+  private func getDeviceInterfaceWithRetries() throws -> DeviceInterface {
+    var deviceInterface: DeviceInterface? = nil
     let maxAttempts = 10
     var attempt = 0
     repeat {
       do {
-        _deviceInterface = try? getDeviceInterface()
+        deviceInterface = try? getDeviceInterface()
       }
       attempt += 1
-      if _deviceInterface == nil { Thread.sleep(forTimeInterval: 0.2) }
-    } while _deviceInterface == nil && attempt < maxAttempts
-    guard let _ = _deviceInterface else {
+      if deviceInterface == nil { Thread.sleep(forTimeInterval: 0.2) }
+    } while deviceInterface == nil && attempt < maxAttempts
+    guard let toReturn = deviceInterface else {
       throw USBError.generic("Failed to obtain device interface after \(attempt) tries")
     }
+    return toReturn
   }
 }
 
@@ -117,47 +108,41 @@ extension USBDevice: Device {
   }
 
   func open() throws {
-    let res = deviceInterface.unwrapped?.USBDeviceOpen(deviceInterface.wrapped!)
-    guard case let res = res, res == kIOReturnSuccess else {
-      throw USBError.generic("Unable to open device! \(String(describing: res))")
+    if case let res = deviceInterface.open(), res != kIOReturnSuccess {
+      throw USBError.generic("Unable to open device! \(returnString(res))")
     }
     isOpen = true
   }
 
   func close() {
-    let res = deviceInterface.unwrapped?.USBDeviceClose(deviceInterface.wrapped!)
-    if let res = res, res != kIOReturnSuccess {
-      logger.error("Error closing the device: \(String(describing: res))")
+    if case let res = deviceInterface.close(), res != kIOReturnSuccess {
+      logger.error("Error closing the device: \(returnString(res))")
     }
     isOpen = false
   }
 
   func reset() {
-    let res = deviceInterface.unwrapped?.ResetDevice(deviceInterface.wrapped!)
-    if let res = res, res != kIOReturnSuccess {
-      logger.error("Error resetting the device: \(String(describing: res))")
+    if case let res = deviceInterface.reset(), res != kIOReturnSuccess {
+      logger.error("Error resetting the device: \(returnString(res))")
     }
     isOpen = false
   }
 
   func hardReset() {
-    let res = deviceInterface.unwrapped?.USBDeviceReEnumerate(deviceInterface.wrapped!, 0)
-    if let res = res, res != kIOReturnSuccess {
-      logger.error("Error resetting the device: \(String(describing: res))")
+    if case let res = deviceInterface.hardReset(), res != kIOReturnSuccess {
+      logger.error("Error resetting the device: \(returnString(res))")
     }
     isOpen = false
     Thread.sleep(forTimeInterval: TimeInterval(0.5))
   }
 
   func setConfiguration(config: UInt8) {
-    let count = configCount
-    guard count >= config else {
-      logger.error("Cannot set configuration \(config); only \(count) found")
+    if case let cnt = configCount, cnt < config {
+      logger.error("Cannot set configuration \(config); only \(cnt) found")
       return
     }
-    let res = deviceInterface.unwrapped?.SetConfiguration(deviceInterface.wrapped!, config)
-    guard let res = res, res == kIOReturnSuccess else {
-      logger.error("Error settting configuration \(config): \(String(describing: res))")
+    if case let res = deviceInterface.setConfiguration(config: config), res == kIOReturnSuccess {
+      logger.error("Error settting configuration \(config): \(returnString(res))")
       return
     }
     logger.info("Configuration \(config) successfully set")
@@ -165,18 +150,23 @@ extension USBDevice: Device {
 }
 
 extension PluginInterface {
+  private static var _deviceInterface: DeviceInterface? = nil
   fileprivate var deviceInterface: DeviceInterface? {
-    guard let plugin = self.unwrapped else { return nil }
+    if let cached = PluginInterface._deviceInterface {
+      return cached
+    }
     var deviceInterface = DeviceInterface()
     // Do a little type system dance to work with C's void* while we query the interface.
     let kr = withUnsafeMutablePointer(to: &deviceInterface.wrapped) {
       $0.withMemoryRebound(to: Optional<LPVOID>.self, capacity: 1) { voidStar in
-        plugin.QueryInterface(self.wrapped, CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID), voidStar)
+        unwrapped.QueryInterface(wrapped, CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID), voidStar)
       }
     }
-    guard kr == S_OK, let _ = deviceInterface.unwrapped else {
+    guard kr == S_OK else {
       return nil
     }
+    // Cache for future references
+    PluginInterface._deviceInterface = deviceInterface
     return deviceInterface
   }
 
@@ -191,16 +181,45 @@ extension USBDevice {
     let kr = IOCreatePlugInInterfaceForService(
       self.serviceHandle, kIOUSBDeviceUserClientTypeID, kIOCFPlugInInterfaceID,
       &pluginInterface.wrapped, &score)
-    guard kr == KERN_SUCCESS, let plugin = pluginInterface.unwrapped else {
+    guard kr == KERN_SUCCESS else {
       throw USBError.generic("Failed to create plugin interface: \(kr)")
     }
-    defer { _ = plugin.Release(pluginInterface.wrapped) }
+    defer { _ = pluginInterface.unwrapped.Release(pluginInterface.wrapped) }
     // Now use the plugin interface to obtain the device interface.
-    guard let deviceInterface = pluginInterface.deviceInterface,
-      let _ = pluginInterface.deviceInterface?.unwrapped
-    else {
+    guard let deviceInterface = pluginInterface.deviceInterface else {
       throw USBError.generic("Error obtaining the device interface")
     }
     return deviceInterface
+  }
+}
+
+// Wrappers for IOUSBDeviceInterface functions.
+extension DeviceInterface {
+  func open() -> IOReturn { unwrapped.USBDeviceOpen(wrapped) }
+  func close() -> IOReturn { unwrapped.USBDeviceClose(wrapped) }
+  func reset() -> IOReturn { unwrapped.ResetDevice(wrapped) }
+  func hardReset() -> IOReturn { unwrapped.USBDeviceReEnumerate(wrapped, 0) }
+  func setConfiguration(config: UInt8) -> IOReturn { unwrapped.SetConfiguration(wrapped, config) }
+  func deviceRequest(_ request: IOUSBDevRequest) -> IOReturn {
+    var req = request // Must be mutable to pass by ref
+    return unwrapped.DeviceRequest(wrapped, &req)
+  }
+
+  func configCount() -> UInt8 {
+    var count = UInt8(0)
+    if case let res = unwrapped.GetNumberOfConfigurations(wrapped, &count), res != kIOReturnSuccess {
+      // Caller will know something is wrong if there are 0 configurations.
+      return UInt8(0)
+    }
+    return count
+  }
+
+  func getConfiguration() -> UInt8 {
+    var config: UInt8 = 0
+    if case let res = unwrapped.GetConfiguration(wrapped, &config), res != kIOReturnSuccess {
+      logger.error("Error getting the current configuration: (\(returnString(res)))")
+      return 0
+    }
+    return config
   }
 }

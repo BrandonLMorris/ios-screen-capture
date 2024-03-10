@@ -16,6 +16,7 @@ struct ScreenCaptureDevice {
     let udidNoHyphens = udid.replacingOccurrences(of: "-", with: "")
 
     let matching = try USBDevice.getConnected().filter {
+      // Match on udid in the device's service registry
       $0.registryEntry(forKey: udidRegistryKey) == udidNoHyphens
     }
 
@@ -37,7 +38,7 @@ struct ScreenCaptureDevice {
     controlActivation(activate: true)
     let newRef = try! obtain(withRetries: 10, recordingInterface: true)
     newRef.device.setConfiguration(config: recordingConfig)
-    logger.info("Current configuration is \(newRef.device.activeConfig)")
+    logger.info("Current configuration is \(newRef.device.activeConfig())")
     return newRef
   }
 
@@ -49,7 +50,8 @@ struct ScreenCaptureDevice {
   private func controlActivation(activate: Bool) {
     try! device.open()
     device.control(index: activate ? enableRecordingIndex : disableRecordingIndex)
-    device.hardReset()
+    device.reset()
+    device.close()
   }
 
   private func obtain(withRetries maxAttempts: Int = 0, recordingInterface: Bool = false) throws

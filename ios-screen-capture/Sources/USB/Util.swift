@@ -8,8 +8,8 @@ let logger = Logger(subsystem: "dev.brandonmorris.screencapture", category: "too
 /// IOKit uses the extra indirection to abstract both creation and memory management.
 struct DoublePointer<T> {
   init() { wrapped = nil }
-  var wrapped: UnsafeMutablePointer<UnsafeMutablePointer<T>?>?
-  var unwrapped: T? { wrapped?.pointee?.pointee ?? nil }
+  var wrapped: UnsafeMutablePointer<UnsafeMutablePointer<T>?>!
+  var unwrapped: T { wrapped.pointee!.pointee }
 }
 typealias PluginInterface = DoublePointer<IOCFPlugInInterface>
 typealias DeviceInterface = DoublePointer<IOUSBDeviceInterface>
@@ -61,6 +61,18 @@ extension IOIterator {
     IORegistryEntryCreateIterator(
       device, kIOServicePlane, IOOptionBits(kIORegistryIterateRecursively), &res.itr)
     return res
+  }
+}
+
+func returnString(_ ret: IOReturn) -> String {
+  let hex = String(format: "0x%08x", ret)
+  switch ret {
+  case kIOReturnSuccess:
+    return "Success!"
+  case kIOReturnNotOpen:
+    return "Device not open (\(hex))"
+  default:
+    return "Unknown error (\(hex))"
   }
 }
 
