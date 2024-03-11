@@ -41,6 +41,7 @@ struct ScreenCaptureDevice {
     let newRef = try! obtain(withRetries: 10, recordingInterface: true)
     newRef.device.setConfiguration(config: recordingConfig)
     logger.info("Current configuration is \(newRef.device.activeConfig())")
+    try! newRef.device.open()
     return newRef
   }
 
@@ -50,8 +51,38 @@ struct ScreenCaptureDevice {
   }
 
   func initializeRecording() {
-    _ = device.getInterface(
-      withSubclass: recordingInterfaceSubclass, withAlt: recordingInterfaceAlt)
+    guard
+      let iface = device.getInterface(
+        withSubclass: recordingInterfaceSubclass, withAlt: recordingInterfaceAlt)
+    else {
+      logger.error("Failed to obtain the recording interface")
+      return
+    }
+    iface.open()
+    let endpoints = getEndpoints(for: iface)
+    // 0 is control endpoint on every interface, so if it hasn't changed we
+    // know we missed it.
+    if endpoints.in == 0 || endpoints.out == 0 {
+      logger.error("Failed to find the endpoints for bulk transfer!")
+      return
+    }
+    iface.read(endpoint: endpoints.in)
+  }
+
+  private func getEndpoints(for iface: InterfaceInterface) -> Endpoints {
+    var inIdx = UInt8(0)
+    var outIdx = UInt8(0)
+    for idx in 1...iface.endpointCount {
+      let props = iface.getProperties(forEndpoint: UInt8(idx))!
+      if props.transferType == kUSBBulk {
+        if props.direction == kUSBIn {
+          inIdx = UInt8(idx)
+        } else {
+          outIdx = UInt8(idx)
+        }
+      }
+    }
+    return (in: inIdx, out: outIdx)
   }
 
   private func controlActivation(activate: Bool) {

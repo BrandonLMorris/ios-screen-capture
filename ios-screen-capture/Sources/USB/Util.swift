@@ -15,6 +15,8 @@ typealias PluginInterface = DoublePointer<IOCFPlugInInterface>
 typealias DeviceInterface = DoublePointer<IOUSBDeviceInterface>
 typealias InterfaceInterface = DoublePointer<IOUSBInterfaceInterface>
 
+typealias Endpoints = (in: UInt8, out: UInt8)
+
 // Values for USB control transfers
 let enableRecordingIndex: UInt16 = 0x02
 let disableRecordingIndex: UInt16 = 0x0
@@ -84,6 +86,8 @@ func returnString(_ ret: IOReturn) -> String {
     return "Device not open (\(hex))"
   case kIOReturnNoDevice:
     return "No such device (\(hex))"
+  case kIOReturnCannotWire:
+    return "Cannot wire down physical memory (\(hex))"
   default:
     return "Unknown error (\(hex))"
   }

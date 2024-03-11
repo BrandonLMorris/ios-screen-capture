@@ -331,4 +331,52 @@ extension InterfaceInterface: CustomStringConvertible {
     }
     return count
   }
+
+  func open() {
+    if case let res = unwrapped.USBInterfaceOpen(wrapped), res != kIOReturnSuccess {
+      logger.error("Failed to open the interface: \(returnString(res))")
+    }
+  }
+
+  func getProperties(forEndpoint idx: UInt8) -> EndpointProperties? {
+    var props = EndpointProperties()
+    if case let res = unwrapped.GetPipeProperties(
+      wrapped, idx, &props.direction, &props.num, &props.transferType, &props.maxPacketSize,
+      &props.interval),
+      res != kIOReturnSuccess
+    {
+      logger.error("Failed to get endpoint properties: \(returnString(res))")
+      return nil
+    }
+    return props
+  }
+
+  func read(endpoint: UInt8) {
+    var buffer = [UInt8](repeating: 0, count: 512)
+    var readLen = UInt32(512)
+    if case let res = unwrapped.ReadPipe(wrapped, endpoint, &buffer, &readLen),
+      res != kIOReturnSuccess
+    {
+      logger.error("Error reading from the endpoint: \(returnString(res))")
+      return
+    }
+    logger.info("Read \(readLen) bytes")
+    _ = buffer.prefix(Int(readLen)).map { String(format: "0x%02x", $0) }.joined(separator: " ")
+    let decoded = String(decoding: buffer[4..<12], as: UTF8.self)
+    logger.info("Received \(decoded) packet")
+  }
 }
+
+internal struct EndpointProperties: CustomStringConvertible {
+  var direction: UInt8 = 0
+  var num: UInt8 = 0
+  var transferType: UInt8 = 0
+  var maxPacketSize: UInt16 = 0
+  var interval: UInt8 = 0
+
+  var description: String {
+    "[endpoint dir=\(direction), num=\(num), trans=\(transferType), "
+      + "maxSize=\(maxPacketSize), interval=\(interval)]"
+  }
+}
+
