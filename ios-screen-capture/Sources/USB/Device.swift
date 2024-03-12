@@ -352,11 +352,14 @@ extension InterfaceInterface: CustomStringConvertible {
   }
 
   func read(endpoint: UInt8) {
-    var buffer = [UInt8](repeating: 0, count: 512)
+    var buffer = Data(count: 512)
     var readLen = UInt32(512)
-    if case let res = unwrapped.ReadPipe(wrapped, endpoint, &buffer, &readLen),
-      res != kIOReturnSuccess
-    {
+    var res: IOReturn = 0
+    buffer.withUnsafeBytes {
+      let voidStar = UnsafeMutableRawPointer(mutating: $0.baseAddress!)
+      res = unwrapped.ReadPipe(wrapped, endpoint, voidStar, &readLen)
+    }
+    if res != kIOReturnSuccess {
       logger.error("Error reading from the endpoint: \(returnString(res))")
       return
     }
@@ -379,4 +382,3 @@ internal struct EndpointProperties: CustomStringConvertible {
       + "maxSize=\(maxPacketSize), interval=\(interval)]"
   }
 }
-
