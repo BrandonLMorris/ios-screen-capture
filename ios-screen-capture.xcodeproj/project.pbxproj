@@ -7,6 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		E75237C72BA5D890002C44F8 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372FB2B941218004EE79D /* Util.swift */; };
+		E77DFCE52BA39E9C005601D7 /* ScreenCapturePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */; };
+		E77DFCF12BA3A58B005601D7 /* ScreenCapturePacketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */; };
+		E77DFCF72BA3AF95005601D7 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = E77DFCF62BA3AF95005601D7 /* ArgumentParser */; };
+		E799598F2BA3B72F00CFBB54 /* ScreenCapturePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */; };
 		E7D372E22B8563C0004EE79D /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = E7D372E12B8563C0004EE79D /* ArgumentParser */; };
 		E7D372E42B8563C0004EE79D /* generate-manual in Frameworks */ = {isa = PBXBuildFile; productRef = E7D372E32B8563C0004EE79D /* generate-manual */; };
 		E7D372E62B856733004EE79D /* RecordCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372E52B856733004EE79D /* RecordCommand.swift */; };
@@ -14,6 +19,16 @@
 		E7D372FA2B93E5DA004EE79D /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372F92B93E5DA004EE79D /* Device.swift */; };
 		E7D372FC2B941218004EE79D /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372FB2B941218004EE79D /* Util.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		E77DFCF82BA3B06A005601D7 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E74ED4C62B85629A0079AE68 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E74ED4CD2B85629A0079AE68;
+			remoteInfo = "ios-screen-capture";
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		E74ED4CC2B85629A0079AE68 /* CopyFiles */ = {
@@ -29,6 +44,9 @@
 
 /* Begin PBXFileReference section */
 		E74ED4CE2B85629A0079AE68 /* ios-screen-capture */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ios-screen-capture"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacket.swift; sourceTree = "<group>"; };
+		E77DFCEE2BA3A58B005601D7 /* ScreenCaptureTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenCaptureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacketTests.swift; sourceTree = "<group>"; };
 		E7D372E52B856733004EE79D /* RecordCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCommand.swift; sourceTree = "<group>"; };
 		E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureDevice.swift; sourceTree = "<group>"; };
 		E7D372F92B93E5DA004EE79D /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
@@ -45,6 +63,14 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E77DFCEB2BA3A58B005601D7 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E77DFCF72BA3AF95005601D7 /* ArgumentParser in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -53,6 +79,7 @@
 			children = (
 				E74ED4D02B85629A0079AE68 /* ios-screen-capture */,
 				E74ED4CF2B85629A0079AE68 /* Products */,
+				E77DFCF52BA3AF95005601D7 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -60,6 +87,7 @@
 			isa = PBXGroup;
 			children = (
 				E74ED4CE2B85629A0079AE68 /* ios-screen-capture */,
+				E77DFCEE2BA3A58B005601D7 /* ScreenCaptureTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -68,8 +96,32 @@
 			isa = PBXGroup;
 			children = (
 				E7D372E72B8567B3004EE79D /* Sources */,
+				E77DFCE62BA3A3BE005601D7 /* Tests */,
 			);
 			path = "ios-screen-capture";
+			sourceTree = "<group>";
+		};
+		E77DFCE62BA3A3BE005601D7 /* Tests */ = {
+			isa = PBXGroup;
+			children = (
+				E77DFCEF2BA3A58B005601D7 /* ScreenCaptureTests */,
+			);
+			path = Tests;
+			sourceTree = "<group>";
+		};
+		E77DFCEF2BA3A58B005601D7 /* ScreenCaptureTests */ = {
+			isa = PBXGroup;
+			children = (
+				E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */,
+			);
+			path = ScreenCaptureTests;
+			sourceTree = "<group>";
+		};
+		E77DFCF52BA3AF95005601D7 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 		E7D372E72B8567B3004EE79D /* Sources */ = {
@@ -85,6 +137,7 @@
 		E7D372E82B856AC9004EE79D /* ScreenCapture */ = {
 			isa = PBXGroup;
 			children = (
+				E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */,
 			);
 			path = ScreenCapture;
 			sourceTree = "<group>";
@@ -123,6 +176,28 @@
 			productReference = E74ED4CE2B85629A0079AE68 /* ios-screen-capture */;
 			productType = "com.apple.product-type.tool";
 		};
+		E77DFCED2BA3A58B005601D7 /* ScreenCaptureTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E77DFCF22BA3A58B005601D7 /* Build configuration list for PBXNativeTarget "ScreenCaptureTests" */;
+			buildPhases = (
+				E77DFCEA2BA3A58B005601D7 /* Sources */,
+				E77DFCEB2BA3A58B005601D7 /* Frameworks */,
+				E77DFCEC2BA3A58B005601D7 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E75922F22BA3B58600716653 /* PBXTargetDependency */,
+				E77DFCF92BA3B06A005601D7 /* PBXTargetDependency */,
+			);
+			name = ScreenCaptureTests;
+			packageProductDependencies = (
+				E77DFCF62BA3AF95005601D7 /* ArgumentParser */,
+			);
+			productName = ScreenCaptureTests;
+			productReference = E77DFCEE2BA3A58B005601D7 /* ScreenCaptureTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -134,6 +209,9 @@
 				LastUpgradeCheck = 1520;
 				TargetAttributes = {
 					E74ED4CD2B85629A0079AE68 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					E77DFCED2BA3A58B005601D7 = {
 						CreatedOnToolsVersion = 15.2;
 					};
 				};
@@ -155,9 +233,20 @@
 			projectRoot = "";
 			targets = (
 				E74ED4CD2B85629A0079AE68 /* ios-screen-capture */,
+				E77DFCED2BA3A58B005601D7 /* ScreenCaptureTests */,
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		E77DFCEC2BA3A58B005601D7 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		E74ED4CA2B85629A0079AE68 /* Sources */ = {
@@ -165,13 +254,36 @@
 			buildActionMask = 2147483647;
 			files = (
 				E7D372FA2B93E5DA004EE79D /* Device.swift in Sources */,
+				E77DFCE52BA39E9C005601D7 /* ScreenCapturePacket.swift in Sources */,
 				E7D372EB2B856B8B004EE79D /* ScreenCaptureDevice.swift in Sources */,
 				E7D372E62B856733004EE79D /* RecordCommand.swift in Sources */,
 				E7D372FC2B941218004EE79D /* Util.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E77DFCEA2BA3A58B005601D7 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E799598F2BA3B72F00CFBB54 /* ScreenCapturePacket.swift in Sources */,
+				E75237C72BA5D890002C44F8 /* Util.swift in Sources */,
+				E77DFCF12BA3A58B005601D7 /* ScreenCapturePacketTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		E75922F22BA3B58600716653 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = E75922F12BA3B58600716653 /* ArgumentParser */;
+		};
+		E77DFCF92BA3B06A005601D7 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E74ED4CD2B85629A0079AE68 /* ios-screen-capture */;
+			targetProxy = E77DFCF82BA3B06A005601D7 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		E74ED4D32B85629A0079AE68 /* Debug */ = {
@@ -312,6 +424,40 @@
 			};
 			name = Release;
 		};
+		E77DFCF32BA3A58B005601D7 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = "$(inherit)";
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				MERGEABLE_LIBRARY = YES;
+				MERGED_BINARY_TYPE = automatic;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.brandonmorris.ScreenCaptureTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E77DFCF42BA3A58B005601D7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				FRAMEWORK_SEARCH_PATHS = "$(inherit)";
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				MERGEABLE_LIBRARY = YES;
+				MERGED_BINARY_TYPE = automatic;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.brandonmorris.ScreenCaptureTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -333,6 +479,15 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
+		E77DFCF22BA3A58B005601D7 /* Build configuration list for PBXNativeTarget "ScreenCaptureTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E77DFCF32BA3A58B005601D7 /* Debug */,
+				E77DFCF42BA3A58B005601D7 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
@@ -347,6 +502,16 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		E75922F12BA3B58600716653 /* ArgumentParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E7D372E02B8563C0004EE79D /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
+			productName = ArgumentParser;
+		};
+		E77DFCF62BA3AF95005601D7 /* ArgumentParser */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E7D372E02B8563C0004EE79D /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
+			productName = ArgumentParser;
+		};
 		E7D372E12B8563C0004EE79D /* ArgumentParser */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = E7D372E02B8563C0004EE79D /* XCRemoteSwiftPackageReference "swift-argument-parser" */;

@@ -355,9 +355,8 @@ extension InterfaceInterface: CustomStringConvertible {
     var buffer = Data(count: 512)
     var readLen = UInt32(512)
     var res: IOReturn = 0
-    buffer.withUnsafeBytes {
-      let voidStar = UnsafeMutableRawPointer(mutating: $0.baseAddress!)
-      res = unwrapped.ReadPipe(wrapped, endpoint, voidStar, &readLen)
+    buffer.withUnsafeMutableBytes {
+      res = unwrapped.ReadPipe(wrapped, endpoint, $0.baseAddress!, &readLen)
     }
     if res != kIOReturnSuccess {
       logger.error("Error reading from the endpoint: \(returnString(res))")
@@ -365,6 +364,7 @@ extension InterfaceInterface: CustomStringConvertible {
     }
     logger.info("Read \(readLen) bytes")
     _ = buffer.prefix(Int(readLen)).map { String(format: "0x%02x", $0) }.joined(separator: " ")
+    try! buffer[..<readLen].write(to: URL(fileURLWithPath: "/Users/brandonmorris/ping.bin"))
     let decoded = String(decoding: buffer[4..<12], as: UTF8.self)
     logger.info("Received \(decoded) packet")
   }
