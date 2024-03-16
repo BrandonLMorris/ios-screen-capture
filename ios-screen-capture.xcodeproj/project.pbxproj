@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		E75237C72BA5D890002C44F8 /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372FB2B941218004EE79D /* Util.swift */; };
+		E75237CF2BA6257C002C44F8 /* ScreenCaptureDeviceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E75237CE2BA6257C002C44F8 /* ScreenCaptureDeviceTests.swift */; };
+		E75237DB2BA627F0002C44F8 /* IOKitInterposer.h in Headers */ = {isa = PBXBuildFile; fileRef = E75237DA2BA627F0002C44F8 /* IOKitInterposer.h */; };
+		E75237E12BA628FB002C44F8 /* libIOKitInterposer.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = E75237D82BA627F0002C44F8 /* libIOKitInterposer.dylib */; };
+		E75237E72BA62959002C44F8 /* libIOKitInterposer.dylib in CopyFiles */ = {isa = PBXBuildFile; fileRef = E75237D82BA627F0002C44F8 /* libIOKitInterposer.dylib */; };
+		E75237E92BA62BC5002C44F8 /* IOKitInterposer.c in Sources */ = {isa = PBXBuildFile; fileRef = E75237E82BA62BC5002C44F8 /* IOKitInterposer.c */; };
 		E77DFCE52BA39E9C005601D7 /* ScreenCapturePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */; };
 		E77DFCF12BA3A58B005601D7 /* ScreenCapturePacketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */; };
 		E77DFCF72BA3AF95005601D7 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = E77DFCF62BA3AF95005601D7 /* ArgumentParser */; };
@@ -21,6 +26,13 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
+		E75237E32BA628FB002C44F8 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = E74ED4C62B85629A0079AE68 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = E75237D72BA627F0002C44F8;
+			remoteInfo = IOKitInterposer;
+		};
 		E77DFCF82BA3B06A005601D7 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E74ED4C62B85629A0079AE68 /* Project object */;
@@ -40,10 +52,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 1;
 		};
+		E75237E62BA6292E002C44F8 /* CopyFiles */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 16;
+			files = (
+				E75237E72BA62959002C44F8 /* libIOKitInterposer.dylib in CopyFiles */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		E74ED4CE2B85629A0079AE68 /* ios-screen-capture */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "ios-screen-capture"; sourceTree = BUILT_PRODUCTS_DIR; };
+		E75237CC2BA6257C002C44F8 /* ScreenCaptureDeviceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenCaptureDeviceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E75237CE2BA6257C002C44F8 /* ScreenCaptureDeviceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureDeviceTests.swift; sourceTree = "<group>"; };
+		E75237D32BA62757002C44F8 /* all.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = file; name = all.xctestplan; path = "ios-screen-capture/Tests/all.xctestplan"; sourceTree = SOURCE_ROOT; };
+		E75237D82BA627F0002C44F8 /* libIOKitInterposer.dylib */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.dylib"; includeInIndex = 0; path = libIOKitInterposer.dylib; sourceTree = BUILT_PRODUCTS_DIR; };
+		E75237DA2BA627F0002C44F8 /* IOKitInterposer.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = IOKitInterposer.h; sourceTree = "<group>"; };
+		E75237E82BA62BC5002C44F8 /* IOKitInterposer.c */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.c; path = IOKitInterposer.c; sourceTree = "<group>"; };
 		E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacket.swift; sourceTree = "<group>"; };
 		E77DFCEE2BA3A58B005601D7 /* ScreenCaptureTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenCaptureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacketTests.swift; sourceTree = "<group>"; };
@@ -60,6 +88,21 @@
 			files = (
 				E7D372E22B8563C0004EE79D /* ArgumentParser in Frameworks */,
 				E7D372E42B8563C0004EE79D /* generate-manual in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E75237C92BA6257C002C44F8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E75237E12BA628FB002C44F8 /* libIOKitInterposer.dylib in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E75237D62BA627F0002C44F8 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -88,6 +131,8 @@
 			children = (
 				E74ED4CE2B85629A0079AE68 /* ios-screen-capture */,
 				E77DFCEE2BA3A58B005601D7 /* ScreenCaptureTests.xctest */,
+				E75237CC2BA6257C002C44F8 /* ScreenCaptureDeviceTests.xctest */,
+				E75237D82BA627F0002C44F8 /* libIOKitInterposer.dylib */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -101,9 +146,29 @@
 			path = "ios-screen-capture";
 			sourceTree = "<group>";
 		};
+		E75237CD2BA6257C002C44F8 /* USBTests */ = {
+			isa = PBXGroup;
+			children = (
+				E75237D92BA627F0002C44F8 /* IOKitInterposer */,
+				E75237CE2BA6257C002C44F8 /* ScreenCaptureDeviceTests.swift */,
+			);
+			path = USBTests;
+			sourceTree = "<group>";
+		};
+		E75237D92BA627F0002C44F8 /* IOKitInterposer */ = {
+			isa = PBXGroup;
+			children = (
+				E75237E82BA62BC5002C44F8 /* IOKitInterposer.c */,
+				E75237DA2BA627F0002C44F8 /* IOKitInterposer.h */,
+			);
+			path = IOKitInterposer;
+			sourceTree = "<group>";
+		};
 		E77DFCE62BA3A3BE005601D7 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				E75237D32BA62757002C44F8 /* all.xctestplan */,
+				E75237CD2BA6257C002C44F8 /* USBTests */,
 				E77DFCEF2BA3A58B005601D7 /* ScreenCaptureTests */,
 			);
 			path = Tests;
@@ -154,6 +219,17 @@
 		};
 /* End PBXGroup section */
 
+/* Begin PBXHeadersBuildPhase section */
+		E75237D42BA627F0002C44F8 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E75237DB2BA627F0002C44F8 /* IOKitInterposer.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
 /* Begin PBXNativeTarget section */
 		E74ED4CD2B85629A0079AE68 /* ios-screen-capture */ = {
 			isa = PBXNativeTarget;
@@ -175,6 +251,42 @@
 			productName = "ios-screen-capture";
 			productReference = E74ED4CE2B85629A0079AE68 /* ios-screen-capture */;
 			productType = "com.apple.product-type.tool";
+		};
+		E75237CB2BA6257C002C44F8 /* ScreenCaptureDeviceTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E75237D02BA6257C002C44F8 /* Build configuration list for PBXNativeTarget "ScreenCaptureDeviceTests" */;
+			buildPhases = (
+				E75237C82BA6257C002C44F8 /* Sources */,
+				E75237C92BA6257C002C44F8 /* Frameworks */,
+				E75237CA2BA6257C002C44F8 /* Resources */,
+				E75237E62BA6292E002C44F8 /* CopyFiles */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				E75237E42BA628FB002C44F8 /* PBXTargetDependency */,
+			);
+			name = ScreenCaptureDeviceTests;
+			productName = ScreenCaptureDeviceTests;
+			productReference = E75237CC2BA6257C002C44F8 /* ScreenCaptureDeviceTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		E75237D72BA627F0002C44F8 /* IOKitInterposer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E75237DE2BA627F0002C44F8 /* Build configuration list for PBXNativeTarget "IOKitInterposer" */;
+			buildPhases = (
+				E75237D42BA627F0002C44F8 /* Headers */,
+				E75237D52BA627F0002C44F8 /* Sources */,
+				E75237D62BA627F0002C44F8 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = IOKitInterposer;
+			productName = IOKitInterposer;
+			productReference = E75237D82BA627F0002C44F8 /* libIOKitInterposer.dylib */;
+			productType = "com.apple.product-type.library.dynamic";
 		};
 		E77DFCED2BA3A58B005601D7 /* ScreenCaptureTests */ = {
 			isa = PBXNativeTarget;
@@ -211,6 +323,12 @@
 					E74ED4CD2B85629A0079AE68 = {
 						CreatedOnToolsVersion = 15.2;
 					};
+					E75237CB2BA6257C002C44F8 = {
+						CreatedOnToolsVersion = 15.2;
+					};
+					E75237D72BA627F0002C44F8 = {
+						CreatedOnToolsVersion = 15.2;
+					};
 					E77DFCED2BA3A58B005601D7 = {
 						CreatedOnToolsVersion = 15.2;
 					};
@@ -234,11 +352,20 @@
 			targets = (
 				E74ED4CD2B85629A0079AE68 /* ios-screen-capture */,
 				E77DFCED2BA3A58B005601D7 /* ScreenCaptureTests */,
+				E75237CB2BA6257C002C44F8 /* ScreenCaptureDeviceTests */,
+				E75237D72BA627F0002C44F8 /* IOKitInterposer */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		E75237CA2BA6257C002C44F8 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E77DFCEC2BA3A58B005601D7 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -261,6 +388,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		E75237C82BA6257C002C44F8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E75237CF2BA6257C002C44F8 /* ScreenCaptureDeviceTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		E75237D52BA627F0002C44F8 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E75237E92BA62BC5002C44F8 /* IOKitInterposer.c in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E77DFCEA2BA3A58B005601D7 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -274,6 +417,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		E75237E42BA628FB002C44F8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = E75237D72BA627F0002C44F8 /* IOKitInterposer */;
+			targetProxy = E75237E32BA628FB002C44F8 /* PBXContainerItemProxy */;
+		};
 		E75922F22BA3B58600716653 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = E75922F12BA3B58600716653 /* ArgumentParser */;
@@ -424,6 +572,58 @@
 			};
 			name = Release;
 		};
+		E75237D12BA6257C002C44F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.brandonmorris.ScreenCaptureDeviceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E75237D22BA6257C002C44F8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.brandonmorris.ScreenCaptureDeviceTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		E75237DF2BA627F0002C44F8 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Debug;
+		};
+		E75237E02BA627F0002C44F8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				EXECUTABLE_PREFIX = lib;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+			};
+			name = Release;
+		};
 		E77DFCF32BA3A58B005601D7 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -475,6 +675,24 @@
 			buildConfigurations = (
 				E74ED4D62B85629A0079AE68 /* Debug */,
 				E74ED4D72B85629A0079AE68 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E75237D02BA6257C002C44F8 /* Build configuration list for PBXNativeTarget "ScreenCaptureDeviceTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E75237D12BA6257C002C44F8 /* Debug */,
+				E75237D22BA6257C002C44F8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		E75237DE2BA627F0002C44F8 /* Build configuration list for PBXNativeTarget "IOKitInterposer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E75237DF2BA627F0002C44F8 /* Debug */,
+				E75237E02BA627F0002C44F8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
