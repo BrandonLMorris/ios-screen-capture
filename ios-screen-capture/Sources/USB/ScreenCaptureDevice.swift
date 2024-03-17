@@ -11,13 +11,15 @@ private let recordingInterfaceAlt: UInt8 = 0xff
 
 struct ScreenCaptureDevice {
   private let udid: String
-  private let device: USBDevice
+  private let device: Device
 
-  static func obtainDevice(withUdid udid: String) throws -> ScreenCaptureDevice {
+  public static func obtainDevice(
+    withUdid udid: String, from provider: any DeviceProvider = USBDeviceProvider()
+  ) throws -> ScreenCaptureDevice {
     // Hyphens are removed in the USB properties
     let udidNoHyphens = udid.replacingOccurrences(of: "-", with: "")
 
-    let matching = try USBDevice.getConnected().filter {
+    let matching = try provider.connected().filter {
       // Match on udid in the device's service registry
       $0.registryEntry(forKey: udidRegistryKey) == udidNoHyphens
     }
@@ -40,7 +42,7 @@ struct ScreenCaptureDevice {
     controlActivation(activate: true)
     let newRef = try! obtain(withRetries: 10, recordingInterface: true)
     newRef.device.setConfiguration(config: recordingConfig)
-    logger.info("Current configuration is \(newRef.device.activeConfig())")
+    logger.info("Current configuration is \(newRef.device.activeConfig(refresh: false))")
     try! newRef.device.open()
     return newRef
   }

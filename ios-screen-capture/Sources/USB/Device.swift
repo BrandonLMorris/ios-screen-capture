@@ -4,16 +4,27 @@ import IOKit.usb
 import IOKit.usb.IOUSBLib
 import os.log
 
-protocol Device {
+public protocol Device {
   var isOpen: Bool { get }
-
-  static func getConnected() throws -> [Self]
+  var configCount: Int { get }
 
   func open() throws
   func close()
+  func reset()
+
+  func activeConfig(refresh: Bool) -> Int
+  func setConfiguration(config: UInt8)
+
+  func getInterface(withSubclass subclass: UInt8, withAlt alt: UInt8) -> InterfaceInterface?
+  func control(index: UInt16)
+  func registryEntry(forKey: String) -> String?
 }
 
-final internal class USBDevice {
+public protocol DeviceProvider {
+  func connected() throws -> [any Device]
+}
+
+final internal class USBDevice: Device {
   private(set) var isOpen = false
 
   private var serviceHandle: io_object_t
@@ -107,16 +118,18 @@ final internal class USBDevice {
   }
 }
 
-/// Device protocol implementation.
-extension USBDevice: Device {
-  static func getConnected() throws -> [USBDevice] {
+final internal class USBDeviceProvider: DeviceProvider {
+  func connected() throws -> [any Device] {
     var connected = [USBDevice]()
     for service in try IOIterator.usbDevices() {
       connected.append(USBDevice(service))
     }
     return connected
   }
+}
 
+/// Device protocol implementation.
+extension USBDevice {
   func open() throws {
     if case let res = deviceInterface.open(), res != kIOReturnSuccess {
       throw USBError.generic("Unable to open device! \(returnString(res))")
@@ -283,7 +296,7 @@ extension DeviceInterface {
 // Wrappers for IOUSBDeviceInterface functions.
 extension InterfaceInterface: CustomStringConvertible {
 
-  var description: String {
+  public var description: String {
     return "iface(class=\(clazz), subclass=\(subclass), protocol=\(proto), alt=\(alt))"
   }
 

@@ -6,14 +6,14 @@ let logger = Logger(subsystem: "dev.brandonmorris.screencapture", category: "too
 /// Generic for a pointer to a pointer to an object.
 ///
 /// IOKit uses the extra indirection to abstract both creation and memory management.
-struct DoublePointer<T> {
+public struct DoublePointer<T> {
   init() { wrapped = nil }
   var wrapped: UnsafeMutablePointer<UnsafeMutablePointer<T>?>!
   var unwrapped: T { wrapped.pointee!.pointee }
 }
-typealias PluginInterface = DoublePointer<IOCFPlugInInterface>
-typealias DeviceInterface = DoublePointer<IOUSBDeviceInterface>
-typealias InterfaceInterface = DoublePointer<IOUSBInterfaceInterface>
+public typealias PluginInterface = DoublePointer<IOCFPlugInInterface>
+public typealias DeviceInterface = DoublePointer<IOUSBDeviceInterface>
+public typealias InterfaceInterface = DoublePointer<IOUSBInterfaceInterface>
 
 typealias Endpoints = (in: UInt8, out: UInt8)
 

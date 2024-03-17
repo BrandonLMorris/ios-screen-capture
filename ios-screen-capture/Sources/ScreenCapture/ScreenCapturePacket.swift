@@ -62,6 +62,11 @@ class Ping: ScreenCapturePacket {
   let header: Header
   let data: Data
 
+  static let instance: Ping = {
+    let data = Data(base64Encoded: "EAAAAGduaXAAAAAAAQAAAA==")!
+    return Ping(header: Header(data)!, wholePacket: data)
+  }()
+
   init(header: Header, wholePacket: Data) {
     self.header = header
     data = wholePacket
