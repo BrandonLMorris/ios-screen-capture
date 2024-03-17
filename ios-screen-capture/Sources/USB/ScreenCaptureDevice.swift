@@ -12,6 +12,7 @@ private let recordingInterfaceAlt: UInt8 = 0xff
 struct ScreenCaptureDevice {
   private let udid: String
   private let device: Device
+  private let reconnectProvider: (any DeviceProvider)?
 
   public static func obtainDevice(
     withUdid udid: String, from provider: any DeviceProvider = USBDeviceProvider()
@@ -31,16 +32,18 @@ struct ScreenCaptureDevice {
       throw ScreenCaptureError.multipleDevicesFound(
         "\(matching.count) services matching udid \(udid). Unsure how to proceed; aborting.")
     }
-    return ScreenCaptureDevice(udid: udidNoHyphens, device: matching.first!)
+    return ScreenCaptureDevice(
+      udid: udidNoHyphens, device: matching.first!, reconnectProvider: provider)
   }
 
   /// Enable the USB configuration for screen recording.
   ///
   /// N.b. This action causes a disconnect, and it takes about 1 second before we can reconnect.
   /// Any previous reference to the device are invalid and should not be used.
-  func activate() throws -> ScreenCaptureDevice {
+  func activate(reconnectBackoff: TimeInterval = 0.4) throws -> ScreenCaptureDevice {
     controlActivation(activate: true)
-    let newRef = try! obtain(withRetries: 10, recordingInterface: true)
+    let newRef = try obtain(
+      withRetries: 10, recordingInterface: true, withBackoff: reconnectBackoff)
     newRef.device.setConfiguration(config: recordingConfig)
     logger.info("Current configuration is \(newRef.device.activeConfig(refresh: false))")
     try! newRef.device.open()
@@ -94,13 +97,17 @@ struct ScreenCaptureDevice {
     device.close()
   }
 
-  private func obtain(withRetries maxAttempts: Int = 0, recordingInterface: Bool = false) throws
+  private func obtain(
+    withRetries maxAttempts: Int = 0, recordingInterface: Bool = false,
+    withBackoff backoff: TimeInterval = 0.4
+  ) throws
     -> ScreenCaptureDevice
   {
     var newDevice: ScreenCaptureDevice? = nil
     var attemptCount = 0
+    let provider = reconnectProvider ?? USBDeviceProvider()
     repeat {
-      newDevice = try? ScreenCaptureDevice.obtainDevice(withUdid: self.udid)
+      newDevice = try? ScreenCaptureDevice.obtainDevice(withUdid: self.udid, from: provider)
       try? newDevice?.device.open()
       attemptCount += 1
       if let d = newDevice, recordingInterface && d.device.configCount >= 6 {
@@ -110,7 +117,7 @@ struct ScreenCaptureDevice {
       } else {
         newDevice?.device.close()
         newDevice = nil
-        Thread.sleep(forTimeInterval: 0.4)
+        Thread.sleep(forTimeInterval: backoff)
       }
     } while newDevice == nil && attemptCount < maxAttempts
     guard newDevice != nil else {
