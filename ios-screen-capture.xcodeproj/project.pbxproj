@@ -22,6 +22,10 @@
 		E77DFCF72BA3AF95005601D7 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = E77DFCF62BA3AF95005601D7 /* ArgumentParser */; };
 		E799598F2BA3B72F00CFBB54 /* ScreenCapturePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */; };
 		E7B9EEBE2BA772D7006631E7 /* ScreenCaptureDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */; };
+		E7B9EEC12BA7C9A3006631E7 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */; };
+		E7B9EEC32BAF45A9006631E7 /* ScreenCapturePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */; };
+		E7B9EEC42BAF45B7006631E7 /* ScreenCaptureDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */; };
+		E7B9EEC52BAF45BF006631E7 /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372F92B93E5DA004EE79D /* Device.swift */; };
 		E7D372E22B8563C0004EE79D /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = E7D372E12B8563C0004EE79D /* ArgumentParser */; };
 		E7D372E42B8563C0004EE79D /* generate-manual in Frameworks */ = {isa = PBXBuildFile; productRef = E7D372E32B8563C0004EE79D /* generate-manual */; };
 		E7D372E62B856733004EE79D /* RecordCommand.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372E52B856733004EE79D /* RecordCommand.swift */; };
@@ -88,6 +92,7 @@
 		E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacket.swift; sourceTree = "<group>"; };
 		E77DFCEE2BA3A58B005601D7 /* ScreenCaptureTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenCaptureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacketTests.swift; sourceTree = "<group>"; };
+		E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
 		E7D372E52B856733004EE79D /* RecordCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCommand.swift; sourceTree = "<group>"; };
 		E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureDevice.swift; sourceTree = "<group>"; };
 		E7D372F92B93E5DA004EE79D /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
@@ -218,6 +223,7 @@
 			isa = PBXGroup;
 			children = (
 				E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */,
+				E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */,
 			);
 			path = ScreenCapture;
 			sourceTree = "<group>";
@@ -426,6 +432,7 @@
 				E7D372FA2B93E5DA004EE79D /* Device.swift in Sources */,
 				E77DFCE52BA39E9C005601D7 /* ScreenCapturePacket.swift in Sources */,
 				E7D372EB2B856B8B004EE79D /* ScreenCaptureDevice.swift in Sources */,
+				E7B9EEC12BA7C9A3006631E7 /* Recorder.swift in Sources */,
 				E7D372E62B856733004EE79D /* RecordCommand.swift in Sources */,
 				E7D372FC2B941218004EE79D /* Util.swift in Sources */,
 			);
@@ -439,6 +446,7 @@
 				E75237F42BA67403002C44F8 /* Device.swift in Sources */,
 				E75237EB2BA66C72002C44F8 /* ScreenCaptureDeviceTests.swift in Sources */,
 				E75237CF2BA6257C002C44F8 /* DeviceTests.swift in Sources */,
+				E7B9EEC32BAF45A9006631E7 /* ScreenCapturePacket.swift in Sources */,
 				E7B9EEBE2BA772D7006631E7 /* ScreenCaptureDevice.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -455,9 +463,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7B9EEC42BAF45B7006631E7 /* ScreenCaptureDevice.swift in Sources */,
 				E799598F2BA3B72F00CFBB54 /* ScreenCapturePacket.swift in Sources */,
 				E75237C72BA5D890002C44F8 /* Util.swift in Sources */,
 				E77DFCF12BA3A58B005601D7 /* ScreenCapturePacketTests.swift in Sources */,
+				E7B9EEC52BAF45BF006631E7 /* Device.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

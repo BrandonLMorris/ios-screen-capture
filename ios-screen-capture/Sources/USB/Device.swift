@@ -4,6 +4,8 @@ import IOKit.usb
 import IOKit.usb.IOUSBLib
 import os.log
 
+private let transmissionSize: Int = 512
+
 public protocol Device {
   var isOpen: Bool { get }
   var configCount: Int { get }
@@ -364,22 +366,19 @@ extension InterfaceInterface: CustomStringConvertible {
     return props
   }
 
-  func read(endpoint: UInt8) {
-    var buffer = Data(count: 512)
-    var readLen = UInt32(512)
+  func read(endpoint: UInt8) -> Data? {
+    var buffer = Data(count: transmissionSize)
+    var readLen = UInt32(transmissionSize)
     var res: IOReturn = 0
     buffer.withUnsafeMutableBytes {
       res = unwrapped.ReadPipe(wrapped, endpoint, $0.baseAddress!, &readLen)
     }
     if res != kIOReturnSuccess {
       logger.error("Error reading from the endpoint: \(returnString(res))")
-      return
+      return nil
     }
-    logger.info("Read \(readLen) bytes")
-    _ = buffer.prefix(Int(readLen)).map { String(format: "0x%02x", $0) }.joined(separator: " ")
-    try! buffer[..<readLen].write(to: URL(fileURLWithPath: "/Users/brandonmorris/ping.bin"))
-    let decoded = String(decoding: buffer[4..<12], as: UTF8.self)
-    logger.info("Received \(decoded) packet")
+    logger.debug("Read \(readLen) bytes")
+    return buffer.prefix(Int(readLen))
   }
 }
 

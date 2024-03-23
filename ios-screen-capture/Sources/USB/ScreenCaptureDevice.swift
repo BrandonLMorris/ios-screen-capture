@@ -13,6 +13,8 @@ struct ScreenCaptureDevice {
   private let udid: String
   private let device: Device
   private let reconnectProvider: (any DeviceProvider)?
+  private var iface: InterfaceInterface? = nil
+  private var endpoints: Endpoints? = nil
 
   public static func obtainDevice(
     withUdid udid: String, from provider: any DeviceProvider = USBDeviceProvider()
@@ -55,7 +57,7 @@ struct ScreenCaptureDevice {
     controlActivation(activate: false)
   }
 
-  func initializeRecording() {
+  mutating func initializeRecording() {
     guard
       let iface = device.getInterface(
         withSubclass: recordingInterfaceSubclass, withAlt: recordingInterfaceAlt)
@@ -71,7 +73,22 @@ struct ScreenCaptureDevice {
       logger.error("Failed to find the endpoints for bulk transfer!")
       return
     }
-    iface.read(endpoint: endpoints.in)
+    self.iface = iface
+    self.endpoints = endpoints
+  }
+
+  func readPacket() throws -> ScreenCapturePacket {
+    guard let iface = iface, let endpoints = endpoints else {
+      throw ScreenCaptureError.uninitialized(
+        "Endpoints (\(String(describing: endpoints))) and/or interface (\(String(describing: iface)) nil; device not initialized for reading."
+      )
+    }
+    guard let raw = iface.read(endpoint: endpoints.in) else {
+      throw ScreenCaptureError.readError("Failed to read from device!")
+    }
+    let packet = try PacketParser.parse(from: raw)
+    logger.info("Received \(String(describing: packet))")
+    return packet
   }
 
   private func getEndpoints(for iface: InterfaceInterface) -> Endpoints {
@@ -132,4 +149,6 @@ internal enum ScreenCaptureError: Error {
   case deviceNotFound(_ msg: String)
   case multipleDevicesFound(_ msg: String)
   case recordingConfigError(_ msg: String)
+  case uninitialized(_ msg: String)
+  case readError(_ msg: String)
 }

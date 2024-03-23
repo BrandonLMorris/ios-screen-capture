@@ -1,3 +1,4 @@
+import Foundation
 import ArgumentParser
 
 @main
@@ -6,14 +7,25 @@ struct RecordCommand: ParsableCommand {
   var udid: String
 
   mutating func run() throws {
-    var screenCaptureDevice = try ScreenCaptureDevice.obtainDevice(withUdid: udid)
-    // I solemnly swear I am up to no good...
-    screenCaptureDevice = try screenCaptureDevice.activate()
-    print("Activated. We are clear for launch.")
-    screenCaptureDevice.initializeRecording()
+    var recorder = Recorder()
+    DispatchQueue.global().async { [self] in
+      do {
+        // I solemnly swear I am up to no good...
+        try recorder.start(forDeviceWithId: udid)
+      } catch {
+        print("Error starting the recording!")
+      }
+    }
+
     print("Press enter to stop...", terminator: "")
     _ = readLine()
+
     // ...mischief managed.
-    screenCaptureDevice.deactivate()
+    try recorder.stop()
   }
+}
+
+enum RecordingError: Error {
+  case unrecognizedPacket(_ msg: String)
+  case recordingUninitialized(_ msg: String)
 }

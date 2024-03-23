@@ -1,7 +1,7 @@
 import Foundation
 import os.log
 
-protocol ScreenCapturePacket {
+protocol ScreenCapturePacket: CustomStringConvertible {
   var header: Header { get }
   var data: Data { get }
   var isValid: Bool { get }
@@ -11,7 +11,7 @@ struct PacketParser {
   // Not instantiable
   private init() {}
 
-  static func parse(from payload: Data) throws -> ScreenCapturePacket {
+  static func parse(from payload: Data) throws -> any ScreenCapturePacket {
     guard let header = Header(payload) else {
       throw PacketParseError.invalidHeader("Unable to parse header!")
     }
@@ -58,9 +58,17 @@ struct Header: Equatable {
   }
 }
 
+internal enum PacketType: String {
+  case ping = "ping"
+}
+
 class Ping: ScreenCapturePacket {
   let header: Header
   let data: Data
+
+  var description: String {
+    "<ping size:\(data.count)>"
+  }
 
   static let instance: Ping = {
     let data = Data(base64Encoded: "EAAAAGduaXAAAAAAAQAAAA==")!
@@ -87,8 +95,4 @@ extension Data {
   subscript(uint32 idx: Int = 0) -> UInt32 {
     return self.withUnsafeBytes { $0.load(fromByteOffset: idx, as: UInt32.self) }
   }
-}
-
-internal enum PacketType: String {
-  case ping = "ping"
 }
