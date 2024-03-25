@@ -1,5 +1,5 @@
-import Foundation
 import ArgumentParser
+import Foundation
 
 @main
 struct RecordCommand: ParsableCommand {
@@ -13,7 +13,7 @@ struct RecordCommand: ParsableCommand {
         // I solemnly swear I am up to no good...
         try recorder.start(forDeviceWithId: udid)
       } catch {
-        print("Error starting the recording!")
+        print("Error starting the recording! \(error)")
       }
     }
 

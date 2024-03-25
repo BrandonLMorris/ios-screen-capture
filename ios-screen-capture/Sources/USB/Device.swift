@@ -369,9 +369,8 @@ extension InterfaceInterface: CustomStringConvertible {
   func read(endpoint: UInt8) -> Data? {
     var buffer = Data(count: transmissionSize)
     var readLen = UInt32(transmissionSize)
-    var res: IOReturn = 0
-    buffer.withUnsafeMutableBytes {
-      res = unwrapped.ReadPipe(wrapped, endpoint, $0.baseAddress!, &readLen)
+    let res: IOReturn = buffer.withUnsafeMutableBytes {
+      unwrapped.ReadPipe(wrapped, endpoint, $0.baseAddress!, &readLen)
     }
     if res != kIOReturnSuccess {
       logger.error("Error reading from the endpoint: \(returnString(res))")
@@ -379,6 +378,19 @@ extension InterfaceInterface: CustomStringConvertible {
     }
     logger.debug("Read \(readLen) bytes")
     return buffer.prefix(Int(readLen))
+  }
+
+  func write(_ toSend: Data, to endpoint: UInt8) -> Bool {
+    var data = toSend
+    // TODO break up packets larger than transmissionSize
+    let res = data.withUnsafeMutableBytes {
+      unwrapped.WritePipe(wrapped, endpoint, $0.baseAddress!, UInt32(toSend.count))
+    }
+    if res != kIOReturnSuccess {
+      logger.error("Error writing to the endpoint: \(returnString(res))")
+      return false
+    }
+    return true
   }
 }
 
