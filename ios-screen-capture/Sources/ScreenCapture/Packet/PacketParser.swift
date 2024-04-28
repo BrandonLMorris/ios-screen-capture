@@ -19,25 +19,31 @@ class PacketParser {
       return ping
     case .sync:
       logger.info("Received SYNC packet")
-      switch header.subtype {
-      case .none:
-        throw PacketParsingError.generic("sync packet did not have a subtype!")
-      case .audioClock:
-        let audioClock = AudioClock(header: header, data: payload)
-        if let audioClock = audioClock, audioClock.isValid {
-          return audioClock
-        }
-        throw PacketParsingError.generic(
-          "Could not parse audio clock: \(String(describing: audioClock))")
-      case .hostDescription:
-        // Should only be sent
-        throw PacketParsingError.generic("Unexpected HPD1 packet")
-      }
+      return try parseSync(header, payload)
     case .async:
       throw PacketParsingError.generic("TODO")
     case .reply:
       logger.error("Reply packets are only sent! Not parsing")
       return Ping.instance
+    }
+  }
+
+  private static func parseSync(_ header: Header, _ trailer: Data) throws
+    -> any ScreenCapturePacket
+  {
+    switch header.subtype {
+    case .none:
+      throw PacketParsingError.generic("sync packet did not have a subtype!")
+    case .audioClock:
+      let audioClock = AudioClock(header: header, data: trailer)
+      if let audioClock = audioClock, audioClock.isValid {
+        return audioClock
+      }
+      throw PacketParsingError.generic(
+        "Could not parse audio clock: \(String(describing: audioClock))")
+    case .hostDescription:
+      // Should only be sent
+      throw PacketParsingError.generic("Unexpected HPD1 packet")
     }
   }
 }
