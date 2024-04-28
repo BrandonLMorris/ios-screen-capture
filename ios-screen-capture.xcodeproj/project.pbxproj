@@ -21,6 +21,35 @@
 		E77DFCF12BA3A58B005601D7 /* ScreenCapturePacketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */; };
 		E77DFCF72BA3AF95005601D7 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = E77DFCF62BA3AF95005601D7 /* ArgumentParser */; };
 		E799598F2BA3B72F00CFBB54 /* ScreenCapturePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */; };
+		E79F4C442BDEF18200F28AE2 /* Prefix.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C432BDEF18200F28AE2 /* Prefix.swift */; };
+		E79F4C452BDEF18200F28AE2 /* Prefix.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C432BDEF18200F28AE2 /* Prefix.swift */; };
+		E79F4C472BDEF2C100F28AE2 /* Number.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C462BDEF2C100F28AE2 /* Number.swift */; };
+		E79F4C482BDEF2C100F28AE2 /* Number.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C462BDEF2C100F28AE2 /* Number.swift */; };
+		E79F4C4A2BDEF37900F28AE2 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C492BDEF37900F28AE2 /* Dictionary.swift */; };
+		E79F4C4B2BDEF37900F28AE2 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C492BDEF37900F28AE2 /* Dictionary.swift */; };
+		E79F4C4C2BDEF42800F28AE2 /* Number.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C462BDEF2C100F28AE2 /* Number.swift */; };
+		E79F4C4D2BDEF43900F28AE2 /* Prefix.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C432BDEF18200F28AE2 /* Prefix.swift */; };
+		E79F4C4E2BDEF43C00F28AE2 /* Dictionary.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C492BDEF37900F28AE2 /* Dictionary.swift */; };
+		E79F4C502BDEF52100F28AE2 /* Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C4F2BDEF52100F28AE2 /* Header.swift */; };
+		E79F4C512BDEF52100F28AE2 /* Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C4F2BDEF52100F28AE2 /* Header.swift */; };
+		E79F4C532BDEF59C00F28AE2 /* Ping.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C522BDEF59C00F28AE2 /* Ping.swift */; };
+		E79F4C542BDEF59C00F28AE2 /* Ping.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C522BDEF59C00F28AE2 /* Ping.swift */; };
+		E79F4C552BDEF5BA00F28AE2 /* Ping.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C522BDEF59C00F28AE2 /* Ping.swift */; };
+		E79F4C562BDEF5C000F28AE2 /* Header.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C4F2BDEF52100F28AE2 /* Header.swift */; };
+		E79F4C582BDEF65F00F28AE2 /* Reply.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C572BDEF65F00F28AE2 /* Reply.swift */; };
+		E79F4C592BDEF65F00F28AE2 /* Reply.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C572BDEF65F00F28AE2 /* Reply.swift */; };
+		E79F4C5B2BDEF81400F28AE2 /* Data+Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C5A2BDEF81400F28AE2 /* Data+Utilities.swift */; };
+		E79F4C5C2BDEF81400F28AE2 /* Data+Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C5A2BDEF81400F28AE2 /* Data+Utilities.swift */; };
+		E79F4C5D2BDEF81A00F28AE2 /* Data+Utilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C5A2BDEF81400F28AE2 /* Data+Utilities.swift */; };
+		E79F4C5F2BDEF8AB00F28AE2 /* HostDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C5E2BDEF8AB00F28AE2 /* HostDescription.swift */; };
+		E79F4C602BDEF8AB00F28AE2 /* HostDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C5E2BDEF8AB00F28AE2 /* HostDescription.swift */; };
+		E79F4C612BDEF8F300F28AE2 /* HostDescription.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C5E2BDEF8AB00F28AE2 /* HostDescription.swift */; };
+		E79F4C632BDEF9F400F28AE2 /* AudioClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C622BDEF9F400F28AE2 /* AudioClock.swift */; };
+		E79F4C642BDEF9F400F28AE2 /* AudioClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C622BDEF9F400F28AE2 /* AudioClock.swift */; };
+		E79F4C652BDEF9F400F28AE2 /* AudioClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C622BDEF9F400F28AE2 /* AudioClock.swift */; };
+		E79F4C672BDEFA3800F28AE2 /* PacketParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C662BDEFA3800F28AE2 /* PacketParser.swift */; };
+		E79F4C682BDEFA3800F28AE2 /* PacketParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C662BDEFA3800F28AE2 /* PacketParser.swift */; };
+		E79F4C692BDEFA3800F28AE2 /* PacketParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C662BDEFA3800F28AE2 /* PacketParser.swift */; };
 		E7B9EEBE2BA772D7006631E7 /* ScreenCaptureDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */; };
 		E7B9EEC12BA7C9A3006631E7 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */; };
 		E7B9EEC32BAF45A9006631E7 /* ScreenCapturePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */; };
@@ -92,6 +121,16 @@
 		E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacket.swift; sourceTree = "<group>"; };
 		E77DFCEE2BA3A58B005601D7 /* ScreenCaptureTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenCaptureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacketTests.swift; sourceTree = "<group>"; };
+		E79F4C432BDEF18200F28AE2 /* Prefix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prefix.swift; sourceTree = "<group>"; };
+		E79F4C462BDEF2C100F28AE2 /* Number.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Number.swift; sourceTree = "<group>"; };
+		E79F4C492BDEF37900F28AE2 /* Dictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
+		E79F4C4F2BDEF52100F28AE2 /* Header.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Header.swift; sourceTree = "<group>"; };
+		E79F4C522BDEF59C00F28AE2 /* Ping.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Ping.swift; sourceTree = "<group>"; };
+		E79F4C572BDEF65F00F28AE2 /* Reply.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reply.swift; sourceTree = "<group>"; };
+		E79F4C5A2BDEF81400F28AE2 /* Data+Utilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Data+Utilities.swift"; sourceTree = "<group>"; };
+		E79F4C5E2BDEF8AB00F28AE2 /* HostDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDescription.swift; sourceTree = "<group>"; };
+		E79F4C622BDEF9F400F28AE2 /* AudioClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioClock.swift; sourceTree = "<group>"; };
+		E79F4C662BDEFA3800F28AE2 /* PacketParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketParser.swift; sourceTree = "<group>"; };
 		E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
 		E7C0B6ED2BD489D60068BB4A /* protocol-reference.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "protocol-reference.md"; sourceTree = "<group>"; };
 		E7D372E52B856733004EE79D /* RecordCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCommand.swift; sourceTree = "<group>"; };
@@ -211,6 +250,29 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
+		E79F4C412BDEF09D00F28AE2 /* Packet */ = {
+			isa = PBXGroup;
+			children = (
+				E79F4C4F2BDEF52100F28AE2 /* Header.swift */,
+				E79F4C522BDEF59C00F28AE2 /* Ping.swift */,
+				E79F4C572BDEF65F00F28AE2 /* Reply.swift */,
+				E79F4C5E2BDEF8AB00F28AE2 /* HostDescription.swift */,
+				E79F4C622BDEF9F400F28AE2 /* AudioClock.swift */,
+				E79F4C662BDEFA3800F28AE2 /* PacketParser.swift */,
+			);
+			path = Packet;
+			sourceTree = "<group>";
+		};
+		E79F4C422BDEF0CB00F28AE2 /* Object */ = {
+			isa = PBXGroup;
+			children = (
+				E79F4C432BDEF18200F28AE2 /* Prefix.swift */,
+				E79F4C462BDEF2C100F28AE2 /* Number.swift */,
+				E79F4C492BDEF37900F28AE2 /* Dictionary.swift */,
+			);
+			path = Object;
+			sourceTree = "<group>";
+		};
 		E7D372E72B8567B3004EE79D /* Sources */ = {
 			isa = PBXGroup;
 			children = (
@@ -224,8 +286,11 @@
 		E7D372E82B856AC9004EE79D /* ScreenCapture */ = {
 			isa = PBXGroup;
 			children = (
+				E79F4C422BDEF0CB00F28AE2 /* Object */,
+				E79F4C412BDEF09D00F28AE2 /* Packet */,
 				E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */,
 				E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */,
+				E79F4C5A2BDEF81400F28AE2 /* Data+Utilities.swift */,
 			);
 			path = ScreenCapture;
 			sourceTree = "<group>";
@@ -348,7 +413,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1520;
-				LastUpgradeCheck = 1520;
+				LastUpgradeCheck = 1530;
 				TargetAttributes = {
 					E74ED4CD2B85629A0079AE68 = {
 						CreatedOnToolsVersion = 15.2;
@@ -431,11 +496,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E79F4C502BDEF52100F28AE2 /* Header.swift in Sources */,
+				E79F4C472BDEF2C100F28AE2 /* Number.swift in Sources */,
+				E79F4C672BDEFA3800F28AE2 /* PacketParser.swift in Sources */,
 				E7D372FA2B93E5DA004EE79D /* Device.swift in Sources */,
+				E79F4C632BDEF9F400F28AE2 /* AudioClock.swift in Sources */,
 				E77DFCE52BA39E9C005601D7 /* ScreenCapturePacket.swift in Sources */,
+				E79F4C5B2BDEF81400F28AE2 /* Data+Utilities.swift in Sources */,
+				E79F4C532BDEF59C00F28AE2 /* Ping.swift in Sources */,
 				E7D372EB2B856B8B004EE79D /* ScreenCaptureDevice.swift in Sources */,
+				E79F4C582BDEF65F00F28AE2 /* Reply.swift in Sources */,
 				E7B9EEC12BA7C9A3006631E7 /* Recorder.swift in Sources */,
+				E79F4C4A2BDEF37900F28AE2 /* Dictionary.swift in Sources */,
+				E79F4C442BDEF18200F28AE2 /* Prefix.swift in Sources */,
 				E7D372E62B856733004EE79D /* RecordCommand.swift in Sources */,
+				E79F4C5F2BDEF8AB00F28AE2 /* HostDescription.swift in Sources */,
 				E7D372FC2B941218004EE79D /* Util.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -445,9 +520,18 @@
 			buildActionMask = 2147483647;
 			files = (
 				E75237F52BA67488002C44F8 /* Util.swift in Sources */,
+				E79F4C652BDEF9F400F28AE2 /* AudioClock.swift in Sources */,
+				E79F4C4C2BDEF42800F28AE2 /* Number.swift in Sources */,
+				E79F4C692BDEFA3800F28AE2 /* PacketParser.swift in Sources */,
 				E75237F42BA67403002C44F8 /* Device.swift in Sources */,
+				E79F4C552BDEF5BA00F28AE2 /* Ping.swift in Sources */,
 				E75237EB2BA66C72002C44F8 /* ScreenCaptureDeviceTests.swift in Sources */,
+				E79F4C562BDEF5C000F28AE2 /* Header.swift in Sources */,
 				E75237CF2BA6257C002C44F8 /* DeviceTests.swift in Sources */,
+				E79F4C4E2BDEF43C00F28AE2 /* Dictionary.swift in Sources */,
+				E79F4C612BDEF8F300F28AE2 /* HostDescription.swift in Sources */,
+				E79F4C5D2BDEF81A00F28AE2 /* Data+Utilities.swift in Sources */,
+				E79F4C4D2BDEF43900F28AE2 /* Prefix.swift in Sources */,
 				E7B9EEC32BAF45A9006631E7 /* ScreenCapturePacket.swift in Sources */,
 				E7B9EEBE2BA772D7006631E7 /* ScreenCaptureDevice.swift in Sources */,
 			);
@@ -466,10 +550,20 @@
 			buildActionMask = 2147483647;
 			files = (
 				E7B9EEC42BAF45B7006631E7 /* ScreenCaptureDevice.swift in Sources */,
+				E79F4C642BDEF9F400F28AE2 /* AudioClock.swift in Sources */,
+				E79F4C512BDEF52100F28AE2 /* Header.swift in Sources */,
+				E79F4C682BDEFA3800F28AE2 /* PacketParser.swift in Sources */,
+				E79F4C4B2BDEF37900F28AE2 /* Dictionary.swift in Sources */,
+				E79F4C542BDEF59C00F28AE2 /* Ping.swift in Sources */,
+				E79F4C482BDEF2C100F28AE2 /* Number.swift in Sources */,
+				E79F4C452BDEF18200F28AE2 /* Prefix.swift in Sources */,
 				E799598F2BA3B72F00CFBB54 /* ScreenCapturePacket.swift in Sources */,
 				E75237C72BA5D890002C44F8 /* Util.swift in Sources */,
+				E79F4C602BDEF8AB00F28AE2 /* HostDescription.swift in Sources */,
+				E79F4C5C2BDEF81400F28AE2 /* Data+Utilities.swift in Sources */,
 				E77DFCF12BA3A58B005601D7 /* ScreenCapturePacketTests.swift in Sources */,
 				E7B9EEC52BAF45BF006631E7 /* Device.swift in Sources */,
+				E79F4C592BDEF65F00F28AE2 /* Reply.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -540,6 +634,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -603,6 +698,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -629,6 +725,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "ios-screen-capture/ios-screen-capture.entitlements";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -639,6 +736,7 @@
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = "ios-screen-capture/ios-screen-capture.entitlements";
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 			};
@@ -649,6 +747,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.brandonmorris.ScreenCaptureDeviceTests;
@@ -663,6 +762,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = dev.brandonmorris.ScreenCaptureDeviceTests;
@@ -676,6 +776,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
@@ -688,6 +789,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
 				EXECUTABLE_PREFIX = lib;
@@ -701,6 +803,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherit)";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
@@ -718,6 +821,7 @@
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				FRAMEWORK_SEARCH_PATHS = "$(inherit)";
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
