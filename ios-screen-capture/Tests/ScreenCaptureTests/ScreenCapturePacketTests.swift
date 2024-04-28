@@ -2,7 +2,7 @@ import XCTest
 
 @testable import ios_screen_capture
 
-final class ScreenCaptureTests: XCTestCase {
+final class ScreenCapturePacketTests: XCTestCase {
   // The ping packet is constant; both sending and receiving
   let ping = Data(base64Encoded: "EAAAAGduaXAAAAAAAQAAAA==")!
 
@@ -44,5 +44,23 @@ final class ScreenCaptureTests: XCTestCase {
       try {
         _ = try PacketParser.parse(from: badPing)
       }())
+  }
+}
+
+final class ScreenCaptureObjectTests: XCTestCase {
+
+  func testParsePrefix() throws {
+    let serialized = Data(base64Encoded: "KAAAAGtydHM=")!
+    print(serialized.base64EncodedString())
+    let parsed = Prefix(serialized)
+
+    XCTAssertEqual(parsed?.type, .stringKey)
+    XCTAssertEqual(parsed?.length, 40)
+  }
+
+  func testSerailizePrefix() throws {
+    let parsed = Prefix(length: UInt32(40), type: .stringKey)
+
+    XCTAssertEqual(parsed.serialize().base64EncodedString(), "KAAAAGtydHM=")
   }
 }

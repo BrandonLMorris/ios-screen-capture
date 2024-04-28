@@ -1,5 +1,5 @@
-import Foundation
 import CoreMedia
+import Foundation
 
 struct Recorder {
   private var device: ScreenCaptureDevice? = nil

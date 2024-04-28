@@ -93,6 +93,7 @@
 		E77DFCEE2BA3A58B005601D7 /* ScreenCaptureTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenCaptureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacketTests.swift; sourceTree = "<group>"; };
 		E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
+		E7C0B6ED2BD489D60068BB4A /* protocol-reference.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "protocol-reference.md"; sourceTree = "<group>"; };
 		E7D372E52B856733004EE79D /* RecordCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCommand.swift; sourceTree = "<group>"; };
 		E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureDevice.swift; sourceTree = "<group>"; };
 		E7D372F92B93E5DA004EE79D /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
@@ -161,6 +162,7 @@
 			children = (
 				E7D372E72B8567B3004EE79D /* Sources */,
 				E77DFCE62BA3A3BE005601D7 /* Tests */,
+				E7C0B6ED2BD489D60068BB4A /* protocol-reference.md */,
 			);
 			path = "ios-screen-capture";
 			sourceTree = "<group>";
