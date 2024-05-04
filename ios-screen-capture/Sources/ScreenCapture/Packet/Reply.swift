@@ -2,8 +2,6 @@ import Foundation
 
 class Reply: ScreenCapturePacket {
   var header = Header(length: length, type: .reply)
-  var isValid: Bool = true
-
   var description: String { "<reply corrId=\(correlationId) clock=\(clock)>" }
 
   private let correlationId: String

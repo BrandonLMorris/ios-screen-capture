@@ -4,9 +4,11 @@ struct Header: Equatable {
   let length: Int
   let type: PacketType
   let subtype: PacketSubtype
+  var payload = Data(count: 8)
 
   private let minLength = 8
   private static let typeRange = 4..<8
+  private static let payloadRange = 8..<16
   private static let subtypeRange = 16..<20
 
   var serialized: Data {
@@ -14,7 +16,9 @@ struct Header: Equatable {
     var res = Data(count: hasSubtype ? 20 : 8)
     res.uint32(at: 0, UInt32(length))
     res.copyInto(at: 4, from: type.rawValue)
+    res.copyInto(at: 8, from: payload)
     if hasSubtype {
+      // Note the empty 8 bytes between type and subtype.
       res.copyInto(at: 16, from: subtype.rawValue)
     }
     return res
@@ -44,6 +48,7 @@ struct Header: Equatable {
       self.subtype = .none
       return
     }
+    self.payload = source[Header.payloadRange]
     let subtypeStr = Header.parseType(in: source, isSubtype: true)
     guard let subtype = PacketSubtype(rawValue: String(subtypeStr)) else {
       logger.error("Unable to parse packet subtype: \(subtypeStr)")

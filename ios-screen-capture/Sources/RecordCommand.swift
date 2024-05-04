@@ -7,7 +7,7 @@ struct RecordCommand: ParsableCommand {
   var udid: String
 
   mutating func run() throws {
-    var recorder = Recorder()
+    let recorder = Recorder()
     DispatchQueue.global().async { [self] in
       do {
         // I solemnly swear I am up to no good...

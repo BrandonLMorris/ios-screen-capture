@@ -10,10 +10,6 @@ class AudioClock: ScreenCapturePacket {
   private let corrIdRange = 20..<28
   private let clockIdx = 28
 
-  lazy var isValid: Bool = {
-    return header.type == .sync && header.subtype == .audioClock
-  }()
-
   var description: String {
     "<audio-clock [cwpa] corrId=\(correlationId) clock=\(clock) size:\(data.count)>"
   }

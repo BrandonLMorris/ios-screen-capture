@@ -5,13 +5,11 @@ import Foundation
 class HostDescription: ScreenCapturePacket {
   var header: Header
   var data: Data
-  var isValid: Bool
   var description: String
 
   init() {
     data = HostDescription.initializeData()
     header = Header(length: Int(data[uint32: 0]), type: .async)
-    isValid = true
     description = "fixme"
   }
 

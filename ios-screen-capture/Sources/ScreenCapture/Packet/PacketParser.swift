@@ -28,22 +28,24 @@ class PacketParser {
     }
   }
 
-  private static func parseSync(_ header: Header, _ trailer: Data) throws
+  private static func parseSync(_ header: Header, _ wholePacket: Data) throws
     -> any ScreenCapturePacket
   {
     switch header.subtype {
-    case .none:
+    case .none, .empty:
       throw PacketParsingError.generic("sync packet did not have a subtype!")
     case .audioClock:
-      let audioClock = AudioClock(header: header, data: trailer)
-      if let audioClock = audioClock, audioClock.isValid {
+      let audioClock = AudioClock(header: header, data: wholePacket)
+      if let audioClock = audioClock {
         return audioClock
       }
       throw PacketParsingError.generic(
         "Could not parse audio clock: \(String(describing: audioClock))")
     case .hostDescription:
       // Should only be sent
-      throw PacketParsingError.generic("Unexpected HPD1 packet")
+      throw PacketParsingError.generic("Unexpected host description (HPD1) packet")
+    case .audioFormat:
+      return AudioFormat(header: header, data: wholePacket)!
     }
   }
 }
@@ -62,6 +64,10 @@ internal enum PacketSubtype: String {
   case audioClock = "cwpa"
   // Host picture description (???)
   case hostDescription = "hpd1"
+  // Audio format
+  case audioFormat = "afmt"
+  // Zero bytes for type. Note this is different than "none"
+  case empty = "\0\0\0\0"
 }
 
 internal enum PacketParsingError: Error {

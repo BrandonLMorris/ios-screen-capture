@@ -50,6 +50,9 @@
 		E79F4C672BDEFA3800F28AE2 /* PacketParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C662BDEFA3800F28AE2 /* PacketParser.swift */; };
 		E79F4C682BDEFA3800F28AE2 /* PacketParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C662BDEFA3800F28AE2 /* PacketParser.swift */; };
 		E79F4C692BDEFA3800F28AE2 /* PacketParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C662BDEFA3800F28AE2 /* PacketParser.swift */; };
+		E79F4C6B2BDF194000F28AE2 /* AudioFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C6A2BDF194000F28AE2 /* AudioFormat.swift */; };
+		E79F4C6C2BDF194000F28AE2 /* AudioFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C6A2BDF194000F28AE2 /* AudioFormat.swift */; };
+		E79F4C6D2BDF194000F28AE2 /* AudioFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C6A2BDF194000F28AE2 /* AudioFormat.swift */; };
 		E7B9EEBE2BA772D7006631E7 /* ScreenCaptureDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */; };
 		E7B9EEC12BA7C9A3006631E7 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */; };
 		E7B9EEC32BAF45A9006631E7 /* ScreenCapturePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */; };
@@ -131,6 +134,7 @@
 		E79F4C5E2BDEF8AB00F28AE2 /* HostDescription.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDescription.swift; sourceTree = "<group>"; };
 		E79F4C622BDEF9F400F28AE2 /* AudioClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioClock.swift; sourceTree = "<group>"; };
 		E79F4C662BDEFA3800F28AE2 /* PacketParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketParser.swift; sourceTree = "<group>"; };
+		E79F4C6A2BDF194000F28AE2 /* AudioFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFormat.swift; sourceTree = "<group>"; };
 		E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
 		E7C0B6ED2BD489D60068BB4A /* protocol-reference.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "protocol-reference.md"; sourceTree = "<group>"; };
 		E7D372E52B856733004EE79D /* RecordCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCommand.swift; sourceTree = "<group>"; };
@@ -259,6 +263,7 @@
 				E79F4C5E2BDEF8AB00F28AE2 /* HostDescription.swift */,
 				E79F4C622BDEF9F400F28AE2 /* AudioClock.swift */,
 				E79F4C662BDEFA3800F28AE2 /* PacketParser.swift */,
+				E79F4C6A2BDF194000F28AE2 /* AudioFormat.swift */,
 			);
 			path = Packet;
 			sourceTree = "<group>";
@@ -504,6 +509,7 @@
 				E77DFCE52BA39E9C005601D7 /* ScreenCapturePacket.swift in Sources */,
 				E79F4C5B2BDEF81400F28AE2 /* Data+Utilities.swift in Sources */,
 				E79F4C532BDEF59C00F28AE2 /* Ping.swift in Sources */,
+				E79F4C6B2BDF194000F28AE2 /* AudioFormat.swift in Sources */,
 				E7D372EB2B856B8B004EE79D /* ScreenCaptureDevice.swift in Sources */,
 				E79F4C582BDEF65F00F28AE2 /* Reply.swift in Sources */,
 				E7B9EEC12BA7C9A3006631E7 /* Recorder.swift in Sources */,
@@ -526,6 +532,7 @@
 				E75237F42BA67403002C44F8 /* Device.swift in Sources */,
 				E79F4C552BDEF5BA00F28AE2 /* Ping.swift in Sources */,
 				E75237EB2BA66C72002C44F8 /* ScreenCaptureDeviceTests.swift in Sources */,
+				E79F4C6D2BDF194000F28AE2 /* AudioFormat.swift in Sources */,
 				E79F4C562BDEF5C000F28AE2 /* Header.swift in Sources */,
 				E75237CF2BA6257C002C44F8 /* DeviceTests.swift in Sources */,
 				E79F4C4E2BDEF43C00F28AE2 /* Dictionary.swift in Sources */,
@@ -556,6 +563,7 @@
 				E79F4C4B2BDEF37900F28AE2 /* Dictionary.swift in Sources */,
 				E79F4C542BDEF59C00F28AE2 /* Ping.swift in Sources */,
 				E79F4C482BDEF2C100F28AE2 /* Number.swift in Sources */,
+				E79F4C6C2BDF194000F28AE2 /* AudioFormat.swift in Sources */,
 				E79F4C452BDEF18200F28AE2 /* Prefix.swift in Sources */,
 				E799598F2BA3B72F00CFBB54 /* ScreenCapturePacket.swift in Sources */,
 				E75237C72BA5D890002C44F8 /* Util.swift in Sources */,

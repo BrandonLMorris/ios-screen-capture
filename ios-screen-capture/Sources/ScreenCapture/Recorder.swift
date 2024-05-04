@@ -56,9 +56,14 @@ class Recorder {
       logger.debug("Received audio clock: \(packet.description)")
       correlationId = packet.correlationId
       hostClock = CMClock.hostTimeClock
-      // FIXME before you send this, send hpd1
+      logger.debug("Sending host description packet...")
+      try device.sendPacket(packet: HostDescription())
       let reply = Reply(correlationId: packet.correlationId, clock: packet.clock + 1000)
+      logger.debug("Sending audio clock reply")
       try device.sendPacket(packet: reply)
+    case let packet as AudioFormat:
+      logger.debug("Received audio format: \(packet.description); replying")
+      try device.sendPacket(packet: packet.reply())
     default:
       logger.error("Unexpected packet received \(packet.data.base64EncodedString())")
     }
