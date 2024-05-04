@@ -1,6 +1,10 @@
 import Foundation
 
 extension Data {
+  subscript(strType idx: Int) -> String {
+    String(data: self.subdata(in: idx..<idx + 4), encoding: .ascii)!
+  }
+
   subscript(uint64 idx: Int = 0) -> UInt64 {
     get {
       return self.withUnsafeBytes {

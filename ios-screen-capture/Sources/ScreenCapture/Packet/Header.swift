@@ -16,8 +16,8 @@ struct Header: Equatable {
     var res = Data(count: hasSubtype ? 20 : 8)
     res.uint32(at: 0, UInt32(length))
     res.copyInto(at: 4, from: type.rawValue)
-    res.copyInto(at: 8, from: payload)
     if hasSubtype {
+      res.copyInto(at: 8, from: payload)
       // Note the empty 8 bytes between type and subtype.
       res.copyInto(at: 16, from: subtype.rawValue)
     }

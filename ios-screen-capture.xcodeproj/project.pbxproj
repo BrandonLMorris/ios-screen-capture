@@ -53,6 +53,7 @@
 		E79F4C6B2BDF194000F28AE2 /* AudioFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C6A2BDF194000F28AE2 /* AudioFormat.swift */; };
 		E79F4C6C2BDF194000F28AE2 /* AudioFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C6A2BDF194000F28AE2 /* AudioFormat.swift */; };
 		E79F4C6D2BDF194000F28AE2 /* AudioFormat.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C6A2BDF194000F28AE2 /* AudioFormat.swift */; };
+		E79F4C6F2BE6903900F28AE2 /* HeaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C6E2BE6903900F28AE2 /* HeaderTests.swift */; };
 		E7B9EEBE2BA772D7006631E7 /* ScreenCaptureDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */; };
 		E7B9EEC12BA7C9A3006631E7 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */; };
 		E7B9EEC32BAF45A9006631E7 /* ScreenCapturePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */; };
@@ -135,6 +136,7 @@
 		E79F4C622BDEF9F400F28AE2 /* AudioClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioClock.swift; sourceTree = "<group>"; };
 		E79F4C662BDEFA3800F28AE2 /* PacketParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PacketParser.swift; sourceTree = "<group>"; };
 		E79F4C6A2BDF194000F28AE2 /* AudioFormat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFormat.swift; sourceTree = "<group>"; };
+		E79F4C6E2BE6903900F28AE2 /* HeaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderTests.swift; sourceTree = "<group>"; };
 		E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
 		E7C0B6ED2BD489D60068BB4A /* protocol-reference.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "protocol-reference.md"; sourceTree = "<group>"; };
 		E7D372E52B856733004EE79D /* RecordCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCommand.swift; sourceTree = "<group>"; };
@@ -243,6 +245,7 @@
 			isa = PBXGroup;
 			children = (
 				E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */,
+				E79F4C6E2BE6903900F28AE2 /* HeaderTests.swift */,
 			);
 			path = ScreenCaptureTests;
 			sourceTree = "<group>";
@@ -566,6 +569,7 @@
 				E79F4C6C2BDF194000F28AE2 /* AudioFormat.swift in Sources */,
 				E79F4C452BDEF18200F28AE2 /* Prefix.swift in Sources */,
 				E799598F2BA3B72F00CFBB54 /* ScreenCapturePacket.swift in Sources */,
+				E79F4C6F2BE6903900F28AE2 /* HeaderTests.swift in Sources */,
 				E75237C72BA5D890002C44F8 /* Util.swift in Sources */,
 				E79F4C602BDEF8AB00F28AE2 /* HostDescription.swift in Sources */,
 				E79F4C5C2BDEF81400F28AE2 /* Data+Utilities.swift in Sources */,
