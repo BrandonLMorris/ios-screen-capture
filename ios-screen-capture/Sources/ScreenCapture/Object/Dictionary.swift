@@ -28,6 +28,11 @@ extension DictValue: Equatable {
       result.append(Swift.withUnsafeBytes(of: UInt32(Prefix.size + serialized.count)) { Data($0) })
       result.append(DataType.number.serialize())
       result.append(serialized)
+    case .string(let s):
+      let serialized = s.data(using: .ascii)!
+      result.append(Swift.withUnsafeBytes(of: UInt32(Prefix.size + serialized.count)) { Data($0) })
+      result.append(DataType.string.serialize())
+      result.append(serialized)
     // TODO more cases
     default:
       print("oh no!")
