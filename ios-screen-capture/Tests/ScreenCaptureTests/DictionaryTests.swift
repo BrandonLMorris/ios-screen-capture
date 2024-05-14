@@ -94,5 +94,18 @@ final class DictionaryTests: XCTestCase {
     // TODO assert value when Number supports parsing
   }
 
+  func testSerializeDictWithDataValue() throws {
+    let data = Data([0xde, 0xad, 0xbe, 0xef])
+    var dict = Dictionary()
+    dict["foo0"] = .data(data)
+
+    let serialized = dict.serialize()
+
+    var idx = 32
+    XCTAssertEqual(serialized[strType: idx], "vtad")
+    idx += 4
+    XCTAssertEqual(serialized.subdata(in: idx..<serialized.count), data)
+  }
+
   // TODO test parsing when supported
 }

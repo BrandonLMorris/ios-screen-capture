@@ -8,6 +8,7 @@ enum DictValue {
   case data(Data)
   indirect case dict([String: DictValue])
   case number(Number)
+  // TODO format description (fdsc)
 }
 
 extension DictValue: Equatable {
@@ -33,9 +34,10 @@ extension DictValue: Equatable {
       result.append(Swift.withUnsafeBytes(of: UInt32(Prefix.size + serialized.count)) { Data($0) })
       result.append(DataType.string.serialize())
       result.append(serialized)
-    // TODO more cases
-    default:
-      print("oh no!")
+    case .data(let d):
+      result.append(Swift.withUnsafeBytes(of: UInt32(Prefix.size + d.count)) { Data($0) })
+      result.append(DataType.data.serialize())
+      result.append(d)
     }
     return result
   }
