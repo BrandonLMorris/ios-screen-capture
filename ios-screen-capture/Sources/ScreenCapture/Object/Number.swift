@@ -27,6 +27,11 @@ struct Number: Equatable {
     float64Value = float64
   }
 
+  init?(_ data: Data) {
+    // TODO
+    return nil
+  }
+
   func serialize() -> Data {
     var result = Data()
     result.append(type.rawValue)

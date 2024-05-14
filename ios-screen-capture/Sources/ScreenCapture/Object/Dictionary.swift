@@ -54,6 +54,42 @@ extension Dictionary {
       )
       return nil
     }
+    var idx = 0
+    guard let dictPrefix = Prefix(data) else { return nil }
+    idx += 8
+    while idx < dictPrefix.length {
+      guard let kvPrefix = Prefix(data.from(idx)), kvPrefix.type == .keyValue else { return nil }
+      idx += 8
+
+      guard let keyPrefix = Prefix(data.from(idx)), keyPrefix.type == .stringKey else { return nil }
+      let keyRange = (idx + 8)..<(idx + Int(keyPrefix.length))
+      let keyData = data.subdata(in: keyRange)
+      let key = String(data: keyData, encoding: .ascii)!
+      idx += Int(keyPrefix.length)
+
+      guard let valuePrefix = Prefix(data.from(idx)) else { return nil }
+      let valueRange = (idx + 8)..<(idx + Int(valuePrefix.length))
+      let valueData = data.subdata(in: valueRange)
+      switch valuePrefix.type {
+      case .dict:
+        guard let subdict = Dictionary(valueData) else { return nil }
+        self[key] = .dict(subdict)
+      case .data:
+        self[key] = .data(valueData)
+      case .bool:
+        self[key] = .bool(valueData[0] != 0)
+      case .string:
+        guard let str = String(data: valueData, encoding: .ascii) else { return nil }
+        self[key] = .string(str)
+      case .number, .formatDesc:
+        // TODO
+        logger.error("TODO")
+      case .keyValue, .stringKey:
+        // These types should never appear for dict values
+        return nil
+      }
+      idx += Int(valuePrefix.length)
+    }
     // TODO keep parsing
   }
 

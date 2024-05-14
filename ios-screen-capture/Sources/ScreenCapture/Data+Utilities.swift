@@ -66,4 +66,8 @@ extension Data {
     toAppend[0] = toAdd
     self.append(toAppend)
   }
+
+  func from(_ idx: Int) -> Data {
+    self.subdata(in: idx..<self.count)
+  }
 }

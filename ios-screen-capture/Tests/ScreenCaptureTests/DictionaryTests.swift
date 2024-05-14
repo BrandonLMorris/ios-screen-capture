@@ -107,5 +107,66 @@ final class DictionaryTests: XCTestCase {
     XCTAssertEqual(serialized.subdata(in: idx..<serialized.count), data)
   }
 
-  // TODO test parsing when supported
+  func testParsingDictionaryWithStringValue() throws {
+    var dict = Dictionary()
+    let strValue: DictValue = .string("bar0")
+    dict["foo0"] = strValue
+    let serialized = dict.serialize()
+
+    let parsed = Dictionary(serialized)!
+
+    XCTAssertEqual(parsed["foo0"]!, strValue)
+  }
+
+  func testParsingDictionaryWithDataValue() throws {
+    let data: DictValue = .data(Data([0xde, 0xad, 0xbe, 0xef]))
+    var dict = Dictionary()
+    dict["foo0"] = data
+    let serialized = dict.serialize()
+
+    let parsed = Dictionary(serialized)!
+
+    XCTAssertEqual(parsed["foo0"]!, data)
+  }
+
+  func testParsingDictionaryWithBoolValue() {
+    let b: DictValue = .bool(true)
+    var dict = Dictionary()
+    dict["foo0"] = b
+    let serialized = dict.serialize()
+
+    let parsed = Dictionary(serialized)!
+
+    XCTAssertEqual(parsed["foo0"]!, b)
+  }
+
+  func testParsingDictionaryWithMultipleValues() {
+    let b: DictValue = .bool(true)
+    let data: DictValue = .data(Data([0xde, 0xad, 0xbe, 0xef]))
+    var dict = Dictionary()
+    dict["foo0"] = b
+    dict["dat0"] = data
+    let serialized = dict.serialize()
+
+    let parsed = Dictionary(serialized)!
+
+    XCTAssertEqual(parsed["foo0"]!, b)
+    XCTAssertEqual(parsed["dat0"]!, data)
+  }
+
+  func testParsingNestedDictionaries() {
+    var nested = Dictionary()
+    nested["foo0"] = .string("bar0")
+    var dict = Dictionary()
+    dict["dict"] = .dict(nested)
+    let serialized = dict.serialize()
+
+    let parsed = Dictionary(serialized)!
+
+    if case let .dict(parsedNested) = parsed["dict"]! {
+      XCTAssertEqual(parsedNested, nested)
+    } else {
+      XCTFail()
+    }
+  }
 }
