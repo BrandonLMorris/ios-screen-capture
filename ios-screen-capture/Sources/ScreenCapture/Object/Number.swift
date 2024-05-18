@@ -2,9 +2,9 @@ import Foundation
 
 struct Number: Equatable {
   private var type: NumberType = .int64
-  private var int32Value = UInt32(0)
-  private var int64Value = UInt64(0)
-  private var float64Value = Float64()
+  private(set) var int32Value = UInt32(0)
+  private(set) var int64Value = UInt64(0)
+  private(set) var float64Value = Float64()
 
   private enum NumberType: UInt8 {
     case int32 = 3
@@ -28,8 +28,22 @@ struct Number: Equatable {
   }
 
   init?(_ data: Data) {
-    // TODO
-    return nil
+    // Minimum possible length (when uint32 value)
+    guard data.count >= 12 else { return nil }
+    guard data.prefix(4) == DataType.number.serialize() else { return nil }
+    let numType = UInt8(data[uint32: 4])
+    switch numType {
+    case NumberType.int32.rawValue:
+      self.int32Value = data[uint32: 8]
+    case NumberType.int64.rawValue:
+      guard data.count >= 16 else { return nil }
+      self.int64Value = data[uint64: 8]
+    case NumberType.float64.rawValue:
+      guard data.count >= 16 else { return nil }
+      self.float64Value = data[float64: 8]
+    default:
+      return nil
+    }
   }
 
   func serialize() -> Data {

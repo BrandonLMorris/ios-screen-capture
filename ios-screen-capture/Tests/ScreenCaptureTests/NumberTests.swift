@@ -36,4 +36,25 @@ final class NumberTests: XCTestCase {
     let valueDiff = abs(serialized[float64: 8] - val)
     XCTAssertLessThan(valueDiff, 1e-5)
   }
+
+  func testParseNumberWithInt32Value() throws {
+    let parsed = Number(Number(int32: 42).serialize())!
+
+    XCTAssertEqual(parsed.int32Value, 42)
+  }
+
+  func testParseNumberWithInt64Value() throws {
+    let v = UInt64(2 << 63)
+    let parsed = Number(Number(int64: v).serialize())!
+
+    XCTAssertEqual(parsed.int64Value, v)
+  }
+
+  func testParseNumberWithFloat64Value() throws {
+    let e = 2.72
+    let parsed = Number(Number(float64: 2.72).serialize())!
+
+    let diff = abs(parsed.float64Value - e)
+    XCTAssertLessThan(diff, 1e-5)
+  }
 }
