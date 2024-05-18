@@ -34,10 +34,10 @@ struct Number: Equatable {
 
   func serialize() -> Data {
     var result = Data()
-    result.append(type.rawValue)
+    result.append(DataType.number.serialize())
+    result.append(UInt32(self.type.rawValue))
     switch self.type {
     case .int32:
-      result.append(type.rawValue)
       result.append(withUnsafeBytes(of: int32Value) { Data($0) })
     case .int64:
       result.append(withUnsafeBytes(of: int64Value) { Data($0) })

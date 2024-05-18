@@ -44,6 +44,12 @@ extension Data {
     self.replaceSubrange(idx..<idx + 2, with: bytes)
   }
 
+  subscript(float64 idx: Int = 0) -> Float64 {
+    get {
+      self.withUnsafeBytes { $0.load(fromByteOffset: idx, as: Float64.self) }
+    }
+  }
+
   mutating func copyInto(at startIdx: Int, from toCopy: Data) {
     let rng = startIdx..<startIdx + toCopy.count
     self.replaceSubrange(rng, with: toCopy)
@@ -56,7 +62,7 @@ extension Data {
   }
 
   mutating func append(_ toAdd: UInt32) {
-    var toAppend = Data(capacity: 4)
+    var toAppend = Data(count: 4)
     toAppend.uint32(at: 0, toAdd)
     self.append(toAppend)
   }
