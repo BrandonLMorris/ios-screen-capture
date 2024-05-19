@@ -84,13 +84,12 @@ extension Dictionary {
       case .number, .formatDesc:
         // TODO
         logger.error("TODO")
-      case .keyValue, .stringKey:
+      case .keyValue, .stringKey, .indexKey:
         // These types should never appear for dict values
         return nil
       }
       idx += Int(valuePrefix.length)
     }
-    // TODO keep parsing
   }
 
   func serialize() -> Data {
@@ -99,7 +98,7 @@ extension Dictionary {
       let kv = serialize(key, value)
       let prefix = Prefix(length: UInt32(8 + kv.count), type: .keyValue)
       result.append(prefix.serialize())
-      result.append(serialize(key, value))
+      result.append(kv)
     }
     var prefix = Prefix(length: UInt32(8 + result.count), type: .dict).serialize()
     prefix.append(result)
@@ -128,6 +127,7 @@ enum DataType: String {
   case dict = "dict"
   case keyValue = "keyv"
   case stringKey = "strk"
+  case indexKey = "idxk"
   case bool = "bulv"
   case string = "strv"
   case data = "datv"
