@@ -8,7 +8,10 @@ extension Data {
   subscript(uint64 idx: Int = 0) -> UInt64 {
     get {
       return self.withUnsafeBytes {
-        $0.load(fromByteOffset: idx, as: UInt64.self)
+        let base = $0.baseAddress!.advanced(by: idx)
+        var toReturn: UInt64 = 0
+        memcpy(&toReturn, base, MemoryLayout<UInt64>.size)
+        return toReturn
       }
     }
   }
@@ -20,7 +23,12 @@ extension Data {
 
   subscript(uint32 idx: Int = 0) -> UInt32 {
     get {
-      return self.withUnsafeBytes { $0.load(fromByteOffset: idx, as: UInt32.self) }
+      return self.withUnsafeBytes { bufferPtr in
+        let start = bufferPtr.baseAddress!.advanced(by: idx)
+        var toReturn: UInt32 = 0
+        memcpy(&toReturn, start, MemoryLayout<UInt32>.size)
+        return toReturn
+      }
     }
   }
 
@@ -35,7 +43,12 @@ extension Data {
 
   subscript(uint16 idx: Int = 0) -> UInt16 {
     get {
-      self.withUnsafeBytes { $0.load(fromByteOffset: idx, as: UInt16.self) }
+      self.withUnsafeBytes {
+        let base = $0.baseAddress!.advanced(by: idx)
+        var toReturn: UInt16 = 0
+        memcpy(&toReturn, base, MemoryLayout<UInt16>.size)
+        return toReturn
+      }
     }
   }
 
@@ -46,7 +59,12 @@ extension Data {
 
   subscript(float64 idx: Int = 0) -> Float64 {
     get {
-      self.withUnsafeBytes { $0.load(fromByteOffset: idx, as: Float64.self) }
+      self.withUnsafeBytes {
+        let base = $0.baseAddress!.advanced(by: idx)
+        var toReturn: Float64 = 0.0
+        memcpy(&toReturn, base, MemoryLayout<Float64>.size)
+        return toReturn
+      }
     }
   }
 
