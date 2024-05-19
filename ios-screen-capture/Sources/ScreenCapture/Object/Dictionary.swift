@@ -8,6 +8,7 @@ enum DictValue {
   case data(Data)
   indirect case dict([String: DictValue])
   case number(Number)
+  // TODO add Array
   // TODO format description (fdsc)
 }
 

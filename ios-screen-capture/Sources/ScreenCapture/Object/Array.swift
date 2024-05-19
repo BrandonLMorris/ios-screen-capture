@@ -5,13 +5,63 @@ import Foundation
 /// C-style array; that is, an element at index N does **not** mean indices 0
 /// to N-1 are set.
 internal class Array {
-  private var backingMap = [Int:DictValue]()
-  
+  private var backingMap = [Int: DictValue]()
+
   init() {}
 
   /// Attempt to construct an `Array` from its binary representation.
   init?(_ data: Data) {
-    // TODO
+    // TODO Merge with dictionary parsing
+    let length = data[uint32: 0]
+    guard data.count >= length else {
+      logger.error(
+        "Could not parse packet array: Stated length of \(length) but only \(data.count) bytes!"
+      )
+      return nil
+    }
+
+    var idx = 0
+    guard let arrPrefix = Prefix(data) else { return nil }
+    idx += Prefix.size
+    while idx < arrPrefix.length {
+      // Key-value
+      let kvPrefix = Prefix(data.from(idx))
+      guard kvPrefix?.type == .keyValue else { return nil }
+      idx += Prefix.size
+
+      // Key
+      guard let keyPrefix = Prefix(data.from(idx)), keyPrefix.type == .indexKey else { return nil }
+      idx += Prefix.size
+      let key = Int(data[uint32: idx])
+      idx += 4  // uint32
+
+      // Value
+      guard let valuePrefix = Prefix(data.from(idx)) else { return nil }
+      let valueRange = (idx + 8)..<(idx + Int(valuePrefix.length))
+      let valueData = data.subdata(in: valueRange)
+      switch valuePrefix.type {
+      case .dict:
+        guard let subdict = Dictionary(valueData) else { return nil }
+        backingMap[key] = .dict(subdict)
+      case .data:
+        backingMap[key] = .data(valueData)
+      case .bool:
+        backingMap[key] = .bool(valueData[0] != 0)
+      case .string:
+        guard let str = String(data: valueData, encoding: .ascii) else { return nil }
+        backingMap[key] = .string(str)
+      case .number:
+        guard let num = Number(valueData) else { return nil }
+        backingMap[key] = .number(num)
+      case .formatDesc:
+        // TODO
+        logger.error("TODO")
+      case .keyValue, .stringKey, .indexKey:
+        // These types should never appear for dict values
+        return nil
+      }
+      idx += Int(valuePrefix.length)
+    }
   }
 
   /// Convert this `Array` to its binary format.
@@ -40,15 +90,15 @@ internal class Array {
       backingMap[idx] = newValue
     }
   }
-  
+
   private func serialize(_ k: Int, _ v: DictValue) -> Data {
     var result = serialize(index: k)
     result.append(v.serialize())
     return result
   }
-  
+
   private func serialize(index idx: Int) -> Data {
-    let len = 12 // = 4b length + 4b type id + 4b content (the index itself)
+    let len = 12  // = 4b length + 4b type id + 4b content (the index itself)
     var result = Data(count: len)
     result.uint32(at: 0, UInt32(len))
     result.copyInto(at: 4, from: DataType.indexKey.serialize())
