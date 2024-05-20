@@ -8,7 +8,7 @@ enum DictValue {
   case data(Data)
   indirect case dict([String: DictValue])
   case number(Number)
-  // TODO add Array
+  case array(Array)
   // TODO format description (fdsc)
 }
 
@@ -39,12 +39,24 @@ extension DictValue: Equatable {
       result.append(Swift.withUnsafeBytes(of: UInt32(Prefix.size + d.count)) { Data($0) })
       result.append(DataType.data.serialize())
       result.append(d)
+    case .array(let a):
+      let serialized = a.serialize()
+      result.append(Swift.withUnsafeBytes(of: UInt32(Prefix.size + serialized.count)) { Data($0) })
+      // Arrays and dicts use same type id and are separated by key type.
+      result.append(DataType.dict.serialize())
+      result.append(serialized)
     }
     return result
   }
 }
 
 extension Dictionary {
+
+  static func usesStringKey(_ data: Data) -> Bool {
+    let keyTypeOffset = 24
+    guard data.count >= keyTypeOffset else { return false }
+    return data[strType: keyTypeOffset] == String(DataType.stringKey.rawValue.reversed())
+  }
 
   init?(_ data: Data) {
     self.init()
@@ -73,8 +85,13 @@ extension Dictionary {
       let valueData = data.subdata(in: valueRange)
       switch valuePrefix.type {
       case .dict:
-        guard let subdict = Dictionary(valueData) else { return nil }
-        self[key] = .dict(subdict)
+        if let subdict = Dictionary(valueData) {
+          self[key] = .dict(subdict)
+        } else if let nested = Array(valueData) {
+          self[key] = .array(nested)
+        } else {
+          return nil
+        }
       case .data:
         self[key] = .data(valueData)
       case .bool:

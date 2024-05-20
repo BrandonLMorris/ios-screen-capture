@@ -101,6 +101,47 @@ final class ArrayTests: XCTestCase {
     }
   }
 
+  func testArrayEquality() throws {
+    let arr1 = Array()
+    arr1[500] = .string("foo")
+    arr1[505] = .string("bar")
+    
+    let arr2 = Array()
+    arr2[500] = .string("foo")
+
+    XCTAssertEqual(arr1, arr1)
+    XCTAssertNotEqual(arr1, Array())
+    XCTAssertNotEqual(arr1, arr2)
+    
+    arr2[505] = .string("bar")
+    XCTAssertEqual(arr1, arr2)
+  }
+  
+  func testNestedArray() throws {
+    let arr = Array()
+    let nested = Array()
+    nested[48879] = .string("foo0")
+    arr[255] = .array(nested)
+    
+    let serialized = arr.serialize()
+    let reserialized = Array(serialized)!.serialize()
+    XCTAssertEqual(serialized, reserialized)
+  }
+
+  func testMultipleNestedArrays() throws {
+    let arr1 = Array()
+    arr1[0] = .bool(true)
+    let arr2 = Array()
+    arr2[0] = .string("bar0")
+    let arr = Array()
+    arr[0] = .array(arr1)
+    let serialized = arr.serialize()
+
+    let parsed = Array(serialized)!
+
+    XCTAssertEqual(parsed.serialize(), serialized)
+  }
+
   private func floatNumbersAlmostEqual(n1: Number, n2: Number) -> Bool {
     let diff = abs(n1.float64Value - n2.float64Value)
     return diff < 1e-5

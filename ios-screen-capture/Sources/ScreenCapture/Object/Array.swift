@@ -4,7 +4,8 @@ import Foundation
 /// All keys are integers, but is **not** a contiguous collection like a
 /// C-style array; that is, an element at index N does **not** mean indices 0
 /// to N-1 are set.
-internal class Array {
+internal class Array: Equatable {
+
   private var backingMap = [Int: DictValue]()
 
   init() {}
@@ -41,8 +42,13 @@ internal class Array {
       let valueData = data.subdata(in: valueRange)
       switch valuePrefix.type {
       case .dict:
-        guard let subdict = Dictionary(valueData) else { return nil }
-        backingMap[key] = .dict(subdict)
+        if let subdict = Dictionary(valueData) {
+          backingMap[key] = .dict(subdict)
+        } else if let nested = Array(valueData) {
+          backingMap[key] = .array(nested)
+        } else {
+          return nil
+        }
       case .data:
         backingMap[key] = .data(valueData)
       case .bool:
@@ -89,6 +95,14 @@ internal class Array {
     set {
       backingMap[idx] = newValue
     }
+  }
+
+  static func == (lhs: Array, rhs: Array) -> Bool {
+    let leftKeys = lhs.backingMap.keys.sorted()
+    for k in leftKeys {
+      guard let l = lhs.backingMap[k], let r = rhs.backingMap[k], l == r else { return false }
+    }
+    return true
   }
 
   private func serialize(_ k: Int, _ v: DictValue) -> Data {
