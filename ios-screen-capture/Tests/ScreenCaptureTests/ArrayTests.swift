@@ -105,24 +105,24 @@ final class ArrayTests: XCTestCase {
     let arr1 = Array()
     arr1[500] = .string("foo")
     arr1[505] = .string("bar")
-    
+
     let arr2 = Array()
     arr2[500] = .string("foo")
 
     XCTAssertEqual(arr1, arr1)
     XCTAssertNotEqual(arr1, Array())
     XCTAssertNotEqual(arr1, arr2)
-    
+
     arr2[505] = .string("bar")
     XCTAssertEqual(arr1, arr2)
   }
-  
+
   func testNestedArray() throws {
     let arr = Array()
     let nested = Array()
     nested[48879] = .string("foo0")
     arr[255] = .array(nested)
-    
+
     let serialized = arr.serialize()
     let reserialized = Array(serialized)!.serialize()
     XCTAssertEqual(serialized, reserialized)

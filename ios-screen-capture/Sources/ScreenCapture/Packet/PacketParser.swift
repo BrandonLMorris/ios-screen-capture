@@ -46,6 +46,8 @@ class PacketParser {
       throw PacketParsingError.generic("Unexpected host description (HPD1) packet")
     case .audioFormat:
       return AudioFormat(header: header, data: wholePacket)!
+    case .videoClock:
+      return VideoClock(header: header, data: wholePacket)!
     }
   }
 }
@@ -66,6 +68,8 @@ internal enum PacketSubtype: String {
   case hostDescription = "hpd1"
   // Audio format
   case audioFormat = "afmt"
+  // Clock for Video Rate Picture (???)
+  case videoClock = "cvrp"
   // Zero bytes for type. Note this is different than "none"
   case empty = "\0\0\0\0"
 }

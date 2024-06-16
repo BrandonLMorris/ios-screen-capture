@@ -22,6 +22,6 @@ class AudioClock: ScreenCapturePacket {
       return nil
     }
     correlationId = data.subdata(in: corrIdRange).base64EncodedString()
-    clock = UInt(data[uint32: clockIdx])
+    clock = UInt(data[uint64: clockIdx])
   }
 }

@@ -16,7 +16,8 @@ class Recorder {
     let packet = try screenCaptureDevice.readPacket()
     guard let ping = packet as? Ping else {
       throw RecordingError.unrecognizedPacket(
-        "Fixme: Unexpected first packet; was looking for ping")
+        "Fixme: Unexpected first packet; was looking for ping. base64: \(packet.data.base64EncodedString())"
+      )
     }
     logger.info("We've been pinged! \(ping.data.base64EncodedString())")
     self.device = screenCaptureDevice
