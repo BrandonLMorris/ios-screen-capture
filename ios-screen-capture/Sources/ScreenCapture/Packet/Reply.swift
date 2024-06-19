@@ -18,7 +18,7 @@ class Reply: ScreenCapturePacket {
   // 16| (empty)        | 4 bytes
   // 20| Clock id       | 8 bytes
   lazy var data: Data = {
-    var res = Data(capacity: header.length)
+    var res = Data(count: header.length)
     res.copyInto(at: 0, from: header.serialized)
     res.copyInto(at: 8, from: Data(base64Encoded: correlationId)!)
     res.uint64(at: 20, UInt64(clock))

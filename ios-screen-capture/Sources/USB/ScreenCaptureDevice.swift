@@ -97,7 +97,7 @@ struct ScreenCaptureDevice {
         "Endpoints (\(String(describing: endpoints))) and/or interface (\(String(describing: iface)) nil; device not initialized for reading."
       )
     }
-    guard iface.write(Ping.instance.data, to: endpoints.out) else {
+    guard iface.write(packet.data, to: endpoints.out) else {
       throw ScreenCaptureError.writeError("Failed to write to device!")
     }
     logger.info("Wrote to device: \(packet.description)")
@@ -105,14 +105,7 @@ struct ScreenCaptureDevice {
 
   /// Sends a ping packet to the device.
   func ping() throws {
-    guard let iface = iface, let endpoints = endpoints else {
-      throw ScreenCaptureError.uninitialized(
-        "Endpoints (\(String(describing: endpoints))) and/or interface (\(String(describing: iface)) nil; device not initialized for writing."
-      )
-    }
-    guard iface.write(Ping.instance.data, to: endpoints.out) else {
-      throw ScreenCaptureError.writeError("Failed to write to device!")
-    }
+    try sendPacket(packet: Ping.instance)
   }
 
   private func getEndpoints(for iface: InterfaceInterface) -> Endpoints {

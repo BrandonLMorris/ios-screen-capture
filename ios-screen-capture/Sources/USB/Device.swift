@@ -4,7 +4,7 @@ import IOKit.usb
 import IOKit.usb.IOUSBLib
 import os.log
 
-private let transmissionSize: Int = 512
+private let transmissionSize: Int = 4096
 
 public protocol Device {
   var isOpen: Bool { get }
@@ -166,7 +166,7 @@ extension USBDevice {
       logger.error("Cannot set configuration \(config); only \(cnt) found")
       return
     }
-    if case let res = deviceInterface.setConfiguration(config: config), res == kIOReturnSuccess {
+    if case let res = deviceInterface.setConfiguration(config: config), res != kIOReturnSuccess {
       logger.error("Error settting configuration \(config): \(returnString(res))")
       return
     }
