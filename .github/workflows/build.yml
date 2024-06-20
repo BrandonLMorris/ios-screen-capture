@@ -1,0 +1,26 @@
+name: Swift Build
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+
+    runs-on: macos-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: mxcl/Xcodebuild
+    - uses: mxcl/xcodebuild@v3.0.0
+      with:
+        # * The most common actions are `test`, `build`
+        action: build # optional, default is test
+        code-coverage: true # optional, default is false
+        configuration: Debug
+        # A scheme defined by an Xcode project or workspace.
+        scheme: 'All Tests' # optional
+        # Fails the build if any warnings in *non test targets*.
+
