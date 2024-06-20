@@ -21,4 +21,4 @@ jobs:
           code-coverage: true # optional, default is false
           configuration: Debug
           # A scheme defined by an Xcode project or workspace.
-          scheme: "'All Tests'" # optional
+          scheme: All Tests
