@@ -16,9 +16,9 @@ struct Prefix {
       logger.error("Cannot parse prefix from only \(data.count) bytes!")
       return nil
     }
-
     length = data[uint32: 0]
-    let typeStr = String(String(data: data.subdata(in: 4..<8), encoding: .ascii)!.reversed())
+    let typeSlice = Data(data.subdata(in: 4..<8))
+    let typeStr = String(String(data: typeSlice, encoding: .ascii)!.reversed())
     type = DataType(rawValue: typeStr)!
   }
 

@@ -65,8 +65,6 @@ final class DictionaryTests: XCTestCase {
     idx += 8
     XCTAssertEqual(serialized[strType: idx], "tcid")  // value type
     idx += 8
-    XCTAssertEqual(serialized[strType: idx], "tcid")  // prefix of dict value
-    idx += 8
     XCTAssertEqual(serialized[strType: idx], "vyek")  // prefix of dict value
     idx += 8
     XCTAssertEqual(serialized[strType: idx], "krts")

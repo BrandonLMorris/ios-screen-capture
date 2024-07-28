@@ -22,8 +22,6 @@ extension DictValue: Equatable {
       result.append(UInt8(b ? 1 : 0))
     case .dict(let d):
       let serialized = d.serialize()
-      result.append(Swift.withUnsafeBytes(of: UInt32(Prefix.size + serialized.count)) { Data($0) })
-      result.append(DataType.dict.serialize())
       result.append(serialized)
     case .number(let n):
       let serialized = n.serialize()
@@ -41,9 +39,6 @@ extension DictValue: Equatable {
       result.append(d)
     case .array(let a):
       let serialized = a.serialize()
-      result.append(Swift.withUnsafeBytes(of: UInt32(Prefix.size + serialized.count)) { Data($0) })
-      // Arrays and dicts use same type id and are separated by key type.
-      result.append(DataType.dict.serialize())
       result.append(serialized)
     }
     return result
@@ -76,16 +71,16 @@ extension Dictionary {
 
       guard let keyPrefix = Prefix(data.from(idx)), keyPrefix.type == .stringKey else { return nil }
       let keyRange = (idx + 8)..<(idx + Int(keyPrefix.length))
-      let keyData = data.subdata(in: keyRange)
+      let keyData = Data(data.subdata(in: keyRange))
       let key = String(data: keyData, encoding: .ascii)!
       idx += Int(keyPrefix.length)
 
       guard let valuePrefix = Prefix(data.from(idx)) else { return nil }
       let valueRange = (idx + 8)..<(idx + Int(valuePrefix.length))
-      let valueData = data.subdata(in: valueRange)
+      let valueData = Data(data.subdata(in: valueRange))
       switch valuePrefix.type {
       case .dict:
-        if let subdict = Dictionary(valueData) {
+        if let subdict = Dictionary(data.from(idx)) {
           self[key] = .dict(subdict)
         } else if let nested = Array(valueData) {
           self[key] = .array(nested)

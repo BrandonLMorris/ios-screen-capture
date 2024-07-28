@@ -11,7 +11,7 @@ class VideoClock: ScreenCapturePacket {
   private let correlationId: String
   private let correlationIdRange = 20..<28
   // N.b. this clock goes in video requests (i.e. NEED packets).
-  private let clock: CFTypeID
+  let clock: CFTypeID
   private let clockIdx = 28
 
   init?(header: Header, data: Data) {
@@ -30,7 +30,7 @@ class VideoClock: ScreenCapturePacket {
     // TODO: Extract video the format description data
   }
 
-  func reply() -> Reply {
-    Reply(correlationId: correlationId, clock: clock)
+  func reply(withClock c: CFTypeID) -> Reply {
+    Reply(correlationId: correlationId, clock: c)
   }
 }

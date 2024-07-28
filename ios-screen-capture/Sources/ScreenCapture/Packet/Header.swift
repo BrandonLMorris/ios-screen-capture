@@ -24,10 +24,13 @@ struct Header: Equatable {
     return res
   }
 
-  internal init(length: Int, type: PacketType, subtype: PacketSubtype = .none) {
+  internal init(length: Int, type: PacketType, subtype: PacketSubtype = .none, payload: CFTypeID = 0) {
     self.length = length
     self.type = type
     self.subtype = subtype
+    var p = Data(count: 8)
+    p.uint64(at: 0, UInt64(payload))
+    self.payload = p
   }
 
   public init?(_ source: Data) {

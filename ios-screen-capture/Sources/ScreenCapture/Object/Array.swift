@@ -42,9 +42,9 @@ internal class Array: Equatable {
       let valueData = data.subdata(in: valueRange)
       switch valuePrefix.type {
       case .dict:
-        if let subdict = Dictionary(valueData) {
+        if let subdict = Dictionary(data.from(idx)) {
           backingMap[key] = .dict(subdict)
-        } else if let nested = Array(valueData) {
+        } else if let nested = Array(data.from(idx)) {
           backingMap[key] = .array(nested)
         } else {
           return nil

@@ -92,6 +92,6 @@ extension Data {
   }
 
   func from(_ idx: Int) -> Data {
-    self.subdata(in: idx..<self.count)
+    Data(self.subdata(in: idx..<self.count))
   }
 }

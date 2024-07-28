@@ -41,13 +41,16 @@ class PacketParser {
       }
       throw PacketParsingError.generic(
         "Could not parse audio clock: \(String(describing: audioClock))")
-    case .hostDescription:
-      // Should only be sent
-      throw PacketParsingError.generic("Unexpected host description (HPD1) packet")
     case .audioFormat:
       return AudioFormat(header: header, data: wholePacket)!
     case .videoClock:
       return VideoClock(header: header, data: wholePacket)!
+    case .hostDescription:
+      // Should only be sent
+      throw PacketParsingError.generic("Unexpected host description (HPD1) packet")
+    case .videoDataRequest:
+      // Should only be sent
+      throw PacketParsingError.generic("Unexpected video request (NEED) packet")
     }
   }
 }
@@ -70,6 +73,8 @@ internal enum PacketSubtype: String {
   case audioFormat = "afmt"
   // Clock for Video Rate Picture (???)
   case videoClock = "cvrp"
+  // Ask the device for more video data
+  case videoDataRequest = "need"
   // Zero bytes for type. Note this is different than "none"
   case empty = "\0\0\0\0"
 }

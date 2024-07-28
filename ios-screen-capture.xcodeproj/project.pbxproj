@@ -64,6 +64,7 @@
 		E79F4C762BFA3FCD00F28AE2 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C742BFA3FCD00F28AE2 /* Array.swift */; };
 		E79F4C772BFA3FCD00F28AE2 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C742BFA3FCD00F28AE2 /* Array.swift */; };
 		E79F4C792BFA499000F28AE2 /* ArrayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C782BFA499000F28AE2 /* ArrayTests.swift */; };
+		E7B864A22C5593D0009640B6 /* VideoClockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B864A12C5593D0009640B6 /* VideoClockTests.swift */; };
 		E7B9EEBE2BA772D7006631E7 /* ScreenCaptureDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */; };
 		E7B9EEC12BA7C9A3006631E7 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */; };
 		E7B9EEC32BAF45A9006631E7 /* ScreenCapturePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */; };
@@ -75,6 +76,9 @@
 		E7D372EB2B856B8B004EE79D /* ScreenCaptureDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */; };
 		E7D372FA2B93E5DA004EE79D /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372F92B93E5DA004EE79D /* Device.swift */; };
 		E7D372FC2B941218004EE79D /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372FB2B941218004EE79D /* Util.swift */; };
+		E7FD25A22C23BD4D007F289A /* VideoDataRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7FD25A12C23BD4D007F289A /* VideoDataRequest.swift */; };
+		E7FD25A32C23BD4D007F289A /* VideoDataRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7FD25A12C23BD4D007F289A /* VideoDataRequest.swift */; };
+		E7FD25A42C23BD4D007F289A /* VideoDataRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7FD25A12C23BD4D007F289A /* VideoDataRequest.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -152,12 +156,14 @@
 		E79F4C722BF90EB900F28AE2 /* NumberTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberTests.swift; sourceTree = "<group>"; };
 		E79F4C742BFA3FCD00F28AE2 /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		E79F4C782BFA499000F28AE2 /* ArrayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayTests.swift; sourceTree = "<group>"; };
+		E7B864A12C5593D0009640B6 /* VideoClockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoClockTests.swift; sourceTree = "<group>"; };
 		E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
 		E7C0B6ED2BD489D60068BB4A /* protocol-reference.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "protocol-reference.md"; sourceTree = "<group>"; };
 		E7D372E52B856733004EE79D /* RecordCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCommand.swift; sourceTree = "<group>"; };
 		E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureDevice.swift; sourceTree = "<group>"; };
 		E7D372F92B93E5DA004EE79D /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		E7D372FB2B941218004EE79D /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
+		E7FD25A12C23BD4D007F289A /* VideoDataRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDataRequest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -259,6 +265,7 @@
 		E77DFCEF2BA3A58B005601D7 /* ScreenCaptureTests */ = {
 			isa = PBXGroup;
 			children = (
+				E7B864A02C5592E5009640B6 /* Packet */,
 				E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */,
 				E79F4C6E2BE6903900F28AE2 /* HeaderTests.swift */,
 				E79F4C702BE6D52300F28AE2 /* DictionaryTests.swift */,
@@ -286,6 +293,7 @@
 				E79F4C662BDEFA3800F28AE2 /* PacketParser.swift */,
 				E79F4C6A2BDF194000F28AE2 /* AudioFormat.swift */,
 				E78FBE5F2C1CA37F007DAE77 /* VideoClock.swift */,
+				E7FD25A12C23BD4D007F289A /* VideoDataRequest.swift */,
 			);
 			path = Packet;
 			sourceTree = "<group>";
@@ -299,6 +307,14 @@
 				E79F4C742BFA3FCD00F28AE2 /* Array.swift */,
 			);
 			path = Object;
+			sourceTree = "<group>";
+		};
+		E7B864A02C5592E5009640B6 /* Packet */ = {
+			isa = PBXGroup;
+			children = (
+				E7B864A12C5593D0009640B6 /* VideoClockTests.swift */,
+			);
+			path = Packet;
 			sourceTree = "<group>";
 		};
 		E7D372E72B8567B3004EE79D /* Sources */ = {
@@ -543,6 +559,7 @@
 				E79F4C5F2BDEF8AB00F28AE2 /* HostDescription.swift in Sources */,
 				E78FBE602C1CA37F007DAE77 /* VideoClock.swift in Sources */,
 				E7D372FC2B941218004EE79D /* Util.swift in Sources */,
+				E7FD25A22C23BD4D007F289A /* VideoDataRequest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -569,6 +586,7 @@
 				E79F4C4D2BDEF43900F28AE2 /* Prefix.swift in Sources */,
 				E7B9EEC32BAF45A9006631E7 /* ScreenCapturePacket.swift in Sources */,
 				E7B9EEBE2BA772D7006631E7 /* ScreenCaptureDevice.swift in Sources */,
+				E7FD25A42C23BD4D007F289A /* VideoDataRequest.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -590,6 +608,7 @@
 				E79F4C512BDEF52100F28AE2 /* Header.swift in Sources */,
 				E79F4C682BDEFA3800F28AE2 /* PacketParser.swift in Sources */,
 				E79F4C4B2BDEF37900F28AE2 /* Dictionary.swift in Sources */,
+				E7B864A22C5593D0009640B6 /* VideoClockTests.swift in Sources */,
 				E79F4C712BE6D52300F28AE2 /* DictionaryTests.swift in Sources */,
 				E79F4C542BDEF59C00F28AE2 /* Ping.swift in Sources */,
 				E79F4C482BDEF2C100F28AE2 /* Number.swift in Sources */,
@@ -604,6 +623,7 @@
 				E79F4C5C2BDEF81400F28AE2 /* Data+Utilities.swift in Sources */,
 				E78FBE612C1CA37F007DAE77 /* VideoClock.swift in Sources */,
 				E77DFCF12BA3A58B005601D7 /* ScreenCapturePacketTests.swift in Sources */,
+				E7FD25A32C23BD4D007F289A /* VideoDataRequest.swift in Sources */,
 				E7B9EEC52BAF45BF006631E7 /* Device.swift in Sources */,
 				E79F4C592BDEF65F00F28AE2 /* Reply.swift in Sources */,
 			);
