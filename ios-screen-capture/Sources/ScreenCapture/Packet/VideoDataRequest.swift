@@ -7,6 +7,7 @@ class VideoDataRequest : ScreenCapturePacket {
   
   init(clock: CFTypeID) {
     self.clock = clock
+    header.payload.uint64(at: 0, UInt64(clock))
   }
   
   lazy var data: Data = {
