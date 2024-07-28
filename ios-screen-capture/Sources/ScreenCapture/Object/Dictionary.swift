@@ -24,10 +24,7 @@ extension DictValue: Equatable {
       let serialized = d.serialize()
       result.append(serialized)
     case .number(let n):
-      let serialized = n.serialize()
-      result.append(Swift.withUnsafeBytes(of: UInt32(Prefix.size + serialized.count)) { Data($0) })
-      result.append(DataType.number.serialize())
-      result.append(serialized)
+      result.append(n.serialize())
     case .string(let s):
       let serialized = s.data(using: .ascii)!
       result.append(Swift.withUnsafeBytes(of: UInt32(Prefix.size + serialized.count)) { Data($0) })
@@ -54,6 +51,7 @@ extension Dictionary {
   }
 
   init?(_ data: Data) {
+    let data = Data(data)
     self.init()
     let length = data[uint32: 0]
     guard data.count >= length else {

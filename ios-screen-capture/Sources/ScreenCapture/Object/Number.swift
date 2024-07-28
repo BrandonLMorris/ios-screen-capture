@@ -29,18 +29,19 @@ struct Number: Equatable {
 
   init?(_ data: Data) {
     // Minimum possible length (when uint32 value)
-    guard data.count >= 12 else { return nil }
-    guard data.prefix(4) == DataType.number.serialize() else { return nil }
-    let numType = UInt8(data[uint32: 4])
+    guard data.count >= 13 else { return nil }
+    let foo = data[strType: 4]
+    guard foo == String(DataType.number.rawValue.reversed()) else { return nil }
+    let numType = data[8]
     switch numType {
     case NumberType.int32.rawValue:
-      self.int32Value = data[uint32: 8]
+      self.int32Value = data[uint32: 9]
     case NumberType.int64.rawValue:
-      guard data.count >= 16 else { return nil }
-      self.int64Value = data[uint64: 8]
+      guard data.count >= 17 else { return nil }
+      self.int64Value = data[uint64: 9]
     case NumberType.float64.rawValue:
-      guard data.count >= 16 else { return nil }
-      self.float64Value = data[float64: 8]
+      guard data.count >= 17 else { return nil }
+      self.float64Value = data[float64: 9]
     default:
       return nil
     }
@@ -48,8 +49,10 @@ struct Number: Equatable {
 
   func serialize() -> Data {
     var result = Data()
+    let lenMap: [NumberType:UInt32] = [.int32: 13, .int64 : 17, .float64 : 17]
+    result.append(lenMap[self.type]!)
     result.append(DataType.number.serialize())
-    result.append(UInt32(self.type.rawValue))
+    result.append(self.type.rawValue)
     switch self.type {
     case .int32:
       result.append(withUnsafeBytes(of: int32Value) { Data($0) })

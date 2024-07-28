@@ -6,10 +6,10 @@ final class NumberTests: XCTestCase {
     let val = UInt32(42)
     let serialized = Number(int32: val).serialize()
 
-    XCTAssertEqual(serialized.count, 12)
-    XCTAssertEqual(serialized[strType: 0], "vbmn")
-    XCTAssertEqual(serialized[uint32: 4], UInt32(3))
-    XCTAssertEqual(serialized[uint32: 8], UInt32(42))
+    XCTAssertEqual(serialized.count, 13)
+    XCTAssertEqual(serialized[strType: 4], "vbmn")
+    XCTAssertEqual(serialized[8], UInt8(3))
+    XCTAssertEqual(serialized[uint32: 9], UInt32(42))
   }
 
   func testSerializeNumberWithInt64Value() throws {
@@ -18,10 +18,10 @@ final class NumberTests: XCTestCase {
 
     let serialized = n.serialize()
 
-    XCTAssertEqual(serialized.count, 16)
-    XCTAssertEqual(serialized[strType: 0], "vbmn")
-    XCTAssertEqual(serialized[uint32: 4], UInt32(4))
-    XCTAssertEqual(serialized[uint64: 8], val)
+    XCTAssertEqual(serialized.count, 17)
+    XCTAssertEqual(serialized[strType: 4], "vbmn")
+    XCTAssertEqual(serialized[8], UInt8(4))
+    XCTAssertEqual(serialized[uint64: 9], val)
   }
 
   func testSerializeNumberWithFloat64Value() throws {
@@ -30,10 +30,10 @@ final class NumberTests: XCTestCase {
 
     let serialized = n.serialize()
 
-    XCTAssertEqual(serialized.count, 16)
-    XCTAssertEqual(serialized[strType: 0], "vbmn")
-    XCTAssertEqual(serialized[uint32: 4], UInt32(6))
-    let valueDiff = abs(serialized[float64: 8] - val)
+    XCTAssertEqual(serialized.count, 17)
+    XCTAssertEqual(serialized[strType: 4], "vbmn")
+    XCTAssertEqual(serialized[8], UInt8(6))
+    let valueDiff = abs(serialized[float64: 9] - val)
     XCTAssertLessThan(valueDiff, 1e-5)
   }
 

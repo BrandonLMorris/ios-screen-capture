@@ -906,7 +906,7 @@
 				E74ED4D42B85629A0079AE68 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		E74ED4D52B85629A0079AE68 /* Build configuration list for PBXNativeTarget "ios-screen-capture" */ = {
 			isa = XCConfigurationList;
@@ -915,7 +915,7 @@
 				E74ED4D72B85629A0079AE68 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		E75237D02BA6257C002C44F8 /* Build configuration list for PBXNativeTarget "ScreenCaptureDeviceTests" */ = {
 			isa = XCConfigurationList;
@@ -924,7 +924,7 @@
 				E75237D22BA6257C002C44F8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		E75237DE2BA627F0002C44F8 /* Build configuration list for PBXNativeTarget "IOKitInterposer" */ = {
 			isa = XCConfigurationList;
@@ -933,7 +933,7 @@
 				E75237E02BA627F0002C44F8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		E77DFCF22BA3A58B005601D7 /* Build configuration list for PBXNativeTarget "ScreenCaptureTests" */ = {
 			isa = XCConfigurationList;
@@ -942,7 +942,7 @@
 				E77DFCF42BA3A58B005601D7 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 

@@ -10,7 +10,7 @@ class HostDescription: ScreenCapturePacket {
   init() {
     data = HostDescription.initializeData()
     header = Header(length: Int(data[uint32: 0]), type: .async)
-    description = "video description <HPD1> dict"
+    description = "host description <HPD1> dict"
   }
 
   private static func initializeData() -> Data {

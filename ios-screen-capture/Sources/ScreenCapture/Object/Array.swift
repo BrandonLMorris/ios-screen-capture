@@ -39,7 +39,7 @@ internal class Array: Equatable {
       // Value
       guard let valuePrefix = Prefix(data.from(idx)) else { return nil }
       let valueRange = (idx + 8)..<(idx + Int(valuePrefix.length))
-      let valueData = data.subdata(in: valueRange)
+      let valueData = Data(data.subdata(in: valueRange))
       switch valuePrefix.type {
       case .dict:
         if let subdict = Dictionary(data.from(idx)) {
@@ -57,7 +57,7 @@ internal class Array: Equatable {
         guard let str = String(data: valueData, encoding: .ascii) else { return nil }
         backingMap[key] = .string(str)
       case .number:
-        guard let num = Number(valueData) else { return nil }
+        guard let num = Number(data.from(idx)) else { return nil }
         backingMap[key] = .number(num)
       case .formatDesc:
         // TODO
