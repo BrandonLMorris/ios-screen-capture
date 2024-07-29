@@ -61,16 +61,16 @@ class Recorder {
       let desc = HostDescription()
       try device.sendPacket(packet: desc)
       try device.sendPacket(packet: desc)
+      try device.sendPacket(packet: StreamDescription(clock: packet.clock))
       let reply = Reply(correlationId: packet.correlationId, clock: packet.clock + 1000)
       logger.debug("Sending audio clock reply")
       try device.sendPacket(packet: reply)
-    // TODO send HPA1 (audio host description?)
     case let packet as AudioFormat:
       logger.debug("Received audio format: \(packet.description); replying")
       try device.sendPacket(packet: packet.reply())
     case let packet as VideoClock:
       logger.debug("Received video clock: \(packet.description)")
-      let reply = packet.reply(withClock: packet.clock + 1000)
+      let reply = packet.reply(withClock: packet.clock + 0x1000AF)
       logger.debug("Sending video clock reply")
       try device.sendPacket(packet: reply)
       try device.sendPacket(packet: VideoDataRequest(clock: packet.clock))

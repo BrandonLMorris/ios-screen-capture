@@ -2,8 +2,7 @@ import Foundation
 
 class StreamDescription: ScreenCapturePacket {
   var header: Header
-
-  var data: Data
+  private(set) var data: Data
 
   init(clock: CFTypeID) {
     header = Header(length: 337, type: .async, subtype: .streamDesciption, payload: clock)

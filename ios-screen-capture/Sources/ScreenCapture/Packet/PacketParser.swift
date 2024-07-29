@@ -18,10 +18,10 @@ class PacketParser {
       }
       return ping
     case .sync:
-      logger.info("Received SYNC packet")
+      logger.info("Received sync packet (subytpe=\(header.subtype.rawValue))")
       return try parseSync(header, payload)
     case .async:
-      throw PacketParsingError.generic("TODO")
+      throw PacketParsingError.generic("TODO: async packet (subytpe=\(header.subtype.rawValue))")
     case .reply:
       logger.error("Reply packets are only sent! Not parsing")
       return Ping.instance

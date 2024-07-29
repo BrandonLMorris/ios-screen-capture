@@ -61,7 +61,7 @@ internal class Array: Equatable {
         backingMap[key] = .number(num)
       case .formatDesc:
         // TODO
-        logger.error("TODO")
+        logger.error("TODO (parsing formatDesc)")
       case .keyValue, .stringKey, .indexKey:
         // These types should never appear for dict values
         return nil

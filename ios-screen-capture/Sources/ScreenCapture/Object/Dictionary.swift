@@ -92,9 +92,11 @@ extension Dictionary {
       case .string:
         guard let str = String(data: valueData, encoding: .ascii) else { return nil }
         self[key] = .string(str)
-      case .number, .formatDesc:
+      case .number:
+        self[key] = .number(Number(data.from(idx))!)
+      case .formatDesc:
         // TODO
-        logger.error("TODO")
+        logger.error("TODO (parsing .formatDesc)")
       case .keyValue, .stringKey, .indexKey:
         // These types should never appear for dict values
         return nil
