@@ -24,7 +24,9 @@ struct Header: Equatable {
     return res
   }
 
-  internal init(length: Int, type: PacketType, subtype: PacketSubtype = .none, payload: CFTypeID = 0) {
+  internal init(
+    length: Int, type: PacketType, subtype: PacketSubtype = .none, payload: CFTypeID = 0
+  ) {
     self.length = length
     self.type = type
     self.subtype = subtype

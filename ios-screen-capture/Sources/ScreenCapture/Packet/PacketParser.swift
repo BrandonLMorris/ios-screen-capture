@@ -45,6 +45,9 @@ class PacketParser {
       return AudioFormat(header: header, data: wholePacket)!
     case .videoClock:
       return VideoClock(header: header, data: wholePacket)!
+    case .streamDesciption:
+      // Should only be sent
+      throw PacketParsingError.generic("Unexpected host description (HPA1) packet")
     case .hostDescription:
       // Should only be sent
       throw PacketParsingError.generic("Unexpected host description (HPD1) packet")
@@ -75,6 +78,8 @@ internal enum PacketSubtype: String {
   case videoClock = "cvrp"
   // Ask the device for more video data
   case videoDataRequest = "need"
+  // A dictionary of info about the stream
+  case streamDesciption = "hpa1"
   // Zero bytes for type. Note this is different than "none"
   case empty = "\0\0\0\0"
 }

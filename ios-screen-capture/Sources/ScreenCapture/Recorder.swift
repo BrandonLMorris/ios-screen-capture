@@ -64,7 +64,7 @@ class Recorder {
       let reply = Reply(correlationId: packet.correlationId, clock: packet.clock + 1000)
       logger.debug("Sending audio clock reply")
       try device.sendPacket(packet: reply)
-      // TODO send HPA1 (audio host description?)
+    // TODO send HPA1 (audio host description?)
     case let packet as AudioFormat:
       logger.debug("Received audio format: \(packet.description); replying")
       try device.sendPacket(packet: packet.reply())

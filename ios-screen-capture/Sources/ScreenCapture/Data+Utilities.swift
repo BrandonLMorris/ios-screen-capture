@@ -33,11 +33,7 @@ extension Data {
   }
 
   mutating func uint32(at idx: Int, _ newValue: UInt32) {
-    var bytes = [UInt8]()
-    for i in 0..<4 {
-      let shifted = newValue >> (8 * i)
-      bytes.append(UInt8(shifted & 0xff))
-    }
+    let bytes = Swift.withUnsafeBytes(of: newValue) { Data($0) }
     self.replaceSubrange(idx..<idx + 4, with: bytes)
   }
 
@@ -66,6 +62,11 @@ extension Data {
         return toReturn
       }
     }
+  }
+
+  mutating func float64(at idx: Int, _ newValue: Float64) {
+    let bytes = Swift.withUnsafeBytes(of: newValue) { Data($0) }
+    self.replaceSubrange(idx..<idx + 8, with: bytes)
   }
 
   mutating func copyInto(at startIdx: Int, from toCopy: Data) {

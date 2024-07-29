@@ -49,7 +49,7 @@ struct Number: Equatable {
 
   func serialize() -> Data {
     var result = Data()
-    let lenMap: [NumberType:UInt32] = [.int32: 13, .int64 : 17, .float64 : 17]
+    let lenMap: [NumberType: UInt32] = [.int32: 13, .int64: 17, .float64: 17]
     result.append(lenMap[self.type]!)
     result.append(DataType.number.serialize())
     result.append(self.type.rawValue)
