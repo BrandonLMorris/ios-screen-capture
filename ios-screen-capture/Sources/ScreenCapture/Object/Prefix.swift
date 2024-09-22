@@ -19,7 +19,12 @@ struct Prefix {
     length = data[uint32: 0]
     let typeSlice = Data(data.subdata(in: 4..<8))
     let typeStr = String(String(data: typeSlice, encoding: .ascii)!.reversed())
-    type = DataType(rawValue: typeStr)!
+    if let dataType = DataType(rawValue: typeStr) {
+      type = dataType
+    } else {
+      logger.warning("Unexpected data type encountered: \(typeStr)")
+      type = .other
+    }
   }
 
   func serialize() -> Data {

@@ -97,7 +97,7 @@ extension Dictionary {
       case .formatDesc:
         // TODO
         logger.error("TODO (parsing .formatDesc)")
-      case .keyValue, .stringKey, .indexKey:
+      default:
         // These types should never appear for dict values
         return nil
       }
@@ -146,6 +146,7 @@ enum DataType: String {
   case data = "datv"
   case number = "nmbv"
   case formatDesc = "fdsc"
+  case other = ""
 }
 
 extension DataType {

@@ -22,7 +22,7 @@ class VideoClock: ScreenCapturePacket {
     }
     correlationId = data.subdata(in: correlationIdRange).base64EncodedString()
     clock = UInt(data[uint64: clockIdx])
-    guard let _ = Dictionary(data.suffix(from: clockIdx + 8)) else {
+    guard Dictionary(data.suffix(from: clockIdx + 8)) != nil else {
       // This dictionary contains the PPS/SPS for the video encoding, so we
       // have to have it.
       return nil

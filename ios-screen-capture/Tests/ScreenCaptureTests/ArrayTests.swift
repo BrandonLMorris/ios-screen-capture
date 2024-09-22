@@ -23,10 +23,10 @@ final class ArrayTests: XCTestCase {
     XCTAssertEqual(serialized[strType: 4], "tcid")
     XCTAssertEqual(serialized[strType: 12], "vyek")
     XCTAssertEqual(serialized[strType: 20], "kxdi")
-    XCTAssertEqual(serialized[uint32: 24], UInt32(42))
-    // 28 + 4b length = 32
-    XCTAssertEqual(serialized[strType: 32], "vrts")
-    XCTAssertEqual(String(data: serialized.subdata(in: 36..<39), encoding: .ascii)!, "foo")
+    XCTAssertEqual(serialized[uint16: 24], UInt16(42))
+    // 26 + 4b length = 30
+    XCTAssertEqual(serialized[strType: 30], "vrts")
+    XCTAssertEqual(String(data: serialized.subdata(in: 34..<37), encoding: .ascii)!, "foo")
   }
 
   func testSerializeMultipleValues() throws {
@@ -38,20 +38,25 @@ final class ArrayTests: XCTestCase {
 
     var idx = 4
     XCTAssertEqual(serialized[strType: idx], "tcid")
-    idx += 8
+    idx += 4
     // We serialize in sorted key order, so its safe (for testing) to assume
     // the serialized order.
-    for (k, v) in [(UInt32(12345), "abcd"), (UInt32(45678), "efgh")] {
-      XCTAssertEqual(serialized[strType: idx], "vyek")
+    for (k, v) in [(UInt16(12345), "abcd"), (UInt16(45678), "efgh")] {
+      // Key-value prefix
+      XCTAssertEqual(serialized[strType: (idx + 4)], "vyek")
       idx += 8
-      XCTAssertEqual(serialized[strType: idx], "kxdi")
-      idx += 4
-      XCTAssertEqual(serialized[uint32: idx], k)
+
+      // Index
+      XCTAssertEqual(serialized[strType: (idx + 4)], "kxdi")
       idx += 8
-      XCTAssertEqual(serialized[strType: idx], "vrts")
-      idx += 4
+      XCTAssertEqual(serialized[uint16: idx], k)
+      idx += 2
+
+      // Value
+      XCTAssertEqual(serialized[strType: (idx + 4)], "vrts")
+      idx += 8
       XCTAssertEqual(String(data: serialized.subdata(in: idx..<(idx + 4)), encoding: .ascii)!, v)
-      idx += 8
+      idx += 4
     }
   }
 

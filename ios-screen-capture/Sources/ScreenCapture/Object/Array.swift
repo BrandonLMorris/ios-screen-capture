@@ -33,8 +33,8 @@ internal class Array: Equatable {
       // Key
       guard let keyPrefix = Prefix(data.from(idx)), keyPrefix.type == .indexKey else { return nil }
       idx += Prefix.size
-      let key = Int(data[uint32: idx])
-      idx += 4  // uint32
+      let key = Int(data[uint16: idx])
+      idx += 2  // uint16
 
       // Value
       guard let valuePrefix = Prefix(data.from(idx)) else { return nil }
@@ -62,7 +62,7 @@ internal class Array: Equatable {
       case .formatDesc:
         // TODO
         logger.error("TODO (parsing formatDesc)")
-      case .keyValue, .stringKey, .indexKey:
+      default:
         // These types should never appear for dict values
         return nil
       }
@@ -112,11 +112,11 @@ internal class Array: Equatable {
   }
 
   private func serialize(index idx: Int) -> Data {
-    let len = 12  // = 4b length + 4b type id + 4b content (the index itself)
+    let len = 10  // = 4b length + 4b type id + 2b content (the index itself)
     var result = Data(count: len)
     result.uint32(at: 0, UInt32(len))
     result.copyInto(at: 4, from: DataType.indexKey.serialize())
-    result.uint32(at: 8, UInt32(idx))
+    result.uint16(at: 8, UInt16(idx))
     return result
   }
 }
