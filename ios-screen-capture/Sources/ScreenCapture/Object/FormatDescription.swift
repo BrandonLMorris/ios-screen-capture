@@ -3,7 +3,13 @@ import Foundation
 /// Metadata about the video/audio, e.g. the h264 PPS/SPS.
 ///
 /// This is roughly analogous to a stripped down CMFormatDescription.
-struct FormatDescription {
+class FormatDescription: Equatable {
+
+  static func == (lhs: FormatDescription, rhs: FormatDescription) -> Bool {
+    lhs.pictureParameterSequence == rhs.pictureParameterSequence
+      && lhs.sequenceParameterSequence == lhs.sequenceParameterSequence
+  }
+
   private let videoMarker = "ediv"
   private let audioMarker = "nous"
   // Absolutely no idea where these numbers come from.
@@ -65,18 +71,22 @@ struct FormatDescription {
 
   private func getParameterSets(_ extensions: Array) -> (Data, Data)? {
     // I have no idea where these indices come from
-    guard case let .array(parameterSetExtensionArr) = extensions[parameterSetExtensionIdx] else { return nil }
-    guard case let .data(rawParameterSets) = parameterSetExtensionArr[rawParametersIdx] else { return nil }
+    guard case let .array(parameterSetExtensionArr) = extensions[parameterSetExtensionIdx] else {
+      return nil
+    }
+    guard case let .data(rawParameterSets) = parameterSetExtensionArr[rawParametersIdx] else {
+      return nil
+    }
 
     // Picture parameter set
-    var idx = 7 // Ignore first 7 bytes for some reason
+    var idx = 7  // Ignore first 7 bytes for some reason
     let pictureSetLength = Int(rawParameterSets[idx])
     idx += 1
     let pictureSet = Data(rawParameterSets.subdata(in: idx..<(idx + pictureSetLength)))
     idx += pictureSetLength
 
     // Sequence parameter set
-    idx += 2 // Ignore 2 more bytes for some reason
+    idx += 2  // Ignore 2 more bytes for some reason
     let sequenceSetLength = Int(rawParameterSets[idx])
     idx += 1
     // I don't understand why this is the case

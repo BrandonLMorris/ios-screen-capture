@@ -9,7 +9,7 @@ enum DictValue {
   indirect case dict([String: DictValue])
   case number(Number)
   case array(Array)
-  // TODO format description (fdsc)
+  case formatDescription(FormatDescription)
 }
 
 extension DictValue: Equatable {
@@ -37,6 +37,8 @@ extension DictValue: Equatable {
     case .array(let a):
       let serialized = a.serialize()
       result.append(serialized)
+    case .formatDescription:
+      logger.warning("Not serializing format description!")
     }
     return result
   }
@@ -95,8 +97,8 @@ extension Dictionary {
       case .number:
         self[key] = .number(Number(data.from(idx))!)
       case .formatDesc:
-        // TODO
-        logger.error("TODO (parsing .formatDesc)")
+        guard let parsed = FormatDescription(data.from(idx)) else { return nil }
+        self[key] = .formatDescription(parsed)
       default:
         // These types should never appear for dict values
         return nil

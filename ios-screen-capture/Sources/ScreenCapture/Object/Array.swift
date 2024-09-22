@@ -60,8 +60,8 @@ internal class Array: Equatable {
         guard let num = Number(data.from(idx)) else { return nil }
         backingMap[key] = .number(num)
       case .formatDesc:
-        // TODO
-        logger.error("TODO (parsing formatDesc)")
+        guard let parsed = FormatDescription(valueData) else { return nil }
+        self[key] = .formatDescription(parsed)
       default:
         // These types should never appear for dict values
         return nil
