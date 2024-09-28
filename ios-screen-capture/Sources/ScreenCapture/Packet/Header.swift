@@ -66,6 +66,7 @@ struct Header: Equatable {
     let rng = isSubtype ? subtypeRange : typeRange
     let raw = src.subdata(in: rng)
     // Need to reverse to account for endianness
-    return String(String(data: raw, encoding: .ascii)!.reversed())
+    guard let reversed = String(data: raw, encoding: .ascii) else { return "NONE" }
+    return String(reversed.reversed())
   }
 }
