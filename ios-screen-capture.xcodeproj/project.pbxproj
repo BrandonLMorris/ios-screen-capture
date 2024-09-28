@@ -64,6 +64,7 @@
 		E79F4C762BFA3FCD00F28AE2 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C742BFA3FCD00F28AE2 /* Array.swift */; };
 		E79F4C772BFA3FCD00F28AE2 /* Array.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C742BFA3FCD00F28AE2 /* Array.swift */; };
 		E79F4C792BFA499000F28AE2 /* ArrayTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C782BFA499000F28AE2 /* ArrayTests.swift */; };
+		E7B4A6D32CA8AD67007B245E /* AudioFormatTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B4A6D22CA8AD67007B245E /* AudioFormatTests.swift */; };
 		E7B864A22C5593D0009640B6 /* VideoClockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B864A12C5593D0009640B6 /* VideoClockTests.swift */; };
 		E7B9EEBE2BA772D7006631E7 /* ScreenCaptureDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */; };
 		E7B9EEC12BA7C9A3006631E7 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */; };
@@ -167,6 +168,7 @@
 		E79F4C722BF90EB900F28AE2 /* NumberTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberTests.swift; sourceTree = "<group>"; };
 		E79F4C742BFA3FCD00F28AE2 /* Array.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Array.swift; sourceTree = "<group>"; };
 		E79F4C782BFA499000F28AE2 /* ArrayTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArrayTests.swift; sourceTree = "<group>"; };
+		E7B4A6D22CA8AD67007B245E /* AudioFormatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFormatTests.swift; sourceTree = "<group>"; };
 		E7B864A12C5593D0009640B6 /* VideoClockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoClockTests.swift; sourceTree = "<group>"; };
 		E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
 		E7C0B6ED2BD489D60068BB4A /* protocol-reference.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "protocol-reference.md"; sourceTree = "<group>"; };
@@ -338,6 +340,7 @@
 				E7FC8D262C56D1A100625F03 /* VideoDataRequestTests.swift */,
 				E7FC8D282C56D5F700625F03 /* AudioClockTests.swift */,
 				E7FC8D2E2C56ED9900625F03 /* StreamDescriptionTests.swift */,
+				E7B4A6D22CA8AD67007B245E /* AudioFormatTests.swift */,
 			);
 			path = Packet;
 			sourceTree = "<group>";
@@ -662,6 +665,7 @@
 				E7FD25A32C23BD4D007F289A /* VideoDataRequest.swift in Sources */,
 				E7B9EEC52BAF45BF006631E7 /* Device.swift in Sources */,
 				E79F4C592BDEF65F00F28AE2 /* Reply.swift in Sources */,
+				E7B4A6D32CA8AD67007B245E /* AudioFormatTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
