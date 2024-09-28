@@ -10,9 +10,13 @@ class AudioClock: ScreenCapturePacket {
   private let corrIdRange = 20..<28
   private let clockIdx = 28
 
-  var description: String {
-    "<audio-clock [cwpa] corrId=\(correlationId) clock=\(clock) size:\(data.count)>"
-  }
+  lazy var description: String = {
+    """
+    [CWPA] Audio clock
+        corrId=\(correlationId)
+        clock=\(String(format: "0x%x", clock))
+    """
+  }()
 
   init?(header: Header, data: Data) {
     self.header = header

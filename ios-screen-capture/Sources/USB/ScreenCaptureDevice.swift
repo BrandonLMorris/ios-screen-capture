@@ -87,7 +87,6 @@ struct ScreenCaptureDevice {
       throw ScreenCaptureError.readError("Failed to read from device!")
     }
     let packet = try PacketParser.parse(from: raw)
-    logger.info("Received \(String(describing: packet))")
     return packet
   }
 
@@ -100,7 +99,7 @@ struct ScreenCaptureDevice {
     guard iface.write(packet.data, to: endpoints.out) else {
       throw ScreenCaptureError.writeError("Failed to write to device!")
     }
-    logger.info("Wrote to device: \(packet.description)")
+    logger.info("Wrote \(packet.data.count) bytes")
   }
 
   /// Sends a ping packet to the device.

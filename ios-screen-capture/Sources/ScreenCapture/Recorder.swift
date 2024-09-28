@@ -4,8 +4,6 @@ import Foundation
 class Recorder {
   private var device: ScreenCaptureDevice! = nil
   private var sessionActive = false
-  private var correlationId: String = ""
-  private var hostClock: CMClock! = nil
 
   func start(forDeviceWithId udid: String) throws {
     var screenCaptureDevice = try ScreenCaptureDevice.obtainDevice(withUdid: udid)
@@ -50,30 +48,37 @@ class Recorder {
   }
 
   private func handle(_ packet: ScreenCapturePacket) throws {
+    logger.debug("\(packet.description)")
     switch packet {
     case _ as Ping:
       try device.ping()
-    case let packet as AudioClock:
-      logger.debug("Received audio clock: \(packet.description)")
-      correlationId = packet.correlationId
-      hostClock = CMClock.hostTimeClock
-      logger.debug("Sending host description packet...")
+
+    case let packet as AudioClock:  // cwpa
       let desc = HostDescription()
+      logger.debug("Sending host description packet (2x)\n\(desc.description)")
       try device.sendPacket(packet: desc)
       try device.sendPacket(packet: desc)
+      logger.debug("Sending stream desc")
       try device.sendPacket(packet: StreamDescription(clock: packet.clock))
       let reply = Reply(correlationId: packet.correlationId, clock: packet.clock + 1000)
-      logger.debug("Sending audio clock reply")
+      logger.debug("Sending audio clock reply\n\(reply.description)")
       try device.sendPacket(packet: reply)
-    case let packet as AudioFormat:
-      logger.debug("Received audio format: \(packet.description); replying")
+
+    case let packet as AudioFormat:  // afmt
+      let reply = packet.reply()
+      logger.debug("Sending audio format reply: \(reply.description)")
       try device.sendPacket(packet: packet.reply())
-    case let packet as VideoClock:
-      logger.debug("Received video clock: \(packet.description)")
+
+    case let packet as VideoClock:  // cvrp
+      let videoDataRequest = VideoDataRequest(clock: packet.clock)
+      logger.debug("Sending video data request\n\(videoDataRequest.description)")
+      try device.sendPacket(packet: videoDataRequest)
       let reply = packet.reply(withClock: packet.clock + 0x1000AF)
-      logger.debug("Sending video clock reply")
+      logger.debug("Sending video clock reply\n\(reply.description)")
       try device.sendPacket(packet: reply)
-      try device.sendPacket(packet: VideoDataRequest(clock: packet.clock))
+      logger.debug("Sending video data request\n\(videoDataRequest.description)")
+      try device.sendPacket(packet: videoDataRequest)
+
     default:
       logger.error("Unexpected packet received \(packet.data.base64EncodedString())")
     }

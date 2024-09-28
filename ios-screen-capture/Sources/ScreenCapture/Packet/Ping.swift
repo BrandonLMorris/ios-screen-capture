@@ -4,9 +4,7 @@ class Ping: ScreenCapturePacket {
   let header: Header
   let data: Data
 
-  var description: String {
-    "<ping size:\(data.count)>"
-  }
+  var description: String = "[PING]"
 
   static let instance: Ping = {
     let data = Data(base64Encoded: "EAAAAGduaXAAAAAAAQAAAA==")!

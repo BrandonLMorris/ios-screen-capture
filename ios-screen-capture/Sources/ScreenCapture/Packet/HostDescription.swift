@@ -5,12 +5,11 @@ import Foundation
 class HostDescription: ScreenCapturePacket {
   var header: Header
   var data: Data
-  var description: String
+  let description = "[HPD1] Host description dict"
 
   init() {
     data = HostDescription.initializeData()
     header = Header(length: Int(data[uint32: 0]), type: .async)
-    description = "host description <HPD1> dict"
   }
 
   private static func initializeData() -> Data {

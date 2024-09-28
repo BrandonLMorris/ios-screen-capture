@@ -3,6 +3,11 @@ import Foundation
 class StreamDescription: ScreenCapturePacket {
   var header: Header
   private(set) var data: Data
+  lazy var description: String = {
+    """
+    [HPA1] Stream description dict
+    """
+  }()
 
   init(clock: CFTypeID) {
     header = Header(length: 337, type: .async, subtype: .streamDesciption, payload: clock)
@@ -10,8 +15,6 @@ class StreamDescription: ScreenCapturePacket {
     wholePacket.append(StreamDescription.initializeData())
     data = wholePacket
   }
-
-  var description: String = "stream description request <hpa1>"
 
   private static func initializeData() -> Data {
     var data = Dictionary()

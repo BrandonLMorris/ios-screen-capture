@@ -2,10 +2,16 @@ import Foundation
 
 class Reply: ScreenCapturePacket {
   var header = Header(length: length, type: .reply)
-  var description: String { "<reply corrId=\(correlationId) clock=\(clock)>" }
+  lazy var description: String = {
+    """
+    [RPLY] reply (to something)
+      corrId=\(correlationId)
+      clock=\(String(format: "0x%x", clock))
+    """
+  }()
 
-  private let correlationId: String
-  private let clock: CFTypeID
+  let correlationId: String
+  let clock: CFTypeID
   private static let length = 28
 
   // Serialized format:

@@ -6,7 +6,13 @@ import Foundation
 class VideoClock: ScreenCapturePacket {
   var header: Header
   var data: Data
-  var description: String = "<video clock (cvrp)>"
+  lazy var description: String = {
+    """
+    [CVRP] Video clock
+        corrId=\(correlationId)
+        clock=\(String(format: "0x%x", clock))
+    """
+  }()
 
   private let correlationId: String
   private let correlationIdRange = 20..<28
