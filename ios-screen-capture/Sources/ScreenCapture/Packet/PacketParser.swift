@@ -53,6 +53,13 @@ class PacketParser {
           "Failed to post parse host clock request: \(encoded)")
       }
       return hostClockReq
+    case .timeRequest:
+      guard let timeReq = TimeRequest(header: header, data: wholePacket) else {
+        let encoded = wholePacket.base64EncodedString()
+        throw PacketParsingError.generic(
+          "Failed to post parse time request: \(encoded)")
+      }
+      return timeReq
     case .streamDesciption:
       // Should only be sent
       throw PacketParsingError.generic("Unexpected host description (HPA1) packet")
@@ -106,6 +113,8 @@ internal enum PacketSubtype: String {
   case setProperty = "sprp"
   // Request for a clock reference
   case hostClockRequest = "clok"
+  // Request for the current time of a clock
+  case timeRequest = "time"
   // Zero bytes for type. Note this is different than "none"
   case empty = "\0\0\0\0"
 }

@@ -79,7 +79,7 @@ class Recorder {
       logger.debug("Sending video data request\n\(videoDataRequest.description)")
       try device.sendPacket(packet: videoDataRequest)
 
-    case let clockRequest as HostClockRequest: // clok
+    case let clockRequest as HostClockRequest:  // clok
       // TODO We'll actually need to create a clock and keep track of the time.
       let hostClockId = clockRequest.clock + 0x10000
       let reply = clockRequest.reply(withClock: hostClockId)
