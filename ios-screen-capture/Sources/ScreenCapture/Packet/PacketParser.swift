@@ -21,7 +21,8 @@ class PacketParser {
       logger.info("Received sync packet (subytpe=\(header.subtype.rawValue))")
       return try parseSync(header, payload)
     case .async:
-      throw PacketParsingError.generic("TODO: async packet (subytpe=\(header.subtype.rawValue))")
+      logger.info("Received async packet (subytpe=\(header.subtype.rawValue))")
+      return try parseAsync(header, payload)
     case .reply:
       logger.error("Reply packets are only sent! Not parsing")
       return Ping.instance
@@ -54,7 +55,21 @@ class PacketParser {
     case .videoDataRequest:
       // Should only be sent
       throw PacketParsingError.generic("Unexpected video request (NEED) packet")
+    default:
+      throw PacketParsingError.generic("Unknown subtype: \(header.subtype)")
     }
+  }
+
+  private static func parseAsync(_ header: Header, _ wholePacket: Data) throws
+    -> any ScreenCapturePacket
+  {
+    switch header.subtype {
+    case .setProperty:
+      return SetProperty(header: header, wholePacket: wholePacket)!
+    default:
+      break
+    }
+    throw PacketParsingError.generic("TODO")
   }
 }
 
@@ -80,6 +95,8 @@ internal enum PacketSubtype: String {
   case videoDataRequest = "need"
   // A dictionary of info about the stream
   case streamDesciption = "hpa1"
+  // TODO
+  case setProperty = "sprp"
   // Zero bytes for type. Note this is different than "none"
   case empty = "\0\0\0\0"
 }

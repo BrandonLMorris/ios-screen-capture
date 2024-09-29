@@ -44,7 +44,7 @@ private class AudioFormatReply: ScreenCapturePacket {
     data = header.serialized
     // Append the correlation id
     var corrIdData = Data(count: 8)
-    corrIdData.uint64(at:0, originator.correlationId)
+    corrIdData.uint64(at: 0, originator.correlationId)
     data.append(corrIdData)
     // Append 4b empty space
     data.append(Data(count: 4))

@@ -77,6 +77,10 @@
 		E7D372EB2B856B8B004EE79D /* ScreenCaptureDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */; };
 		E7D372FA2B93E5DA004EE79D /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372F92B93E5DA004EE79D /* Device.swift */; };
 		E7D372FC2B941218004EE79D /* Util.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372FB2B941218004EE79D /* Util.swift */; };
+		E7F2B5C72CA8D59000AD4CB7 /* SetProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F2B5C62CA8D59000AD4CB7 /* SetProperty.swift */; };
+		E7F2B5C82CA8D59000AD4CB7 /* SetProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F2B5C62CA8D59000AD4CB7 /* SetProperty.swift */; };
+		E7F2B5C92CA8D59000AD4CB7 /* SetProperty.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F2B5C62CA8D59000AD4CB7 /* SetProperty.swift */; };
+		E7F2B5CB2CA98DC500AD4CB7 /* SetPropertyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F2B5CA2CA98DC500AD4CB7 /* SetPropertyTests.swift */; };
 		E7F9F12A2C9FA565004CEE22 /* FormatDescriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7F9F1292C9FA565004CEE22 /* FormatDescriptionTests.swift */; };
 		E7FC8D252C56C53F00625F03 /* HostDescriptionTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7FC8D242C56C53F00625F03 /* HostDescriptionTests.swift */; };
 		E7FC8D272C56D1A100625F03 /* VideoDataRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7FC8D262C56D1A100625F03 /* VideoDataRequestTests.swift */; };
@@ -176,6 +180,8 @@
 		E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCaptureDevice.swift; sourceTree = "<group>"; };
 		E7D372F92B93E5DA004EE79D /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		E7D372FB2B941218004EE79D /* Util.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Util.swift; sourceTree = "<group>"; };
+		E7F2B5C62CA8D59000AD4CB7 /* SetProperty.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetProperty.swift; sourceTree = "<group>"; };
+		E7F2B5CA2CA98DC500AD4CB7 /* SetPropertyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetPropertyTests.swift; sourceTree = "<group>"; };
 		E7F9F1292C9FA565004CEE22 /* FormatDescriptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FormatDescriptionTests.swift; sourceTree = "<group>"; };
 		E7FC8D242C56C53F00625F03 /* HostDescriptionTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HostDescriptionTests.swift; sourceTree = "<group>"; };
 		E7FC8D262C56D1A100625F03 /* VideoDataRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDataRequestTests.swift; sourceTree = "<group>"; };
@@ -316,6 +322,7 @@
 				E78FBE5F2C1CA37F007DAE77 /* VideoClock.swift */,
 				E7FD25A12C23BD4D007F289A /* VideoDataRequest.swift */,
 				E7FC8D2A2C56E39C00625F03 /* StreamDescription.swift */,
+				E7F2B5C62CA8D59000AD4CB7 /* SetProperty.swift */,
 			);
 			path = Packet;
 			sourceTree = "<group>";
@@ -341,6 +348,7 @@
 				E7FC8D282C56D5F700625F03 /* AudioClockTests.swift */,
 				E7FC8D2E2C56ED9900625F03 /* StreamDescriptionTests.swift */,
 				E7B4A6D22CA8AD67007B245E /* AudioFormatTests.swift */,
+				E7F2B5CA2CA98DC500AD4CB7 /* SetPropertyTests.swift */,
 			);
 			path = Packet;
 			sourceTree = "<group>";
@@ -572,6 +580,7 @@
 				E79F4C472BDEF2C100F28AE2 /* Number.swift in Sources */,
 				E79F4C672BDEFA3800F28AE2 /* PacketParser.swift in Sources */,
 				E7D372FA2B93E5DA004EE79D /* Device.swift in Sources */,
+				E7F2B5C82CA8D59000AD4CB7 /* SetProperty.swift in Sources */,
 				E79F4C632BDEF9F400F28AE2 /* AudioClock.swift in Sources */,
 				E77DFCE52BA39E9C005601D7 /* ScreenCapturePacket.swift in Sources */,
 				E79F4C5B2BDEF81400F28AE2 /* Data+Utilities.swift in Sources */,
@@ -601,6 +610,7 @@
 				E79F4C652BDEF9F400F28AE2 /* AudioClock.swift in Sources */,
 				E78FBE642C1CAB0B007DAE77 /* Reply.swift in Sources */,
 				E78FBE632C1CAAA7007DAE77 /* VideoClock.swift in Sources */,
+				E7F2B5C92CA8D59000AD4CB7 /* SetProperty.swift in Sources */,
 				E79F4C4C2BDEF42800F28AE2 /* Number.swift in Sources */,
 				E79F4C772BFA3FCD00F28AE2 /* Array.swift in Sources */,
 				E79F4C692BDEFA3800F28AE2 /* PacketParser.swift in Sources */,
@@ -654,6 +664,7 @@
 				E79F4C732BF90EB900F28AE2 /* NumberTests.swift in Sources */,
 				E79F4C6F2BE6903900F28AE2 /* HeaderTests.swift in Sources */,
 				E75237C72BA5D890002C44F8 /* Util.swift in Sources */,
+				E7F2B5C72CA8D59000AD4CB7 /* SetProperty.swift in Sources */,
 				E79F4C792BFA499000F28AE2 /* ArrayTests.swift in Sources */,
 				E7FC8D2C2C56E39C00625F03 /* StreamDescription.swift in Sources */,
 				E7FC8D292C56D5F700625F03 /* AudioClockTests.swift in Sources */,
@@ -664,6 +675,7 @@
 				E77DFCF12BA3A58B005601D7 /* ScreenCapturePacketTests.swift in Sources */,
 				E7FD25A32C23BD4D007F289A /* VideoDataRequest.swift in Sources */,
 				E7B9EEC52BAF45BF006631E7 /* Device.swift in Sources */,
+				E7F2B5CB2CA98DC500AD4CB7 /* SetPropertyTests.swift in Sources */,
 				E79F4C592BDEF65F00F28AE2 /* Reply.swift in Sources */,
 				E7B4A6D32CA8AD67007B245E /* AudioFormatTests.swift in Sources */,
 			);
