@@ -79,7 +79,14 @@ class Recorder {
       logger.debug("Sending video data request\n\(videoDataRequest.description)")
       try device.sendPacket(packet: videoDataRequest)
 
-    case let setProp as SetProperty:
+    case let clockRequest as HostClockRequest: // clok
+      // TODO We'll actually need to create a clock and keep track of the time.
+      let hostClockId = clockRequest.clock + 0x10000
+      let reply = clockRequest.reply(withClock: hostClockId)
+      logger.debug("Sending host clock reply\n\(reply.description)")
+      try device.sendPacket(packet: reply)
+
+    case _ as SetProperty:
       // Nothing to do
       break
     default:
