@@ -23,4 +23,41 @@ class TimeRequest: ScreenCapturePacket {
   }
 
   // TODO: Reply with the proper CMTime struct
+  func reply(withTime: Time) -> some ScreenCapturePacket {
+    return TimeResponse(to: self, withTime: withTime)
+  }
+}
+
+/// Response packet for a TimeRequest.
+private class TimeResponse: ScreenCapturePacket {
+  private let originator: TimeRequest
+  var header: Header
+  var data: Data
+  lazy var description: String = {
+    """
+    [RPLY(TIME)] Time request reply
+        corrId=\(originator.correlationId)
+        clock=\(String(format: "0x%x", originator.clock))
+    """
+  }()
+  
+  private let length = 44
+
+  init(to originator: TimeRequest, withTime time: Time) {
+    self.originator = originator
+    header = Header(length: length, type: .reply, subtype: .none)
+    var packetBuilder = header.serialized
+    
+    // Append the correlation id
+    let corrIdData = Data(base64Encoded: originator.correlationId)!
+    packetBuilder.append(corrIdData)
+
+    // Append 4b empty space
+    packetBuilder.append(Data(count: 4))
+
+    // Time payload
+    packetBuilder.append(time.serialize())
+    
+    data = Data(packetBuilder)
+  }
 }
