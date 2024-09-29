@@ -8,7 +8,7 @@ final class SetPropertyTests: XCTestCase {
 
   func testFixture() throws {
     let setProperty = try PacketParser.parse(from: Data(base64Encoded: fixture1)!) as! SetProperty
-    
+
     XCTAssertEqual(setProperty.propertyKey, "ObeyEmptyMediaMarkers")
     XCTAssertEqual(setProperty.propertyValue, .bool(true))
   }

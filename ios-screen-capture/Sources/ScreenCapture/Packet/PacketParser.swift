@@ -46,6 +46,13 @@ class PacketParser {
       return AudioFormat(header: header, data: wholePacket)!
     case .videoClock:
       return VideoClock(header: header, data: wholePacket)!
+    case .hostClockRequest:
+      guard let hostClockReq = HostClockRequest(header: header, wholePacket: wholePacket) else {
+        let encoded = wholePacket.base64EncodedString()
+        throw PacketParsingError.generic(
+          "Failed to post parse host clock request: \(encoded)")
+      }
+      return hostClockReq
     case .streamDesciption:
       // Should only be sent
       throw PacketParsingError.generic("Unexpected host description (HPA1) packet")
@@ -95,8 +102,10 @@ internal enum PacketSubtype: String {
   case videoDataRequest = "need"
   // A dictionary of info about the stream
   case streamDesciption = "hpa1"
-  // TODO
+  // A single key/value pair for a property of the stream.
   case setProperty = "sprp"
+  // Request for a clock reference
+  case hostClockRequest = "clok"
   // Zero bytes for type. Note this is different than "none"
   case empty = "\0\0\0\0"
 }

@@ -79,6 +79,9 @@ class Recorder {
       logger.debug("Sending video data request\n\(videoDataRequest.description)")
       try device.sendPacket(packet: videoDataRequest)
 
+    case let setProp as SetProperty:
+      // Nothing to do
+      break
     default:
       logger.error("Unexpected packet received \(packet.data.base64EncodedString())")
     }
