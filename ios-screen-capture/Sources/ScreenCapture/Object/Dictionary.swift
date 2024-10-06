@@ -139,6 +139,7 @@ extension String {
 }
 
 enum DataType: String {
+  // Dictionary/array types
   case dict = "dict"
   case keyValue = "keyv"
   case stringKey = "strk"
@@ -148,6 +149,17 @@ enum DataType: String {
   case data = "datv"
   case number = "nmbv"
   case formatDesc = "fdsc"
+
+  // Media chunk (CMSampleBuffer) specific types
+  case mediaChunk = "sbuf"
+  case outputPresentation = "opts"
+  case sampleTiming = "stia"
+  case sampleData = "sdat"
+  case sampleCount = "nsmp"
+  case sampleSize = "ssiz"
+  case attachments = "satt"
+  case sampleReady = "sary"
+
   case other = ""
 }
 

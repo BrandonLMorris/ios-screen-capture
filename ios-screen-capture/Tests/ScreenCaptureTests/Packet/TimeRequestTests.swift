@@ -18,7 +18,7 @@ final class TimeRequestTests: XCTestCase {
     let replyTime = Time(Data(base64Encoded: "4eFCxGK6AAAAypo7AQAAAAAAAAAAAAAA")!)!
 
     let reply = timeRequest.reply(withTime: replyTime)
-    
+
     XCTAssertEqual(reply.data.base64EncodedString(), replyFixture)
   }
 }

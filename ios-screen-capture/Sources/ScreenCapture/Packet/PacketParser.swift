@@ -81,9 +81,8 @@ class PacketParser {
     case .setProperty:
       return SetProperty(header: header, wholePacket: wholePacket)!
     default:
-      break
+      throw PacketParsingError.generic("Failed to parse async packet")
     }
-    throw PacketParsingError.generic("TODO")
   }
 }
 

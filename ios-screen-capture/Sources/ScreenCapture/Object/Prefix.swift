@@ -16,14 +16,14 @@ struct Prefix {
       logger.error("Cannot parse prefix from only \(data.count) bytes!")
       return nil
     }
-    length = data[uint32: 0]
+    self.length = data[uint32: 0]
     let typeSlice = Data(data.subdata(in: 4..<8))
     let typeStr = String(String(data: typeSlice, encoding: .ascii)!.reversed())
     if let dataType = DataType(rawValue: typeStr) {
-      type = dataType
+      self.type = dataType
     } else {
       logger.warning("Unexpected data type encountered: \(typeStr)")
-      type = .other
+      self.type = .other
     }
   }
 

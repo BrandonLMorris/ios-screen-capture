@@ -22,7 +22,6 @@ class TimeRequest: ScreenCapturePacket {
     clock = CFTypeID(data[uint64: 20])
   }
 
-  // TODO: Reply with the proper CMTime struct
   func reply(withTime: Time) -> some ScreenCapturePacket {
     return TimeResponse(to: self, withTime: withTime)
   }
@@ -40,14 +39,14 @@ private class TimeResponse: ScreenCapturePacket {
         clock=\(String(format: "0x%x", originator.clock))
     """
   }()
-  
+
   private let length = 44
 
   init(to originator: TimeRequest, withTime time: Time) {
     self.originator = originator
     header = Header(length: length, type: .reply, subtype: .none)
     var packetBuilder = header.serialized
-    
+
     // Append the correlation id
     let corrIdData = Data(base64Encoded: originator.correlationId)!
     packetBuilder.append(corrIdData)
@@ -57,7 +56,7 @@ private class TimeResponse: ScreenCapturePacket {
 
     // Time payload
     packetBuilder.append(time.serialize())
-    
+
     data = Data(packetBuilder)
   }
 }

@@ -13,18 +13,18 @@ struct Number: Equatable {
   }
 
   init(int32: UInt32) {
-    type = .int32
-    int32Value = int32
+    self.type = .int32
+    self.int32Value = int32
   }
 
   init(int64: UInt64) {
-    type = .int64
-    int64Value = int64
+    self.type = .int64
+    self.int64Value = int64
   }
 
   init(float64: Float64) {
-    type = .float64
-    float64Value = float64
+    self.type = .float64
+    self.float64Value = float64
   }
 
   init?(_ data: Data) {

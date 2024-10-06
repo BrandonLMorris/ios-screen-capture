@@ -13,7 +13,10 @@ struct Time {
   private let scaleIdx = 8
   private let flagsIdx = 12
   private let epochIdx = 16
-  
+
+  internal static let size = 24
+  internal static let NULL = Time(Data(count: size))
+
   init?(_ data: Data) {
     value = data[uint64: valueIdx]
     scale = data[uint32: scaleIdx]
