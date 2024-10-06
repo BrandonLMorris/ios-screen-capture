@@ -29,6 +29,10 @@
 		E76B12BF2CAA003A0003E398 /* MediaChunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76B12BD2CAA003A0003E398 /* MediaChunk.swift */; };
 		E76B12C02CAA003A0003E398 /* MediaChunk.swift in Sources */ = {isa = PBXBuildFile; fileRef = E76B12BD2CAA003A0003E398 /* MediaChunk.swift */; };
 		E77BD1B72CB2D07F000AE0E4 /* MediaChunkTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1B62CB2D07F000AE0E4 /* MediaChunkTests.swift */; };
+		E77BD1B92CB330F3000AE0E4 /* GoRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1B82CB330F3000AE0E4 /* GoRequest.swift */; };
+		E77BD1BA2CB330F3000AE0E4 /* GoRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1B82CB330F3000AE0E4 /* GoRequest.swift */; };
+		E77BD1BB2CB330F3000AE0E4 /* GoRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1B82CB330F3000AE0E4 /* GoRequest.swift */; };
+		E77BD1BD2CB33318000AE0E4 /* GoRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1BC2CB33318000AE0E4 /* GoRequestTests.swift */; };
 		E77DFCE52BA39E9C005601D7 /* ScreenCapturePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */; };
 		E77DFCF12BA3A58B005601D7 /* ScreenCapturePacketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */; };
 		E77DFCF72BA3AF95005601D7 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = E77DFCF62BA3AF95005601D7 /* ArgumentParser */; };
@@ -174,6 +178,8 @@
 		E76B12BB2CA9C8DE0003E398 /* TimeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeTests.swift; sourceTree = "<group>"; };
 		E76B12BD2CAA003A0003E398 /* MediaChunk.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaChunk.swift; sourceTree = "<group>"; };
 		E77BD1B62CB2D07F000AE0E4 /* MediaChunkTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaChunkTests.swift; sourceTree = "<group>"; };
+		E77BD1B82CB330F3000AE0E4 /* GoRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoRequest.swift; sourceTree = "<group>"; };
+		E77BD1BC2CB33318000AE0E4 /* GoRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoRequestTests.swift; sourceTree = "<group>"; };
 		E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacket.swift; sourceTree = "<group>"; };
 		E77DFCEE2BA3A58B005601D7 /* ScreenCaptureTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenCaptureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacketTests.swift; sourceTree = "<group>"; };
@@ -351,6 +357,7 @@
 				E7F2B5C62CA8D59000AD4CB7 /* SetProperty.swift */,
 				E7F2B5CC2CA9988300AD4CB7 /* HostClockRequest.swift */,
 				E76B12B12CA9BF890003E398 /* TimeRequest.swift */,
+				E77BD1B82CB330F3000AE0E4 /* GoRequest.swift */,
 			);
 			path = Packet;
 			sourceTree = "<group>";
@@ -381,6 +388,7 @@
 				E7F2B5CA2CA98DC500AD4CB7 /* SetPropertyTests.swift */,
 				E7F2B5D02CA9AA3500AD4CB7 /* HostClockRequestTests.swift */,
 				E76B12B52CA9BFEC0003E398 /* TimeRequestTests.swift */,
+				E77BD1BC2CB33318000AE0E4 /* GoRequestTests.swift */,
 			);
 			path = Packet;
 			sourceTree = "<group>";
@@ -609,6 +617,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E79F4C502BDEF52100F28AE2 /* Header.swift in Sources */,
+				E77BD1BA2CB330F3000AE0E4 /* GoRequest.swift in Sources */,
 				E79F4C472BDEF2C100F28AE2 /* Number.swift in Sources */,
 				E79F4C672BDEFA3800F28AE2 /* PacketParser.swift in Sources */,
 				E76B12BF2CAA003A0003E398 /* MediaChunk.swift in Sources */,
@@ -643,6 +652,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E75237F52BA67488002C44F8 /* Util.swift in Sources */,
+				E77BD1B92CB330F3000AE0E4 /* GoRequest.swift in Sources */,
 				E79F4C652BDEF9F400F28AE2 /* AudioClock.swift in Sources */,
 				E78FBE642C1CAB0B007DAE77 /* Reply.swift in Sources */,
 				E76B12C02CAA003A0003E398 /* MediaChunk.swift in Sources */,
@@ -689,6 +699,7 @@
 				E79F4C762BFA3FCD00F28AE2 /* Array.swift in Sources */,
 				E79F4C642BDEF9F400F28AE2 /* AudioClock.swift in Sources */,
 				E76B12B32CA9BF890003E398 /* TimeRequest.swift in Sources */,
+				E77BD1BD2CB33318000AE0E4 /* GoRequestTests.swift in Sources */,
 				E7F9F12A2C9FA565004CEE22 /* FormatDescriptionTests.swift in Sources */,
 				E76B12B92CA9C8640003E398 /* Time.swift in Sources */,
 				E79F4C512BDEF52100F28AE2 /* Header.swift in Sources */,
@@ -722,6 +733,7 @@
 				E78FBE612C1CA37F007DAE77 /* VideoClock.swift in Sources */,
 				E77DFCF12BA3A58B005601D7 /* ScreenCapturePacketTests.swift in Sources */,
 				E7FD25A32C23BD4D007F289A /* VideoDataRequest.swift in Sources */,
+				E77BD1BB2CB330F3000AE0E4 /* GoRequest.swift in Sources */,
 				E7B9EEC52BAF45BF006631E7 /* Device.swift in Sources */,
 				E7F2B5CB2CA98DC500AD4CB7 /* SetPropertyTests.swift in Sources */,
 				E79F4C592BDEF65F00F28AE2 /* Reply.swift in Sources */,
