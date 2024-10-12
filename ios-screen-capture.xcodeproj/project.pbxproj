@@ -45,6 +45,10 @@
 		E77BD1CD2CBAF1A8000AE0E4 /* StreamTermination.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1CB2CBAF1A8000AE0E4 /* StreamTermination.swift */; };
 		E77BD1CE2CBAF1A8000AE0E4 /* StreamTermination.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1CB2CBAF1A8000AE0E4 /* StreamTermination.swift */; };
 		E77BD1D42CBAF772000AE0E4 /* StreamTerminationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1D32CBAF772000AE0E4 /* StreamTerminationTests.swift */; };
+		E77BD1D62CBB018F000AE0E4 /* VideoSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1D52CBB018F000AE0E4 /* VideoSample.swift */; };
+		E77BD1D72CBB018F000AE0E4 /* VideoSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1D52CBB018F000AE0E4 /* VideoSample.swift */; };
+		E77BD1D82CBB018F000AE0E4 /* VideoSample.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1D52CBB018F000AE0E4 /* VideoSample.swift */; };
+		E77BD1DA2CBB01CE000AE0E4 /* VideoSampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1D92CBB01CE000AE0E4 /* VideoSampleTests.swift */; };
 		E77DFCE52BA39E9C005601D7 /* ScreenCapturePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */; };
 		E77DFCF12BA3A58B005601D7 /* ScreenCapturePacketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */; };
 		E77DFCF72BA3AF95005601D7 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = E77DFCF62BA3AF95005601D7 /* ArgumentParser */; };
@@ -198,6 +202,8 @@
 		E77BD1C92CBAD099000AE0E4 /* SkewRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkewRequestTests.swift; sourceTree = "<group>"; };
 		E77BD1CB2CBAF1A8000AE0E4 /* StreamTermination.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamTermination.swift; sourceTree = "<group>"; };
 		E77BD1D32CBAF772000AE0E4 /* StreamTerminationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StreamTerminationTests.swift; sourceTree = "<group>"; };
+		E77BD1D52CBB018F000AE0E4 /* VideoSample.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSample.swift; sourceTree = "<group>"; };
+		E77BD1D92CBB01CE000AE0E4 /* VideoSampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoSampleTests.swift; sourceTree = "<group>"; };
 		E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacket.swift; sourceTree = "<group>"; };
 		E77DFCEE2BA3A58B005601D7 /* ScreenCaptureTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenCaptureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacketTests.swift; sourceTree = "<group>"; };
@@ -379,6 +385,7 @@
 				E77BD1BE2CBA06D6000AE0E4 /* StopRequest.swift */,
 				E77BD1C52CBACE0E000AE0E4 /* SkewRequest.swift */,
 				E77BD1CB2CBAF1A8000AE0E4 /* StreamTermination.swift */,
+				E77BD1D52CBB018F000AE0E4 /* VideoSample.swift */,
 			);
 			path = Packet;
 			sourceTree = "<group>";
@@ -413,6 +420,7 @@
 				E77BD1C22CBA0D78000AE0E4 /* StopRequestTests.swift */,
 				E77BD1C92CBAD099000AE0E4 /* SkewRequestTests.swift */,
 				E77BD1D32CBAF772000AE0E4 /* StreamTerminationTests.swift */,
+				E77BD1D92CBB01CE000AE0E4 /* VideoSampleTests.swift */,
 			);
 			path = Packet;
 			sourceTree = "<group>";
@@ -645,6 +653,7 @@
 				E77BD1BA2CB330F3000AE0E4 /* GoRequest.swift in Sources */,
 				E79F4C472BDEF2C100F28AE2 /* Number.swift in Sources */,
 				E77BD1BF2CBA06D6000AE0E4 /* StopRequest.swift in Sources */,
+				E77BD1D62CBB018F000AE0E4 /* VideoSample.swift in Sources */,
 				E79F4C672BDEFA3800F28AE2 /* PacketParser.swift in Sources */,
 				E76B12BF2CAA003A0003E398 /* MediaChunk.swift in Sources */,
 				E7D372FA2B93E5DA004EE79D /* Device.swift in Sources */,
@@ -683,6 +692,7 @@
 				E77BD1B92CB330F3000AE0E4 /* GoRequest.swift in Sources */,
 				E79F4C652BDEF9F400F28AE2 /* AudioClock.swift in Sources */,
 				E77BD1C02CBA06D6000AE0E4 /* StopRequest.swift in Sources */,
+				E77BD1D72CBB018F000AE0E4 /* VideoSample.swift in Sources */,
 				E78FBE642C1CAB0B007DAE77 /* Reply.swift in Sources */,
 				E76B12C02CAA003A0003E398 /* MediaChunk.swift in Sources */,
 				E78FBE632C1CAAA7007DAE77 /* VideoClock.swift in Sources */,
@@ -725,6 +735,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E7FC8D2F2C56ED9900625F03 /* StreamDescriptionTests.swift in Sources */,
+				E77BD1D82CBB018F000AE0E4 /* VideoSample.swift in Sources */,
 				E7B9EEC42BAF45B7006631E7 /* ScreenCaptureDevice.swift in Sources */,
 				E79F4C762BFA3FCD00F28AE2 /* Array.swift in Sources */,
 				E79F4C642BDEF9F400F28AE2 /* AudioClock.swift in Sources */,
@@ -764,6 +775,7 @@
 				E79F4C602BDEF8AB00F28AE2 /* HostDescription.swift in Sources */,
 				E7FC8D272C56D1A100625F03 /* VideoDataRequestTests.swift in Sources */,
 				E76B12BE2CAA003A0003E398 /* MediaChunk.swift in Sources */,
+				E77BD1DA2CBB01CE000AE0E4 /* VideoSampleTests.swift in Sources */,
 				E79F4C5C2BDEF81400F28AE2 /* Data+Utilities.swift in Sources */,
 				E77BD1B72CB2D07F000AE0E4 /* MediaChunkTests.swift in Sources */,
 				E78FBE612C1CA37F007DAE77 /* VideoClock.swift in Sources */,

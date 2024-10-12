@@ -96,6 +96,8 @@ class PacketParser {
     -> any ScreenCapturePacket
   {
     switch header.subtype {
+    case .videoSample:
+      return VideoSample(header: header, wholePacket: wholePacket)!
     case .setProperty:
       return SetProperty(header: header, wholePacket: wholePacket)!
     default:
@@ -142,6 +144,8 @@ internal enum PacketSubtype: String {
   case videoTermination = "hpd0"
   // Audio termination marker (to device only)
   case audioTermination = "hpa0"
+  // A packet with a segment of video data
+  case videoSample = "feed"
   // Zero bytes for type. Note this is different than "none"
   case empty = "\0\0\0\0"
 }
