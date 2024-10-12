@@ -63,15 +63,21 @@ class PacketParser {
     case .goRequest:
       guard let goReq = GoRequest(header: header, wholePacket: wholePacket) else {
         throw PacketParsingError.generic(
-          "Failed to parse time request: \(wholePacket.base64EncodedString())")
+          "Failed to parse go request: \(wholePacket.base64EncodedString())")
       }
       return goReq
     case .stopRequest:
       guard let stopReq = StopRequest(header: header, wholePacket: wholePacket) else {
         throw PacketParsingError.generic(
-          "Failed to parse time request: \(wholePacket.base64EncodedString())")
+          "Failed to parse stop request: \(wholePacket.base64EncodedString())")
       }
       return stopReq
+    case .skewRequest:
+      guard let skewReq = SkewRequest(header: header, wholePacket: wholePacket) else {
+        throw PacketParsingError.generic(
+          "Failed to parse skew request: \(wholePacket.base64EncodedString())")
+      }
+      return skewReq
     case .streamDesciption:
       // Should only be sent
       throw PacketParsingError.generic("Unexpected host description (HPA1) packet")
@@ -130,6 +136,8 @@ internal enum PacketSubtype: String {
   case goRequest = "go! "
   // Some kinda termination signal?
   case stopRequest = "stop"
+  // Request for our clock's skew value
+  case skewRequest = "skew"
   // Zero bytes for type. Note this is different than "none"
   case empty = "\0\0\0\0"
 }

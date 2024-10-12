@@ -37,6 +37,10 @@
 		E77BD1C02CBA06D6000AE0E4 /* StopRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1BE2CBA06D6000AE0E4 /* StopRequest.swift */; };
 		E77BD1C12CBA06D6000AE0E4 /* StopRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1BE2CBA06D6000AE0E4 /* StopRequest.swift */; };
 		E77BD1C32CBA0D78000AE0E4 /* StopRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1C22CBA0D78000AE0E4 /* StopRequestTests.swift */; };
+		E77BD1C62CBACE0E000AE0E4 /* SkewRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1C52CBACE0E000AE0E4 /* SkewRequest.swift */; };
+		E77BD1C72CBACE0E000AE0E4 /* SkewRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1C52CBACE0E000AE0E4 /* SkewRequest.swift */; };
+		E77BD1C82CBACE0E000AE0E4 /* SkewRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1C52CBACE0E000AE0E4 /* SkewRequest.swift */; };
+		E77BD1CA2CBAD099000AE0E4 /* SkewRequestTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77BD1C92CBAD099000AE0E4 /* SkewRequestTests.swift */; };
 		E77DFCE52BA39E9C005601D7 /* ScreenCapturePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */; };
 		E77DFCF12BA3A58B005601D7 /* ScreenCapturePacketTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */; };
 		E77DFCF72BA3AF95005601D7 /* ArgumentParser in Frameworks */ = {isa = PBXBuildFile; productRef = E77DFCF62BA3AF95005601D7 /* ArgumentParser */; };
@@ -186,6 +190,8 @@
 		E77BD1BC2CB33318000AE0E4 /* GoRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoRequestTests.swift; sourceTree = "<group>"; };
 		E77BD1BE2CBA06D6000AE0E4 /* StopRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopRequest.swift; sourceTree = "<group>"; };
 		E77BD1C22CBA0D78000AE0E4 /* StopRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StopRequestTests.swift; sourceTree = "<group>"; };
+		E77BD1C52CBACE0E000AE0E4 /* SkewRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkewRequest.swift; sourceTree = "<group>"; };
+		E77BD1C92CBAD099000AE0E4 /* SkewRequestTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SkewRequestTests.swift; sourceTree = "<group>"; };
 		E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacket.swift; sourceTree = "<group>"; };
 		E77DFCEE2BA3A58B005601D7 /* ScreenCaptureTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenCaptureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacketTests.swift; sourceTree = "<group>"; };
@@ -365,6 +371,7 @@
 				E76B12B12CA9BF890003E398 /* TimeRequest.swift */,
 				E77BD1B82CB330F3000AE0E4 /* GoRequest.swift */,
 				E77BD1BE2CBA06D6000AE0E4 /* StopRequest.swift */,
+				E77BD1C52CBACE0E000AE0E4 /* SkewRequest.swift */,
 			);
 			path = Packet;
 			sourceTree = "<group>";
@@ -397,6 +404,7 @@
 				E76B12B52CA9BFEC0003E398 /* TimeRequestTests.swift */,
 				E77BD1BC2CB33318000AE0E4 /* GoRequestTests.swift */,
 				E77BD1C22CBA0D78000AE0E4 /* StopRequestTests.swift */,
+				E77BD1C92CBAD099000AE0E4 /* SkewRequestTests.swift */,
 			);
 			path = Packet;
 			sourceTree = "<group>";
@@ -625,6 +633,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E79F4C502BDEF52100F28AE2 /* Header.swift in Sources */,
+				E77BD1C62CBACE0E000AE0E4 /* SkewRequest.swift in Sources */,
 				E77BD1BA2CB330F3000AE0E4 /* GoRequest.swift in Sources */,
 				E79F4C472BDEF2C100F28AE2 /* Number.swift in Sources */,
 				E77BD1BF2CBA06D6000AE0E4 /* StopRequest.swift in Sources */,
@@ -661,6 +670,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E75237F52BA67488002C44F8 /* Util.swift in Sources */,
+				E77BD1C82CBACE0E000AE0E4 /* SkewRequest.swift in Sources */,
 				E77BD1B92CB330F3000AE0E4 /* GoRequest.swift in Sources */,
 				E79F4C652BDEF9F400F28AE2 /* AudioClock.swift in Sources */,
 				E77BD1C02CBA06D6000AE0E4 /* StopRequest.swift in Sources */,
@@ -725,7 +735,9 @@
 				E79F4C6C2BDF194000F28AE2 /* AudioFormat.swift in Sources */,
 				E79F4C452BDEF18200F28AE2 /* Prefix.swift in Sources */,
 				E799598F2BA3B72F00CFBB54 /* ScreenCapturePacket.swift in Sources */,
+				E77BD1C72CBACE0E000AE0E4 /* SkewRequest.swift in Sources */,
 				E79F4C732BF90EB900F28AE2 /* NumberTests.swift in Sources */,
+				E77BD1CA2CBAD099000AE0E4 /* SkewRequestTests.swift in Sources */,
 				E76B12B62CA9BFEC0003E398 /* TimeRequestTests.swift in Sources */,
 				E79F4C6F2BE6903900F28AE2 /* HeaderTests.swift in Sources */,
 				E75237C72BA5D890002C44F8 /* Util.swift in Sources */,
