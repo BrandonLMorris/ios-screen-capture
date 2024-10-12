@@ -9,10 +9,10 @@ class SkewRequest: ScreenCapturePacket {
   internal let clock: CFTypeID
 
   lazy var description = """
-    [SKEW]
-        corrId=\(correlationId)
-        clock=\(String(format: "0x%x", clock))
-  """
+      [SKEW]
+          corrId=\(correlationId)
+          clock=\(String(format: "0x%x", clock))
+    """
 
   init?(header: Header, wholePacket: Data) {
     self.data = wholePacket

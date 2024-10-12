@@ -138,6 +138,10 @@ internal enum PacketSubtype: String {
   case stopRequest = "stop"
   // Request for our clock's skew value
   case skewRequest = "skew"
+  // Video termination marker (to device only)
+  case videoTermination = "hpd0"
+  // Audio termination marker (to device only)
+  case audioTermination = "hpa0"
   // Zero bytes for type. Note this is different than "none"
   case empty = "\0\0\0\0"
 }
