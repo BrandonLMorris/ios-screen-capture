@@ -18,10 +18,17 @@ struct Time {
   internal static let NULL = Time(Data(count: size))
 
   init?(_ data: Data) {
-    value = data[uint64: valueIdx]
-    scale = data[uint32: scaleIdx]
-    flags = data[uint32: flagsIdx]
-    epoch = data[uint64: epochIdx]
+    self.value = data[uint64: valueIdx]
+    self.scale = data[uint32: scaleIdx]
+    self.flags = data[uint32: flagsIdx]
+    self.epoch = data[uint64: epochIdx]
+  }
+  
+  init(nanoseconds: UInt64) {
+    self.value = nanoseconds
+    self.scale = 1_000_000_000
+    self.flags = 1
+    self.epoch = 0
   }
 
   func serialize() -> Data {

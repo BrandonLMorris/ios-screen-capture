@@ -4,6 +4,7 @@ import Foundation
 class Recorder {
   private var device: ScreenCaptureDevice! = nil
   private var sessionActive = false
+  private var startTime: UInt64 = 0
 
   func start(forDeviceWithId udid: String) throws {
     var screenCaptureDevice = try ScreenCaptureDevice.obtainDevice(withUdid: udid)
@@ -52,6 +53,11 @@ class Recorder {
     switch packet {
     case _ as Ping:
       try device.ping()
+      
+    case let packet as GoRequest:
+      let reply = packet.reply()
+      logger.debug("Sending go reply: \(reply.description)")
+      try device.sendPacket(packet: reply)
 
     case let packet as AudioClock:  // cwpa
       let desc = HostDescription()
@@ -80,15 +86,22 @@ class Recorder {
       try device.sendPacket(packet: videoDataRequest)
 
     case let clockRequest as HostClockRequest:  // clok
-      // TODO We'll actually need to create a clock and keep track of the time.
+      self.startTime = DispatchTime.now().uptimeNanoseconds
       let hostClockId = clockRequest.clock + 0x10000
       let reply = clockRequest.reply(withClock: hostClockId)
       logger.debug("Sending host clock reply\n\(reply.description)")
       try device.sendPacket(packet: reply)
 
+    case let timeRequest as TimeRequest: // time
+      logger.debug("Sending time reply")
+      let now = DispatchTime.now().uptimeNanoseconds
+      let reply = timeRequest.reply(withTime: Time(nanoseconds: now - startTime))
+      try device.sendPacket(packet: reply)
+
     case _ as SetProperty:
       // Nothing to do
       break
+
     default:
       logger.error("Unexpected packet received \(packet.data.base64EncodedString())")
     }

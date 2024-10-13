@@ -34,7 +34,7 @@ private class SkewReply: ScreenCapturePacket {
     """
     [RPLY(SKEW)]
         corrId=\(originator.correlationId)
-        skew=***FIXME***
+        skew=\(String(format: "%f", self.skew))
     """
   }()
 
