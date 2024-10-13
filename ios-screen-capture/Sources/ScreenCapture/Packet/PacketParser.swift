@@ -98,6 +98,8 @@ class PacketParser {
     switch header.subtype {
     case .videoSample:
       return VideoSample(header: header, wholePacket: wholePacket)!
+    case .audioSample:
+      return AudioSample(header: header, wholePacket: wholePacket)!
     case .setProperty:
       return SetProperty(header: header, wholePacket: wholePacket)!
     default:
@@ -146,6 +148,8 @@ internal enum PacketSubtype: String {
   case audioTermination = "hpa0"
   // A packet with a segment of video data
   case videoSample = "feed"
+  // A packet with a segment of audio data
+  case audioSample = "eat!"
   // Zero bytes for type. Note this is different than "none"
   case empty = "\0\0\0\0"
 }
