@@ -1,25 +1,23 @@
-import XCTest
+import Foundation
+import Testing
 
-final class AudioFormatTests: XCTestCase {
+final class AudioFormatTests {
   let fixture =
     "RAAAAGNueXOwDOJspn8AAHRtZmGAnSITAQAAAAAAAAAAcOdAbWNwbEwAAAAEAAAAAQAAAAQAAAACAAAAEAAAAAAAAAA="
   let replyFixture =
     "PgAAAHlscHKAnSITAQAAAAAAAAAqAAAAdGNpZCIAAAB2eWVrDQAAAGtydHNFcnJvcg0AAAB2Ym1uAwAAAAA="
 
-  func testWithFixture() throws {
+  @Test func fixtureParsing() throws {
     let binary = Data(base64Encoded: fixture)!
 
     let packet = try PacketParser.parse(from: binary) as? AudioFormat
-    guard packet != nil else {
-      XCTFail("Failed to parse audio format packet from fixture")
-      return
-    }
+    #expect(packet != nil)
   }
 
-  func testWithReplyFixture() throws {
+  @Test func replyFixtureParsing() throws {
     let binary = Data(base64Encoded: fixture)!
     let packet = try PacketParser.parse(from: binary) as! AudioFormat
 
-    XCTAssertEqual(packet.reply().data.base64EncodedString(), replyFixture)
+    #expect(packet.reply().data.base64EncodedString() == replyFixture)
   }
 }

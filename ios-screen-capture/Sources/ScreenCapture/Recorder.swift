@@ -53,7 +53,7 @@ class Recorder {
     switch packet {
     case _ as Ping:
       try device.ping()
-      
+
     case let packet as GoRequest:
       let reply = packet.reply()
       logger.debug("Sending go reply: \(reply.description)")
@@ -92,11 +92,14 @@ class Recorder {
       logger.debug("Sending host clock reply\n\(reply.description)")
       try device.sendPacket(packet: reply)
 
-    case let timeRequest as TimeRequest: // time
+    case let timeRequest as TimeRequest:  // time
       logger.debug("Sending time reply")
       let now = DispatchTime.now().uptimeNanoseconds
       let reply = timeRequest.reply(withTime: Time(nanoseconds: now - startTime))
       try device.sendPacket(packet: reply)
+
+    case let videoSample as VideoSample:  // feed
+      let sample = videoSample.sample
 
     case _ as SetProperty:
       // Nothing to do

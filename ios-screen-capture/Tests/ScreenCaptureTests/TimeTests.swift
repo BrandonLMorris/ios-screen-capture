@@ -1,22 +1,23 @@
-import XCTest
+import Foundation
+import Testing
 
-final class TimeTests: XCTestCase {
+final class TimeTests {
   let fixture = "4eFCxGK6AAAAypo7AQAAAAAAAAAAAAAA"
 
-  func testFixture() throws {
+  @Test func fixtureParsing() throws {
     let time = Time(Data(base64Encoded: fixture)!)!
 
-    XCTAssertEqual(time.value, UInt64(0xBA62_C442_E1E1))
-    XCTAssertEqual(time.scale, UInt32(1_000_000_000))
-    XCTAssertEqual(time.flags, UInt32(0x01))
-    XCTAssertEqual(time.epoch, UInt64(0))
+    #expect(time.value == UInt64(0xBA62_C442_E1E1))
+    #expect(time.scale == UInt32(1_000_000_000))
+    #expect(time.flags == UInt32(0x01))
+    #expect(time.epoch == UInt64(0))
   }
 
-  func testSerializeBackToFixture() throws {
+  @Test func serializeBackToFixture() throws {
     let time = Time(Data(base64Encoded: fixture)!)!
 
     let serialized = time.serialize()
 
-    XCTAssertEqual(serialized.base64EncodedString(), fixture)
+    #expect(serialized.base64EncodedString() == fixture)
   }
 }

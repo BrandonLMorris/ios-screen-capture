@@ -1,43 +1,43 @@
-import XCTest
+import Testing
 
-final class HeaderTests: XCTestCase {
+final class HeaderTests {
 
-  func testSerializeSimple() throws {
+  @Test func serializeSimple() throws {
     let header = Header(length: 42, type: .async)
 
     let serialized = header.serialized
 
-    XCTAssertEqual(serialized.count, 8)
-    XCTAssertEqual(serialized[uint32: 0], UInt32(42))
+    #expect(serialized.count == 8)
+    #expect(serialized[uint32: 0] == UInt32(42))
     // asyn -> nysa
-    XCTAssertEqual(String(data: serialized.subdata(in: 4..<8), encoding: .ascii), "nysa")
+    #expect(String(data: serialized.subdata(in: 4..<8), encoding: .ascii) == "nysa")
   }
 
-  func testSerializeHeaderWithSubtype() throws {
+  @Test func serializeHeaderWithSubtype() throws {
     let header = Header(length: 420, type: .sync, subtype: .audioFormat)
 
     let serialized = header.serialized
 
-    XCTAssertEqual(serialized.count, 20)
-    XCTAssertEqual(serialized[uint32: 0], UInt32(420))
+    #expect(serialized.count == 20)
+    #expect(serialized[uint32: 0] == UInt32(420))
     // sync -> cnys
-    XCTAssertEqual(serialized[strType: 4], "cnys")
-    XCTAssertEqual(serialized[uint64: 8], 0)
+    #expect(serialized[strType: 4] == "cnys")
+    #expect(serialized[uint64: 8] == 0)
     // afmt -> tmfa
-    XCTAssertEqual(serialized[strType: 16], "tmfa")
+    #expect(serialized[strType: 16] == "tmfa")
   }
 
-  func testSerializeHeaderWithPayload() throws {
+  @Test func serializeHeaderWithPayload() throws {
     let payload = UInt64(12345)
     var header = Header(length: 123, type: .sync, subtype: .audioClock)
     header.payload.uint64(at: 0, payload)
 
     let serialized = header.serialized
 
-    XCTAssertEqual(serialized[uint64: 8], payload)
+    #expect(serialized[uint64: 8] == payload)
   }
 
-  func testParseHeaderWithPayload() throws {
+  @Test func parseHeaderWithPayload() throws {
     let payload = UInt64(12345)
     var header = Header(length: 123, type: .sync, subtype: .audioClock)
     header.payload.uint64(at: 0, payload)
@@ -45,13 +45,13 @@ final class HeaderTests: XCTestCase {
 
     let parsed = Header(serialized)!
 
-    XCTAssertEqual(parsed.payload[uint64: 0], payload)
+    #expect(parsed.payload[uint64: 0] == payload)
   }
 
-  func testParseHeaderBadSubtype() throws {
+  @Test func parseHeaderBadSubtype() throws {
     var serialized = Header(length: 123, type: .sync, subtype: .audioClock).serialized
     serialized.uint32(at: 16, UInt32(42))
 
-    XCTAssertNil(Header(serialized))
+    #expect(Header(serialized) == nil)
   }
 }

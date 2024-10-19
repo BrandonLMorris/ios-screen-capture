@@ -3,11 +3,11 @@ import Foundation
 class VideoSample: ScreenCapturePacket {
   var header: Header
   var data: Data
-  
+
   var description = """
-    [FEED] Video sample
-  """
-  
+      [FEED] Video sample
+    """
+
   internal let sample: MediaChunk
 
   init?(header: Header, wholePacket: Data) {

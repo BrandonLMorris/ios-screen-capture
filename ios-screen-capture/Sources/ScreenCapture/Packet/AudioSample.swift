@@ -5,8 +5,8 @@ class AudioSample: ScreenCapturePacket {
   var data: Data
 
   var description = """
-    [EAT] Audio sample
-  """
+      [EAT] Audio sample
+    """
 
   internal let sample: MediaChunk
 
@@ -19,4 +19,3 @@ class AudioSample: ScreenCapturePacket {
     self.sample = sample
   }
 }
-

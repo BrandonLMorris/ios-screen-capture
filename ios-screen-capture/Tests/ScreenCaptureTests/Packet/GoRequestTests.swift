@@ -1,27 +1,28 @@
-import XCTest
+import Foundation
+import Testing
 
 let requestFixture = "IAAAAGNueXPwX0I1un8AACAhb2cwL9MCAQAAAAEAAAA="
 let replyFixture = "GAAAAHlscHIwL9MCAQAAAAAAAAAAAAAA"
 
 let correlationId = "MC/TAgEAAAA="
 
-final class GoRequestTests: XCTestCase {
-  func testRequestFixture() throws {
+final class GoRequestTests {
+  @Test func requestFixtureParsing() throws {
     let serialized = Data(base64Encoded: requestFixture)!
 
     let parsed = try! PacketParser.parse(from: serialized) as! GoRequest
 
-    XCTAssertEqual(0x7FBA_3542_5FF0, parsed.clock)
-    XCTAssertEqual(correlationId, parsed.correlationId)
+    #expect(0x7FBA_3542_5FF0 == parsed.clock)
+    #expect(correlationId == parsed.correlationId)
   }
 
-  func testResponseFixture() throws {
+  @Test func responseFixtureParsing() throws {
     let serialized = Data(base64Encoded: requestFixture)!
     let parsed = try! PacketParser.parse(from: serialized) as! GoRequest
 
     let reply = parsed.reply()
 
-    XCTAssertEqual(reply.data.base64EncodedString(), replyFixture)
-    XCTAssertEqual(correlationId, reply.data.subdata(in: 8..<16).base64EncodedString())
+    #expect(reply.data.base64EncodedString() == replyFixture)
+    #expect(correlationId == reply.data.subdata(in: 8..<16).base64EncodedString())
   }
 }

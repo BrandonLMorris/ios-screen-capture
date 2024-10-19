@@ -1,66 +1,63 @@
-import XCTest
+import Foundation
+import Testing
 
 @testable import ios_screen_capture
 
-final class ScreenCapturePacketTests: XCTestCase {
+final class ScreenCapturePacketTests {
   // The ping packet is constant; both sending and receiving
   let ping = Data(base64Encoded: "EAAAAGduaXAAAAAAAQAAAA==")!
 
-  func testParsePingHeader() throws {
+  @Test func parsePingHeader() throws {
     let header = Header(ping)!
-    XCTAssertEqual(header, Header(length: 16, type: .ping))
+    #expect(header == Header(length: 16, type: .ping))
   }
 
-  func testParsePingHeaderTooShort() throws {
+  @Test func parsePingHeaderTooShort() throws {
     // Header must be at least 8 bytes, so try one off
     let shortPayload = Data(repeating: 0xff, count: 7)
-    XCTAssertNil(Header(shortPayload))
+    #expect(Header(shortPayload) == nil)
   }
 
-  func testParseHeaderUnknownType() throws {
+  @Test func parseHeaderUnknownType() throws {
     let unknownType = Data(repeating: 0xff, count: 8)
-    XCTAssertNil(Header(unknownType))
+    #expect(Header(unknownType) == nil)
   }
 
-  func testParsePingPacket() throws {
-    XCTAssertNoThrow(
-      try { [self] in
-        let parsed: ScreenCapturePacket = try PacketParser.parse(from: ping)
-        _ = parsed as! Ping
-      }())
+  @Test func parsePingPacket() throws {
+    #expect(throws: Never.self) {
+      _ = try PacketParser.parse(from: ping) as! Ping
+    }
   }
 
-  func testParseErrorsEmptyPacket() throws {
-    XCTAssertThrowsError(
-      try {
-        _ = try PacketParser.parse(from: Data(count: 0))
-      }())
+  @Test func parseErrorsEmptyPacket() throws {
+    #expect(throws: PacketParsingError.self) {
+      _ = try PacketParser.parse(from: Data(count: 0))
+    }
   }
 
-  func testParseInvalidPing() throws {
+  @Test func testParseInvalidPing() throws {
     // Good header, but payload too short
     let badPing = ping.subdata(in: 0..<12)
-    XCTAssertThrowsError(
-      try {
-        _ = try PacketParser.parse(from: badPing)
-      }())
+    #expect(throws: PacketParsingError.self) {
+      _ = try PacketParser.parse(from: badPing)
+    }
   }
 }
 
-final class ScreenCaptureObjectTests: XCTestCase {
+final class ScreenCaptureObjectTests {
 
-  func testParsePrefix() throws {
+  @Test func parsePrefix() throws {
     let serialized = Data(base64Encoded: "KAAAAGtydHM=")!
     print(serialized.base64EncodedString())
     let parsed = Prefix(serialized)
 
-    XCTAssertEqual(parsed?.type, .stringKey)
-    XCTAssertEqual(parsed?.length, 40)
+    #expect(parsed?.type == .stringKey)
+    #expect(parsed?.length == 40)
   }
 
-  func testSerailizePrefix() throws {
+  @Test func serailizePrefix() throws {
     let parsed = Prefix(length: UInt32(40), type: .stringKey)
 
-    XCTAssertEqual(parsed.serialize().base64EncodedString(), "KAAAAGtydHM=")
+    #expect(parsed.serialize().base64EncodedString() == "KAAAAGtydHM=")
   }
 }

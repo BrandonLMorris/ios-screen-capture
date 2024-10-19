@@ -1,22 +1,23 @@
-import XCTest
+import Foundation
+import Testing
 
-final class SetPropertyTests: XCTestCase {
+final class SetPropertyTests {
   let fixture1 =
     "QgAAAG55c2GP1sUiDQAAAHBycHMuAAAAdnllax0AAABrcnRzT2JleUVtcHR5TWVkaWFNYXJrZXJzCQAAAHZsdWIB"
   let fixture2 =
     "PQAAAG55c2GP1sUiDQAAAHBycHMpAAAAdnllaxgAAABrcnRzUmVuZGVyRW1wdHlNZWRpYQkAAAB2bHViAA=="
 
-  func testFixture() throws {
+  @Test func fixtureParsing() throws {
     let setProperty = try PacketParser.parse(from: Data(base64Encoded: fixture1)!) as! SetProperty
 
-    XCTAssertEqual(setProperty.propertyKey, "ObeyEmptyMediaMarkers")
-    XCTAssertEqual(setProperty.propertyValue, .bool(true))
+    #expect(setProperty.propertyKey == "ObeyEmptyMediaMarkers")
+    #expect(setProperty.propertyValue == .bool(true))
   }
 
-  func testFixture2() throws {
+  @Test func fixtureParsing2() throws {
     let setProperty = try PacketParser.parse(from: Data(base64Encoded: fixture2)!) as! SetProperty
 
-    XCTAssertEqual(setProperty.propertyKey, "RenderEmptyMedia")
-    XCTAssertEqual(setProperty.propertyValue, .bool(false))
+    #expect(setProperty.propertyKey == "RenderEmptyMedia")
+    #expect(setProperty.propertyValue == .bool(false))
   }
 }

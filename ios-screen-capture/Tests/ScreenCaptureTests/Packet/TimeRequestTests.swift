@@ -1,24 +1,24 @@
 import Foundation
-import XCTest
+import Testing
 
-final class TimeRequestTests: XCTestCase {
+final class TimeRequestTests {
   let fixture = "HAAAAGNueXOAecF8pn8AAGVtaXRQPSITAQAAAA=="
   let replyFixture = "LAAAAHlscHKAecF8pn8AAAAAAADh4ULEYroAAADKmjsBAAAAAAAAAAAAAAA="
 
-  func testFixture() throws {
+  @Test func fixtureParsing() throws {
     let timeRequest = try PacketParser.parse(from: Data(base64Encoded: fixture)!) as! TimeRequest
 
     // Taken from fixture
-    XCTAssertEqual(timeRequest.correlationId, "gHnBfKZ/AAA=")
-    XCTAssertEqual(timeRequest.clock, CFTypeID(0x1_1322_3d50))
+    #expect(timeRequest.correlationId == "gHnBfKZ/AAA=")
+    #expect(timeRequest.clock == CFTypeID(0x1_1322_3d50))
   }
 
-  func testReplyFixture() throws {
+  @Test func replyFixtureParsing() throws {
     let timeRequest = try PacketParser.parse(from: Data(base64Encoded: fixture)!) as! TimeRequest
     let replyTime = Time(Data(base64Encoded: "4eFCxGK6AAAAypo7AQAAAAAAAAAAAAAA")!)!
 
     let reply = timeRequest.reply(withTime: replyTime)
 
-    XCTAssertEqual(reply.data.base64EncodedString(), replyFixture)
+    #expect(reply.data.base64EncodedString() == replyFixture)
   }
 }

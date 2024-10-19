@@ -1,24 +1,25 @@
-import XCTest
+import Foundation
+import Testing
 
-final class HostClockRequestTests: XCTestCase {
+final class HostClockRequestTests {
   let fixture = "HAAAAGNueXNQAtFspn8AAGtvbGNwSVgTAQAAAA=="
   let replyFixture = "HAAAAHlscHJwSVgTAQAAAAAAAACAecF8pn8AAA=="
 
-  func testFixture() throws {
+  func fixtureParsing() throws {
     let fixture = try PacketParser.parse(from: Data(base64Encoded: fixture)!) as! HostClockRequest
 
     // Values taken from fixture
-    XCTAssertEqual(fixture.clock, UInt(0x7FA6_6CD1_0250))
-    XCTAssertEqual(fixture.correlationId, "cElYEwEAAAA=")
+    #expect(fixture.clock == UInt(0x7FA6_6CD1_0250))
+    #expect(fixture.correlationId == "cElYEwEAAAA=")
   }
 
-  func testReplyFixture() throws {
+  func replyFixtureParsing() throws {
     let fixture = try PacketParser.parse(from: Data(base64Encoded: fixture)!) as! HostClockRequest
 
     // Taken from fixture
     let reply = fixture.reply(withClock: UInt(0x7FA6_7CC1_7980))
 
-    XCTAssertEqual(reply.data.base64EncodedString(), replyFixture)
+    #expect(reply.data.base64EncodedString() == replyFixture)
   }
 
 }

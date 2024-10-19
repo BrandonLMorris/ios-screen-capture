@@ -23,7 +23,7 @@ struct Time {
     self.flags = data[uint32: flagsIdx]
     self.epoch = data[uint64: epochIdx]
   }
-  
+
   init(nanoseconds: UInt64) {
     self.value = nanoseconds
     self.scale = 1_000_000_000

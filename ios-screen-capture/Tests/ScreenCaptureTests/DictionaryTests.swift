@@ -1,24 +1,25 @@
-import XCTest
+import Foundation
+import Testing
 
-final class DictionaryTests: XCTestCase {
+final class DictionaryTests {
 
-  func testSerializeDictWithStringValue() throws {
+  @Test func serializeDictWithStringValue() throws {
     var dict = Dictionary()
     dict["foo"] = .string("bar")
 
     let serialized = dict.serialize()
 
-    XCTAssertEqual(serialized[strType: 4], "tcid")
-    XCTAssertEqual(serialized[strType: 12], "vyek")
-    XCTAssertEqual(serialized[strType: 20], "krts")
+    #expect(serialized[strType: 4] == "tcid")
+    #expect(serialized[strType: 12] == "vyek")
+    #expect(serialized[strType: 20] == "krts")
     // Note: The actual values aren't endian-ed
-    XCTAssertEqual(String(data: serialized.subdata(in: 24..<27), encoding: .ascii)!, "foo")
+    #expect(String(data: serialized.subdata(in: 24..<27), encoding: .ascii)! == "foo")
     // 27 + 4b length = 31
-    XCTAssertEqual(serialized[strType: 31], "vrts")
-    XCTAssertEqual(String(data: serialized.subdata(in: 35..<38), encoding: .ascii)!, "bar")
+    #expect(serialized[strType: 31] == "vrts")
+    #expect(String(data: serialized.subdata(in: 35..<38), encoding: .ascii)! == "bar")
   }
 
-  func testSerializeDictWithBoolValues() throws {
+  @Test func serializeDictWithBoolValues() throws {
     var dict = Dictionary()
     dict["t"] = .bool(true)
     dict["f"] = .bool(false)
@@ -30,26 +31,27 @@ final class DictionaryTests: XCTestCase {
     // There are two elements, but since we're iterating over the
     // underlying dictionary we can't assume order.
     for _ in 0..<2 {
-      XCTAssertEqual(serialized[strType: idx], "krts")
+      #expect(serialized[strType: idx] == "krts")
       idx += 4
       if serialized[idx] == Character("t").asciiValue! {
         idx += 5
-        XCTAssertEqual(serialized[strType: idx], "vlub")
+        #expect(serialized[strType: idx] == "vlub")
         idx += 4
-        XCTAssertEqual(serialized[idx], UInt8(1))
+        #expect(serialized[idx] == UInt8(1))
       } else if serialized[idx] == Character("f").asciiValue! {
         idx += 5
-        XCTAssertEqual(serialized[strType: idx], "vlub")
+        #expect(serialized[strType: idx] == "vlub")
         idx += 4
-        XCTAssertEqual(serialized[idx], UInt8(0))
+        #expect(serialized[idx] == UInt8(0))
       } else {
-        XCTFail()
+        Issue.record("Key at index \(idx) not found!")
+        return
       }
       idx += 13
     }
   }
 
-  func testSerializeDictWithDictValue() throws {
+  @Test func serializeDictWithDictValue() throws {
     var nested = Dictionary()
     nested["foo0"] = .string("bar0")
     var dict = Dictionary()
@@ -59,24 +61,24 @@ final class DictionaryTests: XCTestCase {
 
     // First 20 bytes are prefixes tested elsewhere
     var idx = 20
-    XCTAssertEqual(serialized[strType: idx], "krts")
+    #expect(serialized[strType: idx] == "krts")
     idx += 4
-    XCTAssertEqual(serialized[strType: idx], "key1")
+    #expect(serialized[strType: idx] == "key1")
     idx += 8
-    XCTAssertEqual(serialized[strType: idx], "tcid")  // value type
+    #expect(serialized[strType: idx] == "tcid")  // value type
     idx += 8
-    XCTAssertEqual(serialized[strType: idx], "vyek")  // prefix of dict value
+    #expect(serialized[strType: idx] == "vyek")  // prefix of dict value
     idx += 8
-    XCTAssertEqual(serialized[strType: idx], "krts")
+    #expect(serialized[strType: idx] == "krts")
     idx += 4
-    XCTAssertEqual(serialized[strType: idx], "foo0")
+    #expect(serialized[strType: idx] == "foo0")
     idx += 8
-    XCTAssertEqual(serialized[strType: idx], "vrts")
+    #expect(serialized[strType: idx] == "vrts")
     idx += 4
-    XCTAssertEqual(serialized[strType: idx], "bar0")
+    #expect(serialized[strType: idx] == "bar0")
   }
 
-  func testSerializeDictWithNumberValue() throws {
+  @Test func serializeDictWithNumberValue() throws {
     var dict = Dictionary()
     dict["foo0"] = .number(Number(int64: 0xdead_beef))
 
@@ -84,15 +86,15 @@ final class DictionaryTests: XCTestCase {
 
     // First 20 bytes are prefixes tested elsewhere
     var idx = 20
-    XCTAssertEqual(serialized[strType: idx], "krts")
+    #expect(serialized[strType: idx] == "krts")
     idx += 4
-    XCTAssertEqual(serialized[strType: idx], "foo0")
+    #expect(serialized[strType: idx] == "foo0")
     idx += 8
-    XCTAssertEqual(serialized[strType: idx], "vbmn")
-    // TODO assert value when Number supports parsing
+    #expect(serialized[strType: idx] == "vbmn")
+    // TODO: Assert value when Number supports parsing
   }
 
-  func testSerializeDictWithDataValue() throws {
+  @Test func serializeDictWithDataValue() throws {
     let data = Data([0xde, 0xad, 0xbe, 0xef])
     var dict = Dictionary()
     dict["foo0"] = .data(data)
@@ -100,12 +102,12 @@ final class DictionaryTests: XCTestCase {
     let serialized = dict.serialize()
 
     var idx = 32
-    XCTAssertEqual(serialized[strType: idx], "vtad")
+    #expect(serialized[strType: idx] == "vtad")
     idx += 4
-    XCTAssertEqual(serialized.subdata(in: idx..<serialized.count), data)
+    #expect(serialized.subdata(in: idx..<serialized.count) == data)
   }
 
-  func testParsingDictionaryWithStringValue() throws {
+  @Test func parsingDictionaryWithStringValue() throws {
     var dict = Dictionary()
     let strValue: DictValue = .string("bar0")
     dict["foo0"] = strValue
@@ -113,10 +115,10 @@ final class DictionaryTests: XCTestCase {
 
     let parsed = Dictionary(serialized)!
 
-    XCTAssertEqual(parsed["foo0"]!, strValue)
+    #expect(parsed["foo0"]! == strValue)
   }
 
-  func testParsingDictionaryWithDataValue() throws {
+  @Test func parsingDictionaryWithDataValue() throws {
     let data: DictValue = .data(Data([0xde, 0xad, 0xbe, 0xef]))
     var dict = Dictionary()
     dict["foo0"] = data
@@ -124,10 +126,10 @@ final class DictionaryTests: XCTestCase {
 
     let parsed = Dictionary(serialized)!
 
-    XCTAssertEqual(parsed["foo0"]!, data)
+    #expect(parsed["foo0"]! == data)
   }
 
-  func testParsingDictionaryWithBoolValue() {
+  @Test func parsingDictionaryWithBoolValue() {
     let b: DictValue = .bool(true)
     var dict = Dictionary()
     dict["foo0"] = b
@@ -135,10 +137,10 @@ final class DictionaryTests: XCTestCase {
 
     let parsed = Dictionary(serialized)!
 
-    XCTAssertEqual(parsed["foo0"]!, b)
+    #expect(parsed["foo0"]! == b)
   }
 
-  func testParsingDictionaryWithMultipleValues() {
+  @Test func parsingDictionaryWithMultipleValues() {
     let b: DictValue = .bool(true)
     let data: DictValue = .data(Data([0xde, 0xad, 0xbe, 0xef]))
     var dict = Dictionary()
@@ -148,11 +150,11 @@ final class DictionaryTests: XCTestCase {
 
     let parsed = Dictionary(serialized)!
 
-    XCTAssertEqual(parsed["foo0"]!, b)
-    XCTAssertEqual(parsed["dat0"]!, data)
+    #expect(parsed["foo0"]! == b)
+    #expect(parsed["dat0"]! == data)
   }
 
-  func testParsingNestedDictionaries() {
+  @Test func parsingNestedDictionaries() {
     var nested = Dictionary()
     nested["foo0"] = .string("bar0")
     var dict = Dictionary()
@@ -162,25 +164,25 @@ final class DictionaryTests: XCTestCase {
     let parsed = Dictionary(serialized)!
 
     if case let .dict(parsedNested) = parsed["dict"]! {
-      XCTAssertEqual(parsedNested, nested)
+      #expect(parsedNested == nested)
     } else {
-      XCTFail()
+      Issue.record("Failed to parse nested dictionay")
     }
   }
 
-  func testParsingFixture() throws {
+  @Test func parsingFixture() throws {
     let fixture =
       "xwAAAHRjaWQgAAAAdnllaw8AAABrcnRzVmFsZXJpYQkAAAB2bHViAS8AAAB2eWVrHgAAAGtydHNIRVZDRGVjb2RlclN1cHBvcnRzNDQ0CQAAAHZsdWIBcAAAAHZ5ZWsTAAAAa3J0c0Rpc3BsYXlTaXplVQAAAHRjaWQmAAAAdnllaw0AAABrcnRzV2lkdGgRAAAAdmJtbgYAAAAAAACeQCcAAAB2eWVrDgAAAGtydHNIZWlnaHQRAAAAdmJtbgYAAAAAAMCSQA=="
     let binary = Data(base64Encoded: fixture)!
 
-    XCTAssertNotNil(Dictionary(binary))
+    #expect(Dictionary(binary) != nil)
   }
 
-  func testParsingComplexFixture() throws {
+  @Test func parsingComplexFixture() throws {
     let fixture =
       "ZQIAAHRjaWTHAAAAdnllayMAAABrcnRzUHJlcGFyZWRRdWV1ZUhpZ2hXYXRlckxldmVsnAAAAHRjaWQiAAAAdnllaw0AAABrcnRzZmxhZ3MNAAAAdmJtbgMBAAAAJgAAAHZ5ZWsNAAAAa3J0c3ZhbHVlEQAAAHZibW4EBQAAAAAAAAAmAAAAdnllaxEAAABrcnRzdGltZXNjYWxlDQAAAHZibW4DHgAAACYAAAB2eWVrDQAAAGtydHNlcG9jaBEAAAB2Ym1uBAAAAAAAAAAAxgAAAHZ5ZWsiAAAAa3J0c1ByZXBhcmVkUXVldWVMb3dXYXRlckxldmVsnAAAAHRjaWQiAAAAdnllaw0AAABrcnRzZmxhZ3MNAAAAdmJtbgMBAAAAJgAAAHZ5ZWsNAAAAa3J0c3ZhbHVlEQAAAHZibW4EAwAAAAAAAAAmAAAAdnllaxEAAABrcnRzdGltZXNjYWxlDQAAAHZibW4DHgAAACYAAAB2eWVrDQAAAGtydHNlcG9jaBEAAAB2Ym1uBAAAAAAAAAAA0AAAAHZ5ZWsZAAAAa3J0c0Zvcm1hdERlc2NyaXB0aW9urwAAAGNzZGYMAAAAYWlkbWVkaXYQAAAAbWlkdmYEAACECQAADAAAAGNkb2MxY3ZhfwAAAG50eGVYAAAAdnllawoAAABreGRpMQBGAAAAdGNpZD4AAAB2eWVrCgAAAGt4ZGlpACwAAAB2dGFkAWQAM//hABEnZAAzrFaARwEz5p5uBAQEBAEABCjuPLD9+PgAHwAAAHZ5ZWsKAAAAa3hkaTQADQAAAHZydHNILjI2NA=="
     let binary = Data(base64Encoded: fixture)!
 
-    XCTAssertNotNil(Dictionary(binary))
+    #expect(Dictionary(binary) != nil)
   }
 }

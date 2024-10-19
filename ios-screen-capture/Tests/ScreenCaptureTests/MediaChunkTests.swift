@@ -1,10 +1,11 @@
-import XCTest
+import Foundation
+import Testing
 
-final class MediaChunkTests: XCTestCase {
+final class MediaChunkTests {
 
-  func testExample() throws {
+  @Test func parseFixture() throws {
     let dat = Data(base64Encoded: fixture)!
-    let _ = MediaChunk(dat.from(20))!
+    #expect(MediaChunk(dat.from(20)) != nil)
   }
 }
 

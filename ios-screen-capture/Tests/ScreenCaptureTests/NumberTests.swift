@@ -1,60 +1,61 @@
-import XCTest
+import Testing
 
-final class NumberTests: XCTestCase {
+final class NumberTests {
 
-  func testSerializeNumberWithInt32Value() throws {
+  @Test func serializeNumberWithInt32Value() throws {
     let val = UInt32(42)
     let serialized = Number(int32: val).serialize()
 
-    XCTAssertEqual(serialized.count, 13)
-    XCTAssertEqual(serialized[strType: 4], "vbmn")
-    XCTAssertEqual(serialized[8], UInt8(3))
-    XCTAssertEqual(serialized[uint32: 9], UInt32(42))
+    #expect(serialized.count == 13)
+    #expect(serialized[strType: 4] == "vbmn")
+    #expect(serialized[8] == UInt8(3))
+    #expect(serialized[uint32: 9] == UInt32(42))
   }
 
-  func testSerializeNumberWithInt64Value() throws {
+  @Test func serializeNumberWithInt64Value() throws {
     let val = UInt64(2 << 64)
     let n = Number(int64: val)
 
     let serialized = n.serialize()
 
-    XCTAssertEqual(serialized.count, 17)
-    XCTAssertEqual(serialized[strType: 4], "vbmn")
-    XCTAssertEqual(serialized[8], UInt8(4))
-    XCTAssertEqual(serialized[uint64: 9], val)
+    #expect(serialized.count == 17)
+    #expect(serialized[strType: 4] == "vbmn")
+    #expect(serialized[8] == UInt8(4))
+    #expect(serialized[uint64: 9] == val)
   }
 
-  func testSerializeNumberWithFloat64Value() throws {
+  @Test func serializeNumberWithFloat64Value() throws {
     let val = Float64(3.14)
     let n = Number(float64: val)
 
     let serialized = n.serialize()
 
-    XCTAssertEqual(serialized.count, 17)
-    XCTAssertEqual(serialized[strType: 4], "vbmn")
-    XCTAssertEqual(serialized[8], UInt8(6))
+    #expect(serialized.count == 17)
+    #expect(serialized[strType: 4] == "vbmn")
+    #expect(serialized[8] == UInt8(6))
+    // FIXME: Using the right method
     let valueDiff = abs(serialized[float64: 9] - val)
-    XCTAssertLessThan(valueDiff, 1e-5)
+    #expect(valueDiff < 1e-5)
   }
 
-  func testParseNumberWithInt32Value() throws {
+  @Test func parseNumberWithInt32Value() throws {
     let parsed = Number(Number(int32: 42).serialize())!
 
-    XCTAssertEqual(parsed.int32Value, 42)
+    #expect(parsed.int32Value == 42)
   }
 
-  func testParseNumberWithInt64Value() throws {
+  @Test func parseNumberWithInt64Value() throws {
     let v = UInt64(2 << 63)
     let parsed = Number(Number(int64: v).serialize())!
 
-    XCTAssertEqual(parsed.int64Value, v)
+    #expect(parsed.int64Value == v)
   }
 
-  func testParseNumberWithFloat64Value() throws {
+  @Test func parseNumberWithFloat64Value() throws {
     let e = 2.72
     let parsed = Number(Number(float64: 2.72).serialize())!
 
     let diff = abs(parsed.float64Value - e)
-    XCTAssertLessThan(diff, 1e-5)
+    #expect(diff < 1e-5)
   }
 }

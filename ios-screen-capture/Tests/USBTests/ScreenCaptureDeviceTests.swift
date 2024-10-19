@@ -1,90 +1,92 @@
-import XCTest
+import Testing
 
 @testable import ios_screen_capture
 
 let defaultUdid = "abcd1234"
 
-final class ScreenCaptureDeviceTests: XCTestCase {
+final class ScreenCaptureDeviceTests {
 
   // MARK: Obtain device tests
 
-  func testObtainDevice_happyPath_worksFine() throws {
-    XCTAssertNoThrow(
+  @Test func obtainDevice_happyPath_worksFine() throws {
+    #expect(throws: Never.self) {
       try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: FakeDeviceProvider())
-    )
+    }
   }
 
-  func testObtainDevice_noDevices_throwsError() throws {
+  @Test func obtainDevice_noDevices_throwsError() throws {
     let provider = FakeDeviceProvider()
     provider.devices = []
-    XCTAssertThrowsError(
-      try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider))
+    #expect(throws: ScreenCaptureError.self) {
+      try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider)
+    }
   }
 
-  func testObtainDevice_multipleMatchingDevices_throwsError() throws {
+  @Test func obtainDevice_multipleMatchingDevices_throwsError() throws {
     let provider = FakeDeviceProvider()
     provider.devices = [FakeDevice(), FakeDevice()]
-    XCTAssertThrowsError(
-      try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider))
+    #expect(throws: ScreenCaptureError.self) {
+      try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider)
+    }
   }
 
-  func testObtainDevice_udidWithHyphens_removesForMatching() throws {
+  @Test func obtainDevice_udidWithHyphens_removesForMatching() throws {
     let hyphenated = "--a-b-c-d-1-2-3-4--"
-    XCTAssertNoThrow(
+    #expect(throws: Never.self) {
       try ScreenCaptureDevice.obtainDevice(withUdid: hyphenated, from: FakeDeviceProvider())
-    )
+    }
   }
 
   // MARK: Activation tests
 
-  func testActivate_normalFlow_sendsControl() throws {
+  @Test func activate_normalFlow_sendsControl() throws {
     let provider = FakeDeviceProvider()
     let fake = provider.devices.first!
     let device = try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider)
 
     _ = try device.activate(reconnectBackoff: 0.0)
 
-    XCTAssertEqual(fake.controlCallCount, 1)
+    #expect(fake.controlCallCount == 1)
   }
 
-  func testActivate_normalFlow_reconnectsProperly() throws {
+  @Test func activate_normalFlow_reconnectsProperly() throws {
     let provider = FakeDeviceProvider()
     let reconnect = provider.reconnectDevices.first!
     let device = try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider)
 
     _ = try device.activate(reconnectBackoff: 0.0)
 
-    XCTAssertGreaterThan(reconnect.openCallCount, 0)
+    #expect(reconnect.openCallCount > 0)
   }
 
-  func testActivate_normalFlow_setsConfigurationAfterReconnect() throws {
+  @Test func activate_normalFlow_setsConfigurationAfterReconnect() throws {
     let provider = FakeDeviceProvider()
     let reconnect = provider.reconnectDevices.first!
     let device = try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider)
 
     _ = try device.activate(reconnectBackoff: 0.0)
 
-    XCTAssertEqual(reconnect.config, 6)
+    #expect(reconnect.config == 6)
   }
 
-  func testActivate_cannotReconect_failsWithError() throws {
+  @Test func testActivate_cannotReconect_failsWithError() throws {
     let provider = FakeDeviceProvider()
     provider.reconnectDevices = []  // Nothing to reconnect to
     let device = try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider)
 
-    XCTAssertThrowsError(try device.activate(reconnectBackoff: 0.0))
+    #expect(throws: ScreenCaptureError.self) { try device.activate(reconnectBackoff: 0.0) }
   }
 
   // MARK: Deactivation tests
 
-  func testDeactivate_normalFlow_sendsControl() throws {
+  @Test func deactivate_normalFlow_sendsControl() throws {
     let provider = FakeDeviceProvider()
     let fake = provider.devices.first!
     let device = try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider)
 
     device.deactivate()
 
-    XCTAssertEqual(fake.controlCallCount, 1)
+    #expect(fake.controlCallCount == 1)
   }
 }
 
