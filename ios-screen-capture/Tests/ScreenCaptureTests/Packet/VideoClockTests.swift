@@ -11,8 +11,7 @@ final class VideoClockTests {
 
   @Test func parseFixture() throws {
     let binary = Data(base64Encoded: fixture)!
-    let packet = try #require(PacketParser.parse(from: binary) as! VideoClock)
-    #expect(packet != nil)
+    _ = try #require(PacketParser.parse(from: binary) as? VideoClock)
   }
 
   @Test func parseReplyFixture() throws {
