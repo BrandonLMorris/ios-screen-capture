@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -250,6 +250,10 @@
 		E7FD25A12C23BD4D007F289A /* VideoDataRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoDataRequest.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		E7B7B53F2CC44C9B00463DD8 /* Stream */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Stream; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
 /* Begin PBXFrameworksBuildPhase section */
 		E74ED4CB2B85629A0079AE68 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
@@ -443,6 +447,7 @@
 		E7D372E82B856AC9004EE79D /* ScreenCapture */ = {
 			isa = PBXGroup;
 			children = (
+				E7B7B53F2CC44C9B00463DD8 /* Stream */,
 				E79F4C422BDEF0CB00F28AE2 /* Object */,
 				E79F4C412BDEF09D00F28AE2 /* Packet */,
 				E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */,
@@ -490,6 +495,9 @@
 			dependencies = (
 				E75237EF2BA672B8002C44F8 /* PBXTargetDependency */,
 			);
+			fileSystemSynchronizedGroups = (
+				E7B7B53F2CC44C9B00463DD8 /* Stream */,
+			);
 			name = "ios-screen-capture";
 			packageProductDependencies = (
 				E7D372E12B8563C0004EE79D /* ArgumentParser */,
@@ -514,6 +522,9 @@
 				E75237F12BA672D9002C44F8 /* PBXTargetDependency */,
 				E75237ED2BA6705A002C44F8 /* PBXTargetDependency */,
 				E75237E42BA628FB002C44F8 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E7B7B53F2CC44C9B00463DD8 /* Stream */,
 			);
 			name = ScreenCaptureDeviceTests;
 			packageProductDependencies = (
@@ -553,6 +564,9 @@
 			dependencies = (
 				E75922F22BA3B58600716653 /* PBXTargetDependency */,
 				E77DFCF92BA3B06A005601D7 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				E7B7B53F2CC44C9B00463DD8 /* Stream */,
 			);
 			name = ScreenCaptureTests;
 			packageProductDependencies = (

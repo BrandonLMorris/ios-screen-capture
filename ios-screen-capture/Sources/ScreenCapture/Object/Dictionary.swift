@@ -149,6 +149,7 @@ enum DataType: String {
   case data = "datv"
   case number = "nmbv"
   case formatDesc = "fdsc"
+  case audioDescriptor = "asbd"
 
   // Media chunk (CMSampleBuffer) specific types
   case mediaChunk = "sbuf"

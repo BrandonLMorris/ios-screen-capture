@@ -11,13 +11,15 @@ class FormatDescription: Equatable {
   }
 
   private let videoMarker = "ediv"
-  private let audioMarker = "nous"
+  private let audioMarker = "nuos"
   // Absolutely no idea where these numbers come from.
   private let parameterSetExtensionIdx = 49
   private let rawParametersIdx = 105
 
   private(set) var pictureParameterSequence = Data()
   private(set) var sequenceParameterSequence = Data()
+
+  private(set) var audioDetails = AudioDetails.defaultInstance
 
   init?(_ data: Data) {
     var idx = 0
@@ -43,10 +45,24 @@ class FormatDescription: Equatable {
     idx += Prefix.size
     let mediaType = data[strType: idx]
     idx += mediaType.count
+    if mediaType == audioMarker {
+      logger.info("Continuing format description parsing for audio")
+      let descriptorPrefix = Prefix(data.from(idx))!
+      guard descriptorPrefix.type == .audioDescriptor else {
+        return nil
+      }
+      if let audioDetails = AudioDetails.parse(from: data.from(idx + Prefix.size)) {
+        logger.info("Parsed audio details")
+        self.audioDetails = audioDetails
+      }
+      return
+    }
+
     guard mediaType == videoMarker else {
-      logger.warning("Encountered non-video media type in format description. Skipping")
+      logger.warning("Unexpected media type found! (\(mediaType)) Cannot parse format description")
       return nil
     }
+    logger.info("Continuing format description parsing for video")
 
     let (width, height) = getVideoDimensions(data.from(idx))
     idx += 16  // 8b prefix + 2x4b integers
@@ -104,5 +120,57 @@ class FormatDescription: Equatable {
 
   private func getVideoCodec(_ data: Data) -> UInt32 {
     data[uint32: Prefix.size]
+  }
+}
+
+internal struct AudioDetails {
+  let sampleRate: Float64
+  let formatId: UInt32
+  let formatFlags: UInt32
+  let bytesPerPacket: UInt32
+  let framesPerPacket: UInt32
+  let bytesPerFrame: UInt32
+  let channelsPerFrame: UInt32
+  let bitsPerChannel: UInt32
+
+  static let defaultInstance = AudioDetails(
+    sampleRate: 48000.0,
+    formatId: 0x6C70_636D,
+    formatFlags: 12,
+    bytesPerPacket: 4,
+    framesPerPacket: 1,
+    bytesPerFrame: 4,
+    channelsPerFrame: 2,
+    bitsPerChannel: 16
+  )
+
+  static func parse(from data: Data) -> AudioDetails? {
+    guard data.count >= 36 else {
+      logger.error("Not enough data to parse AudioDetails! aborting")
+      return nil
+    }
+    var idx = 0
+    let sampleRate = data[float64: idx]
+    idx += 8
+    let formatId = data[uint32: idx]
+    idx += 4
+    let formatFlags = data[uint32: idx]
+    idx += 4
+    let bytesPerPacket = data[uint32: idx]
+    idx += 4
+    let framesPerPacket = data[uint32: idx]
+    idx += 4
+    let bytesPerFrame = data[uint32: idx]
+    idx += 4
+    let channelsPerFrame = data[uint32: idx]
+    idx += 4
+    let bitsPerChannel = data[uint32: idx]
+    idx += 4
+
+    return AudioDetails(
+      sampleRate: sampleRate, formatId: formatId, formatFlags: formatFlags,
+      bytesPerPacket: bytesPerPacket, framesPerPacket: framesPerPacket,
+      bytesPerFrame: bytesPerFrame, channelsPerFrame: channelsPerFrame,
+      bitsPerChannel: bitsPerChannel)
   }
 }

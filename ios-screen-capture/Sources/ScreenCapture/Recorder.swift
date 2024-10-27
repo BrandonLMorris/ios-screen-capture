@@ -5,6 +5,7 @@ class Recorder {
   private var device: ScreenCaptureDevice! = nil
   private var sessionActive = false
   private var startTime: UInt64 = 0
+  private let output: MediaReceiver = VideoFile(to: "/tmp/recording.h264")!
 
   func start(forDeviceWithId udid: String) throws {
     var screenCaptureDevice = try ScreenCaptureDevice.obtainDevice(withUdid: udid)
@@ -100,6 +101,11 @@ class Recorder {
 
     case let videoSample as VideoSample:  // feed
       let sample = videoSample.sample
+      self.output.sendVideo(sample)
+      
+    case let audioSample as AudioSample: // eat!
+      let _ = audioSample.sample
+      logger.info("Received audio sample, dropping")
 
     case _ as SetProperty:
       // Nothing to do
