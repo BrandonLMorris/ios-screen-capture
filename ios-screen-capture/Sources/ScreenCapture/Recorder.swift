@@ -7,13 +7,18 @@ class Recorder {
   private var startTime: UInt64 = 0
   private let output: MediaReceiver = VideoFile(to: "/tmp/recording.h264")!
 
+  private var audioStartTime: Time! = nil
+  private var deviceAudioStart: Time! = nil
+  private var localAudioLatest: Time! = nil
+  private var deviceAudioLatest: Time! = nil
+
   func start(forDeviceWithId udid: String) throws {
     var screenCaptureDevice = try ScreenCaptureDevice.obtainDevice(withUdid: udid)
     screenCaptureDevice = try screenCaptureDevice.activate()
     logger.info("Activated. We are clear for launch.")
 
     screenCaptureDevice.initializeRecording()
-    let packet = try screenCaptureDevice.readPacket()
+    let packet = try screenCaptureDevice.readPackets().first!
     guard let ping = packet as? Ping else {
       throw RecordingError.unrecognizedPacket(
         "Fixme: Unexpected first packet; was looking for ping. base64: \(packet.data.base64EncodedString())"
@@ -41,11 +46,13 @@ class Recorder {
     }
     sessionActive = true
     while sessionActive {
-      guard let packet = try? device.readPacket() else {
+      guard let packets = try? device.readPackets() else {
         logger.error("Failed to read packet")
         return
       }
-      try handle(packet)
+      for packet in packets {
+        try handle(packet)
+      }
     }
   }
 
@@ -67,6 +74,7 @@ class Recorder {
       try device.sendPacket(packet: desc)
       logger.debug("Sending stream desc")
       try device.sendPacket(packet: StreamDescription(clock: packet.clock))
+      self.audioStartTime = Time.now()
       let reply = Reply(correlationId: packet.correlationId, clock: packet.clock + 1000)
       logger.debug("Sending audio clock reply\n\(reply.description)")
       try device.sendPacket(packet: reply)
@@ -99,12 +107,23 @@ class Recorder {
       let reply = timeRequest.reply(withTime: Time(nanoseconds: now - startTime))
       try device.sendPacket(packet: reply)
 
+    case let skewRequest as SkewRequest:  // skew
+      logger.debug("Sending skew reply")
+      let calculatedSkew = skew(
+        localDuration: self.localAudioLatest, deviceDuration: self.deviceAudioLatest)
+      let reply = skewRequest.reply(withSkew: calculatedSkew)
+      try device.sendPacket(packet: reply)
+
     case let videoSample as VideoSample:  // feed
       let sample = videoSample.sample
       self.output.sendVideo(sample)
-      
-    case let audioSample as AudioSample: // eat!
-      let _ = audioSample.sample
+
+    case let audioSamplePacket as AudioSample:  // eat!
+      self.localAudioLatest = Time.now().since(self.audioStartTime)
+      self.deviceAudioLatest = audioSamplePacket.sample.outputPresentation ?? Time.NULL
+      if deviceAudioStart == nil {
+        self.deviceAudioStart = deviceAudioLatest
+      }
       logger.info("Received audio sample, dropping")
 
     case _ as SetProperty:

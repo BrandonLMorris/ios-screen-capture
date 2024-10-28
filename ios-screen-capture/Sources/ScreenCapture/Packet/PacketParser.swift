@@ -150,6 +150,8 @@ internal enum PacketSubtype: String {
   case videoSample = "feed"
   // A packet with a segment of audio data
   case audioSample = "eat!"
+  // A packet to set the time base
+  case timeBase = "tbas"
   // Zero bytes for type. Note this is different than "none"
   case empty = "\0\0\0\0"
 }

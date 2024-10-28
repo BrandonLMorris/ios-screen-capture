@@ -77,7 +77,7 @@ struct ScreenCaptureDevice {
     self.endpoints = endpoints
   }
 
-  func readPacket() throws -> ScreenCapturePacket {
+  func readPackets() throws -> [ScreenCapturePacket] {
     guard let iface = iface, let endpoints = endpoints else {
       throw ScreenCaptureError.uninitialized(
         "Endpoints (\(String(describing: endpoints))) and/or interface (\(String(describing: iface)) nil; device not initialized for reading."
@@ -86,8 +86,39 @@ struct ScreenCaptureDevice {
     guard let raw = iface.read(endpoint: endpoints.in) else {
       throw ScreenCaptureError.readError("Failed to read from device!")
     }
-    let packet = try PacketParser.parse(from: raw)
-    return packet
+    let statedLength = Int(raw[uint32: 0])
+    if statedLength == raw.count {
+      // We read exactly 1 packet
+      let packet = try PacketParser.parse(from: raw)
+      return [packet]
+    }
+    if statedLength < raw.count {
+      // We read +1 packets
+      var packets = [ScreenCapturePacket]()
+      var idx = 0
+      while idx < raw.count {
+        let packetLen = Int(raw[uint32: idx])
+        let packet = try PacketParser.parse(from: raw.from(idx))
+        packets.append(packet)
+        idx += packetLen
+      }
+      return packets
+    }
+    if statedLength > raw.count {
+      // We read <1 packet
+      var fullPacket = Data(raw)
+      var bytesRead = raw.count
+      while bytesRead < statedLength {
+        guard let additional = iface.read(endpoint: endpoints.in) else {
+          throw ScreenCaptureError.readError("Failed to read from device!")
+        }
+        fullPacket.append(additional)
+        bytesRead += additional.count
+      }
+      let packet = try PacketParser.parse(from: fullPacket)
+      return [packet]
+    }
+    throw ScreenCaptureError.readError("This should never happen")
   }
 
   func sendPacket(packet: any ScreenCapturePacket) throws {
