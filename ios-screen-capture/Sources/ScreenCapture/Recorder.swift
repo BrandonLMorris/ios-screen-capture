@@ -129,6 +129,9 @@ class Recorder {
     case _ as SetProperty:
       // Nothing to do
       break
+    case _ as AsyncPacket:
+      // Nothing to do
+      break
 
     default:
       logger.error("Unexpected packet received \(packet.data.base64EncodedString())")

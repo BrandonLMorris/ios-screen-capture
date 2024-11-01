@@ -102,6 +102,8 @@ class PacketParser {
       return AudioSample(header: header, wholePacket: wholePacket)!
     case .setProperty:
       return SetProperty(header: header, wholePacket: wholePacket)!
+    case .timeBase, .timeJump, .setRate:
+      return AsyncPacket(header: header, data: wholePacket)!
     default:
       throw PacketParsingError.generic("Failed to parse async packet")
     }
@@ -152,6 +154,8 @@ internal enum PacketSubtype: String {
   case audioSample = "eat!"
   // A packet to set the time base
   case timeBase = "tbas"
+  case timeJump = "tjmp"
+  case setRate = "srat"
   // Zero bytes for type. Note this is different than "none"
   case empty = "\0\0\0\0"
 }
@@ -160,4 +164,24 @@ internal enum PacketParsingError: Error {
   case generic(_ msg: String)
   case invalidHeader(_ msg: String)
   case unrecognizedPacketType(_ msg: String)
+}
+
+internal class AsyncPacket: ScreenCapturePacket {
+  var header: Header
+  var data: Data
+  
+  lazy var description: String = {
+    """
+    [ASYNC] subtype \(header.subtype.rawValue)
+    """
+  }()
+  
+  init?(header: Header, data: Data) {
+    self.header = header
+    self.data = data
+    
+    guard header.type == .async else {
+      return nil
+    }
+  }
 }
