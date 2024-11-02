@@ -42,7 +42,7 @@ internal class VideoFile: MediaReceiver {
     while idx < data.count {
       let chunkLength = Int(data[uint32: idx])
       idx += 4
-      let toWrite = data.subdata(in: idx..<(idx + chunkLength))
+      let toWrite = data.subdata(in: idx..<min(idx + chunkLength, data.count))
       writeWithStartCode(toWrite)
       idx += chunkLength
     }
