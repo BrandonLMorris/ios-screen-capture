@@ -98,7 +98,7 @@ struct ScreenCaptureDevice {
       var idx = 0
       while idx < raw.count {
         let packetLen = Int(raw[uint32: idx])
-        let packet = try PacketParser.parse(from: raw.from(idx))
+        let packet = try PacketParser.parse(from: raw.subdata(in: idx..<idx+packetLen))
         packets.append(packet)
         idx += packetLen
       }

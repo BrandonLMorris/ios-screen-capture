@@ -12,7 +12,11 @@ struct MediaChunk {
   private(set) var formatDescription: FormatDescription? = nil  // fdsc
   private(set) var attachments = Array()  // satt
   private(set) var sampleReady = Array()  // sary
-
+  
+  init(_ fdesc: FormatDescription) {
+    self.formatDescription = fdesc
+  }
+  
   init?(_ data: Data) {
     var idx = 0
     guard let prefix = Prefix(data), prefix.type == .mediaChunk else {
@@ -44,7 +48,7 @@ struct MediaChunk {
         self.sampleTiming = MediaChunk.parseSampleTiming(data.from(idx + Prefix.size))
 
       case .sampleData:
-        self.sampleData = segmentPrefix.segmentPayload(data.from(idx))
+        self.sampleData = Data(data.from(idx + Prefix.size))
 
       case .formatDesc:
         guard let fdesc = FormatDescription(data.from(idx)) else { return nil }
@@ -67,13 +71,16 @@ struct MediaChunk {
         self.attachments = attachments
 
       case .sampleReady:
-        let payload = segmentPrefix.segmentPayload(data.from(idx))
-        guard let readyArray = Array(payload) else { return nil }
+        guard let readyArray = Array(data.from(idx + Prefix.size)) else { return nil }
         self.sampleReady = readyArray
+        
+      case .free:
+        // Empty block
+        break
 
       default:
         logger.error(
-          "Unexpected media chunk segment prefix type \(segmentPrefix.type.rawValue) at index \(idx). Skipping..."
+          "Unexpected media chunk segment prefix type \(data[uint32: idx + 4]) at index \(idx). Skipping..."
         )
       }
       idx += Int(segmentPrefix.length)

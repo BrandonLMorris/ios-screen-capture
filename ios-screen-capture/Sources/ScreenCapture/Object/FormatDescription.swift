@@ -81,8 +81,8 @@ class FormatDescription: Equatable {
       return nil
     }
     logger.info("Successfully parsed picture/sequence parameter sets")
-    self.pictureParameterSequence = pps
-    self.sequenceParameterSequence = sps
+    self.pictureParameterSequence = Data(pps)
+    self.sequenceParameterSequence = Data(sps)
   }
 
   private func getParameterSets(_ extensions: Array) -> (Data, Data)? {
@@ -105,9 +105,7 @@ class FormatDescription: Equatable {
     idx += 2  // Ignore 2 more bytes for some reason
     let sequenceSetLength = Int(rawParameterSets[idx])
     idx += 1
-    // I don't understand why this is the case
-    let lastIdx = 8 + pictureSetLength + sequenceSetLength
-    let sequenceSet = Data(rawParameterSets.subdata(in: idx..<lastIdx))
+    let sequenceSet = Data(rawParameterSets.subdata(in: idx..<(idx + sequenceSetLength)))
 
     return (pictureSet, sequenceSet)
   }

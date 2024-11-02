@@ -160,6 +160,7 @@ enum DataType: String {
   case sampleSize = "ssiz"
   case attachments = "satt"
   case sampleReady = "sary"
+  case free = "free"
 
   case other = ""
 }

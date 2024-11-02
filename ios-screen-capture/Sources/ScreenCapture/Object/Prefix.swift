@@ -22,7 +22,6 @@ struct Prefix {
     if let dataType = DataType(rawValue: typeStr) {
       self.type = dataType
     } else {
-      logger.warning("Unexpected data type encountered: \(typeSlice.base64EncodedString())")
       self.type = .other
     }
   }

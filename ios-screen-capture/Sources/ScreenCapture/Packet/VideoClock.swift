@@ -19,6 +19,7 @@ class VideoClock: ScreenCapturePacket {
   // N.b. this clock goes in video requests (i.e. NEED packets).
   let clock: CFTypeID
   private let clockIdx = 28
+  internal let formatDescription: FormatDescription
 
   init?(header: Header, data: Data) {
     self.header = header
@@ -28,12 +29,14 @@ class VideoClock: ScreenCapturePacket {
     }
     correlationId = data.subdata(in: correlationIdRange).base64EncodedString()
     clock = UInt(data[uint64: clockIdx])
-    guard Dictionary(data.from(clockIdx + 8)) != nil else {
+    guard let payloadDict = Dictionary(data.from(clockIdx + 8)) else {
       // This dictionary contains the PPS/SPS for the video encoding, so we
       // have to have it.
       return nil
     }
-    // TODO: Extract video the format description data
+    guard let val = payloadDict["FormatDescription"] else { return nil }
+    guard case let .formatDescription(fdesc) = val else { return nil }
+    self.formatDescription = fdesc
   }
 
   func reply(withClock c: CFTypeID) -> Reply {

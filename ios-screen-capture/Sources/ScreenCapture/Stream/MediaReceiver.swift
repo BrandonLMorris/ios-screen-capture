@@ -25,8 +25,8 @@ internal class VideoFile: MediaReceiver {
 
   func sendVideo(_ chunk: MediaChunk) {
     if let formatDesc = chunk.formatDescription {
-      writeWithStartCode(formatDesc.pictureParameterSequence)
       writeWithStartCode(formatDesc.sequenceParameterSequence)
+      writeWithStartCode(formatDesc.pictureParameterSequence)
     }
     if chunk.sampleData.count > 0 {
       write(chunk.sampleData)
@@ -40,7 +40,7 @@ internal class VideoFile: MediaReceiver {
   private func write(_ data: Data) {
     var idx = 0
     while idx < data.count {
-      let chunkLength = Int(data[uint32: idx])
+      let chunkLength = Int(data[uint32: idx].bigEndian)
       idx += 4
       let toWrite = data.subdata(in: idx..<min(idx + chunkLength, data.count))
       writeWithStartCode(toWrite)
@@ -49,9 +49,25 @@ internal class VideoFile: MediaReceiver {
   }
 
   private func writeWithStartCode(_ data: Data) {
-    data.withUnsafeBytes { dataPtr in
-      self.outStream.write(self.startCodePtr, maxLength: 4)
-      self.outStream.write(dataPtr.baseAddress!, maxLength: dataPtr.count)
+    if let err = self.outStream.streamError {
+      logger.error("Stream in error state, not writing: \(err.localizedDescription)")
+      return
+    }
+
+    let startCodeBytesWritten = VideoFile.startCode.withUnsafeBytes { startCodePtr in
+      self.outStream.write(startCodePtr.baseAddress!, maxLength: VideoFile.startCode.count)
+    }
+    if startCodeBytesWritten != VideoFile.startCode.count {
+      logger.error("Error writing start code: \(startCodeBytesWritten) bytes written instead of 4")
+      logger.error("\(self.outStream.streamError!.localizedDescription)")
+    }
+
+    let dataWritten = data.withUnsafeBytes {
+      self.outStream.write($0.baseAddress!, maxLength: data.count)
+    }
+    if dataWritten != data.count {
+      logger.error("Error writing data: \(dataWritten) bytes written instead of \(data.count)")
+      logger.error("\(self.outStream.streamError!.localizedDescription)")
     }
   }
 }
