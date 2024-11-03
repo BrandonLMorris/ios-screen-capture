@@ -13,6 +13,8 @@ class Recorder {
   private var deviceAudioLatest: Time! = nil
   
   private var videoRequest: VideoDataRequest! = nil
+  private let closeStreamGroup = DispatchGroup()
+  private var audioClockRef: CFTypeID = 0
 
   func start(forDeviceWithId udid: String) throws {
     var screenCaptureDevice = try ScreenCaptureDevice.obtainDevice(withUdid: udid)
@@ -34,14 +36,27 @@ class Recorder {
   }
 
   func stop() throws {
-    sessionActive = false
     guard let device = device else {
       throw RecordingError.recordingUninitialized("Cannot stop() recording that never started!")
     }
+    logger.info("Closing stream...")
+    try device.sendPacket(packet: CloseAudioStream(clock: audioClockRef))
+    try device.sendPacket(packet: CloseVideoStream())
+    let closeResult = closeStreamGroup.wait(wallTimeout: .now() + .seconds(3))
+    switch closeResult {
+    case .timedOut:
+      logger.warning("Timed out waiting for the stream to close")
+    case .success:
+      logger.info("Stream closed successfully")
+    }
+    sessionActive = false
     device.deactivate()
   }
 
   private func startMessageLoop() throws {
+    // Enter twice since we need releases for audio and video
+    closeStreamGroup.enter()
+    closeStreamGroup.enter()
     guard let device = device else {
       logger.error("Cannot start message loop without device!")
       return
@@ -50,7 +65,7 @@ class Recorder {
     while sessionActive {
       guard let packets = try? device.readPackets() else {
         logger.error("Failed to read packet")
-        return
+        continue
       }
       for packet in packets {
         try handle(packet)
@@ -68,13 +83,19 @@ class Recorder {
       let reply = packet.reply()
       logger.debug("Sending go reply: \(reply.description)")
       try device.sendPacket(packet: reply)
-
+      
+    case let packet as StopRequest:
+      let reply = packet.reply()
+      logger.debug("Sending stop reply: \(reply.description)")
+      try device.sendPacket(packet: reply)
+      
     case let packet as AudioClock:  // cwpa
       let desc = HostDescription()
       logger.debug("Sending host description packet (2x)\n\(desc.description)")
       try device.sendPacket(packet: desc)
       try device.sendPacket(packet: desc)
       logger.debug("Sending stream desc")
+      audioClockRef = packet.clock
       try device.sendPacket(packet: StreamDescription(clock: packet.clock))
       self.audioStartTime = Time.now()
       let reply = Reply(correlationId: packet.correlationId, clock: packet.clock + 1000)
@@ -133,9 +154,11 @@ class Recorder {
     case _ as SetProperty:
       // Nothing to do
       break
-    case _ as AsyncPacket:
+    case let packet as AsyncPacket:
       // Nothing to do
-      break
+      if packet.header.subtype == .release {
+        closeStreamGroup.leave()
+      }
 
     default:
       logger.error("Unexpected packet received \(packet.data.base64EncodedString())")

@@ -60,6 +60,9 @@
 		E78FBE632C1CAAA7007DAE77 /* VideoClock.swift in Sources */ = {isa = PBXBuildFile; fileRef = E78FBE5F2C1CA37F007DAE77 /* VideoClock.swift */; };
 		E78FBE642C1CAB0B007DAE77 /* Reply.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C572BDEF65F00F28AE2 /* Reply.swift */; };
 		E799598F2BA3B72F00CFBB54 /* ScreenCapturePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */; };
+		E79E42CC2CD70655009CC5D1 /* CloseStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79E42CB2CD70655009CC5D1 /* CloseStream.swift */; };
+		E79E42CD2CD70655009CC5D1 /* CloseStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79E42CB2CD70655009CC5D1 /* CloseStream.swift */; };
+		E79E42CE2CD70655009CC5D1 /* CloseStream.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79E42CB2CD70655009CC5D1 /* CloseStream.swift */; };
 		E79F4C442BDEF18200F28AE2 /* Prefix.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C432BDEF18200F28AE2 /* Prefix.swift */; };
 		E79F4C452BDEF18200F28AE2 /* Prefix.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C432BDEF18200F28AE2 /* Prefix.swift */; };
 		E79F4C472BDEF2C100F28AE2 /* Number.swift in Sources */ = {isa = PBXBuildFile; fileRef = E79F4C462BDEF2C100F28AE2 /* Number.swift */; };
@@ -212,6 +215,7 @@
 		E77DFCEE2BA3A58B005601D7 /* ScreenCaptureTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScreenCaptureTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E77DFCF02BA3A58B005601D7 /* ScreenCapturePacketTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenCapturePacketTests.swift; sourceTree = "<group>"; };
 		E78FBE5F2C1CA37F007DAE77 /* VideoClock.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoClock.swift; sourceTree = "<group>"; };
+		E79E42CB2CD70655009CC5D1 /* CloseStream.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CloseStream.swift; sourceTree = "<group>"; };
 		E79F4C432BDEF18200F28AE2 /* Prefix.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Prefix.swift; sourceTree = "<group>"; };
 		E79F4C462BDEF2C100F28AE2 /* Number.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Number.swift; sourceTree = "<group>"; };
 		E79F4C492BDEF37900F28AE2 /* Dictionary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dictionary.swift; sourceTree = "<group>"; };
@@ -395,6 +399,7 @@
 				E77BD1CB2CBAF1A8000AE0E4 /* StreamTermination.swift */,
 				E77BD1D52CBB018F000AE0E4 /* VideoSample.swift */,
 				E77BD1DB2CBC2C0B000AE0E4 /* AudioSample.swift */,
+				E79E42CB2CD70655009CC5D1 /* CloseStream.swift */,
 			);
 			path = Packet;
 			sourceTree = "<group>";
@@ -675,6 +680,7 @@
 				E77BD1D62CBB018F000AE0E4 /* VideoSample.swift in Sources */,
 				E79F4C672BDEFA3800F28AE2 /* PacketParser.swift in Sources */,
 				E76B12BF2CAA003A0003E398 /* MediaChunk.swift in Sources */,
+				E79E42CD2CD70655009CC5D1 /* CloseStream.swift in Sources */,
 				E7D372FA2B93E5DA004EE79D /* Device.swift in Sources */,
 				E7F2B5CE2CA9988300AD4CB7 /* HostClockRequest.swift in Sources */,
 				E7F2B5C82CA8D59000AD4CB7 /* SetProperty.swift in Sources */,
@@ -715,6 +721,7 @@
 				E77BD1D72CBB018F000AE0E4 /* VideoSample.swift in Sources */,
 				E78FBE642C1CAB0B007DAE77 /* Reply.swift in Sources */,
 				E76B12C02CAA003A0003E398 /* MediaChunk.swift in Sources */,
+				E79E42CE2CD70655009CC5D1 /* CloseStream.swift in Sources */,
 				E78FBE632C1CAAA7007DAE77 /* VideoClock.swift in Sources */,
 				E7F2B5CD2CA9988300AD4CB7 /* HostClockRequest.swift in Sources */,
 				E7F2B5C92CA8D59000AD4CB7 /* SetProperty.swift in Sources */,
@@ -798,6 +805,7 @@
 				E7FC8D272C56D1A100625F03 /* VideoDataRequestTests.swift in Sources */,
 				E76B12BE2CAA003A0003E398 /* MediaChunk.swift in Sources */,
 				E77BD1DA2CBB01CE000AE0E4 /* VideoSampleTests.swift in Sources */,
+				E79E42CC2CD70655009CC5D1 /* CloseStream.swift in Sources */,
 				E79F4C5C2BDEF81400F28AE2 /* Data+Utilities.swift in Sources */,
 				E77BD1B72CB2D07F000AE0E4 /* MediaChunkTests.swift in Sources */,
 				E78FBE612C1CA37F007DAE77 /* VideoClock.swift in Sources */,

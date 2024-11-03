@@ -102,7 +102,7 @@ class PacketParser {
       return AudioSample(header: header, wholePacket: wholePacket)!
     case .setProperty:
       return SetProperty(header: header, wholePacket: wholePacket)!
-    case .timeBase, .timeJump, .setRate:
+    case .timeBase, .timeJump, .setRate, .release:
       return AsyncPacket(header: header, data: wholePacket)!
     default:
       throw PacketParsingError.generic("Failed to parse async packet")
@@ -156,6 +156,7 @@ internal enum PacketSubtype: String {
   case timeBase = "tbas"
   case timeJump = "tjmp"
   case setRate = "srat"
+  case release = "rels"
   // Zero bytes for type. Note this is different than "none"
   case empty = "\0\0\0\0"
 }
