@@ -1,3 +1,4 @@
+import CoreMedia
 import Foundation
 
 /// Metadata about the video/audio, e.g. the h264 PPS/SPS.
@@ -12,6 +13,7 @@ class FormatDescription: Equatable {
 
   private let videoMarker = "ediv"
   private let audioMarker = "nuos"
+  private(set) var mediaMarker: String
   // Absolutely no idea where these numbers come from.
   private let parameterSetExtensionIdx = 49
   private let rawParametersIdx = 105
@@ -44,6 +46,7 @@ class FormatDescription: Equatable {
     }
     idx += Prefix.size
     let mediaType = data[strType: idx]
+    self.mediaMarker = mediaType
     idx += mediaType.count
     if mediaType == audioMarker {
       logger.info("Continuing format description parsing for audio")
@@ -83,6 +86,41 @@ class FormatDescription: Equatable {
     logger.info("Successfully parsed picture/sequence parameter sets")
     self.pictureParameterSequence = Data(pps)
     self.sequenceParameterSequence = Data(sps)
+  }
+
+  func toCMFormatDescription() -> CMFormatDescription? {
+    guard self.mediaMarker == videoMarker else {
+      // TODO: Support CMFormatDescription for audio
+      return nil
+    }
+
+    var formatDesc: CMFormatDescription?
+    let status = self.sequenceParameterSequence.withUnsafeBytes {
+      (sequenceParam: UnsafeRawBufferPointer) in
+      self.pictureParameterSequence.withUnsafeBytes { (pictureParam: UnsafeRawBufferPointer) in
+        let parameterSets = [
+          sequenceParam.baseAddress!.assumingMemoryBound(to: UInt8.self),
+          pictureParam.baseAddress!.assumingMemoryBound(to: UInt8.self),
+        ]
+        let parameterSetSizes = [
+          self.sequenceParameterSequence.count, self.pictureParameterSequence.count,
+        ]
+        let status = CMVideoFormatDescriptionCreateFromH264ParameterSets(
+          allocator: kCFAllocatorDefault,
+          parameterSetCount: 2,
+          parameterSetPointers: parameterSets,
+          parameterSetSizes: parameterSetSizes,
+          nalUnitHeaderLength: 4,
+          formatDescriptionOut: &formatDesc
+        )
+        return status
+      }
+    }
+    guard status == noErr else {
+      logger.error("Failed to create CMFormatDescription for H264 video! \(status)")
+      return nil
+    }
+    return formatDesc
   }
 
   private func getParameterSets(_ extensions: Array) -> (Data, Data)? {

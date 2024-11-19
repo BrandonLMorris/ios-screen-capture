@@ -1,3 +1,5 @@
+import AVFoundation
+import CoreMedia
 import Foundation
 
 internal protocol MediaReceiver {
@@ -7,12 +9,7 @@ internal protocol MediaReceiver {
 
 internal class VideoFile: MediaReceiver {
   private static let startCode = Data([0x00, 0x00, 0x00, 0x01])
-
   private let outStream: OutputStream
-  private let startCodePtr: UnsafeRawPointer = VideoFile.startCode.withUnsafeBytes {
-    (ptr: UnsafeRawBufferPointer) -> UnsafeRawPointer in
-    ptr.baseAddress!
-  }
 
   init?(to filePath: String) {
     guard let outStream = OutputStream(toFileAtPath: filePath, append: false) else {
@@ -68,6 +65,124 @@ internal class VideoFile: MediaReceiver {
     if dataWritten != data.count {
       logger.error("Error writing data: \(dataWritten) bytes written instead of \(data.count)")
       logger.error("\(self.outStream.streamError!.localizedDescription)")
+    }
+  }
+}
+
+internal class AVAssetReceiver: MediaReceiver {
+  private let assetWriter: AVAssetWriter
+  private var assetWriterInput: AVAssetWriterInput? = nil
+  private var formatDescription: CMFormatDescription!
+  private var startedInput: Bool = false
+  private var lastPts: CMTime! = nil
+  private var presentationTimestamp: CMTime! = nil
+
+  init?(to filePath: String) {
+    AVAssetReceiver.deleteIfExists(filePath)
+    guard let assetWriter = try? AVAssetWriter(outputURL: URL(filePath: filePath), fileType: .mp4)
+    else {
+      return nil
+    }
+    self.assetWriter = assetWriter
+  }
+
+  func sendVideo(_ chunk: MediaChunk) {
+    if self.assetWriterInput == nil {
+      initializeAssetWriterInput(chunk)
+    }
+    self.lastPts = self.presentationTimestamp
+    self.presentationTimestamp = CMClock.hostTimeClock.time
+    if !startedInput {
+      self.assetWriter.startSession(atSourceTime: presentationTimestamp)
+      startedInput = true
+    }
+    guard self.assetWriter.status == .writing else {
+      logger.error("Unexpected asset writer status: \(self.assetWriter.status.rawValue)")
+      return
+    }
+    guard let assetWriterInput = self.assetWriterInput else { return }
+
+    let sampleBuffer = chunk.sampleBuffer(
+      presentationTimestamp, lastPts, fd: self.formatDescription)
+    guard CMSampleBufferIsValid(sampleBuffer) else {
+      logger.error("Sample buffer is invalid! dropping")
+      return
+    }
+    guard startedInput else {
+      logger.warning("Asset writer session has not started; dropping sample buffer")
+      return
+    }
+    guard assetWriterInput.isReadyForMoreMediaData else {
+      logger.error("Asset writer input is not ready for more media data; dropping buffer")
+      return
+    }
+    if !assetWriterInput.append(sampleBuffer) {
+      logger.error(
+        """
+        Failed to append sample buffer!
+          status: \(self.assetWriter.status.rawValue)
+          error: \(String(describing: self.assetWriter.error))
+        """
+      )
+    }
+  }
+
+  func end() {
+    assetWriterInput?.markAsFinished()
+    let writer = assetWriter
+    writer.endSession(atSourceTime: presentationTimestamp)
+    writer.finishWriting { [weak writer] in
+      if writer?.status == .completed {
+        logger.info("Successfully wrote media output")
+      } else {
+        let status: Int = writer?.status.rawValue ?? 0
+        logger.error("Failed to shutdown media output stream: \(status)")
+      }
+    }
+  }
+
+  private func initializeAssetWriterInput(_ chunk: MediaChunk) {
+    logger.info("Initializing asset writer input")
+    guard let fd = chunk.formatDescription else {
+      logger.warning("Media chunk lacks format description; skipping")
+      return
+    }
+    guard let cmFormatDescription = fd.toCMFormatDescription() else {
+      logger.warning("Failed to construct CMFormatDescription; skipping")
+      return
+    }
+    self.formatDescription = cmFormatDescription
+
+    let videoInput = AVAssetWriterInput(
+      mediaType: .video, outputSettings: nil,
+      sourceFormatHint: cmFormatDescription)
+    videoInput.expectsMediaDataInRealTime = true
+    guard self.assetWriter.canAdd(videoInput) else {
+      logger.error("AVAssetWriter cannot add input!")
+      return
+    }
+    self.assetWriter.add(videoInput)
+    guard self.assetWriter.startWriting() else {
+      logger.error(
+        """
+        Failed to start writing AVAssetWriter!
+          status: \(self.assetWriter.status.rawValue)
+          error: \(self.assetWriter.error?.localizedDescription ?? "none")
+        """
+      )
+      return
+    }
+    self.assetWriterInput = videoInput
+    logger.info("Successfully initialized asset writer video input")
+  }
+
+  private static func deleteIfExists(_ file: String) {
+    let fm = FileManager.default
+    guard fm.fileExists(atPath: file) else { return }
+    do {
+      try fm.removeItem(atPath: file)
+    } catch {
+      logger.error("Failed to delete file at \(file): \(error)")
     }
   }
 }

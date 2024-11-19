@@ -98,7 +98,7 @@ struct ScreenCaptureDevice {
       var idx = 0
       while idx < raw.count {
         let packetLen = Int(raw[uint32: idx])
-        let packet = try PacketParser.parse(from: raw.subdata(in: idx..<idx+packetLen))
+        let packet = try PacketParser.parse(from: raw.subdata(in: idx..<idx + packetLen))
         packets.append(packet)
         idx += packetLen
       }
@@ -130,7 +130,7 @@ struct ScreenCaptureDevice {
     guard iface.write(packet.data, to: endpoints.out) else {
       throw ScreenCaptureError.writeError("Failed to write to device!")
     }
-    logger.info("Wrote \(packet.data.count) bytes")
+    logger.debug("Wrote \(packet.data.count) bytes")
   }
 
   /// Sends a ping packet to the device.

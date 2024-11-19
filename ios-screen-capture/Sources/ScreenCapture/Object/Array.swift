@@ -6,7 +6,7 @@ import Foundation
 /// to N-1 are set.
 internal class Array: Equatable {
 
-  private var backingMap = [Int: DictValue]()
+  private(set) var backingMap = [Int: DictValue]()
 
   init() {}
 

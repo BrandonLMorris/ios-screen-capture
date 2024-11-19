@@ -5,13 +5,14 @@ class Recorder {
   private var device: ScreenCaptureDevice! = nil
   private var sessionActive = false
   private var startTime: UInt64 = 0
-  private let output: MediaReceiver = VideoFile(to: "/tmp/recording.h264")!
+  // private let output: MediaReceiver = VideoFile(to: "/tmp/recording.h264")!
+  private let output: MediaReceiver = AVAssetReceiver(to: "/tmp/recording.mp4")!
 
   private var audioStartTime: Time! = nil
   private var deviceAudioStart: Time! = nil
   private var localAudioLatest: Time! = nil
   private var deviceAudioLatest: Time! = nil
-  
+
   private var videoRequest: VideoDataRequest! = nil
   private let closeStreamGroup = DispatchGroup()
   private var audioClockRef: CFTypeID = 0
@@ -36,6 +37,7 @@ class Recorder {
   }
 
   func stop() throws {
+    self.output.end()
     guard let device = device else {
       throw RecordingError.recordingUninitialized("Cannot stop() recording that never started!")
     }
@@ -83,12 +85,12 @@ class Recorder {
       let reply = packet.reply()
       logger.debug("Sending go reply: \(reply.description)")
       try device.sendPacket(packet: reply)
-      
+
     case let packet as StopRequest:
       let reply = packet.reply()
       logger.debug("Sending stop reply: \(reply.description)")
       try device.sendPacket(packet: reply)
-      
+
     case let packet as AudioClock:  // cwpa
       let desc = HostDescription()
       logger.debug("Sending host description packet (2x)\n\(desc.description)")
@@ -108,7 +110,6 @@ class Recorder {
       try device.sendPacket(packet: packet.reply())
 
     case let packet as VideoClock:  // cvrp
-      self.output.sendVideo(MediaChunk(packet.formatDescription))
       self.videoRequest = VideoDataRequest(clock: packet.clock)
       logger.debug("Sending video data request\n\(self.videoRequest.description)")
       try device.sendPacket(packet: videoRequest)
@@ -149,7 +150,6 @@ class Recorder {
       if deviceAudioStart == nil {
         self.deviceAudioStart = deviceAudioLatest
       }
-      // logger.info("Received audio sample, dropping")
 
     case _ as SetProperty:
       // Nothing to do

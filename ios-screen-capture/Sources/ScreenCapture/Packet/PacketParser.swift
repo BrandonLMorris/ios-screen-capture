@@ -18,10 +18,10 @@ class PacketParser {
       }
       return ping
     case .sync:
-      logger.info("Received sync packet (subytpe=\(header.subtype.rawValue))")
+      logger.debug("Received sync packet (subytpe=\(header.subtype.rawValue))")
       return try parseSync(header, payload)
     case .async:
-      logger.info("Received async packet (subytpe=\(header.subtype.rawValue))")
+      logger.debug("Received async packet (subytpe=\(header.subtype.rawValue))")
       return try parseAsync(header, payload)
     case .reply:
       logger.error("Reply packets are only sent! Not parsing")
@@ -170,17 +170,17 @@ internal enum PacketParsingError: Error {
 internal class AsyncPacket: ScreenCapturePacket {
   var header: Header
   var data: Data
-  
+
   lazy var description: String = {
     """
     [ASYNC] subtype \(header.subtype.rawValue)
     """
   }()
-  
+
   init?(header: Header, data: Data) {
     self.header = header
     self.data = data
-    
+
     guard header.type == .async else {
       return nil
     }

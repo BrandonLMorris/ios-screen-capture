@@ -1,3 +1,4 @@
+import CoreMedia
 import Foundation
 
 extension Data {
@@ -94,5 +95,18 @@ extension Data {
 
   func from(_ idx: Int) -> Data {
     self.subdata(in: idx..<self.count)
+  }
+
+  var blockBuffer: CMBlockBuffer {
+    var blockBuffer: CMBlockBuffer?
+    _ = self.withUnsafeBytes { (samplePtr: UnsafeRawBufferPointer) in
+      CMBlockBufferCreateWithMemoryBlock(
+        allocator: kCFAllocatorDefault,
+        memoryBlock: UnsafeMutableRawPointer(mutating: samplePtr.baseAddress!),
+        blockLength: count, blockAllocator: kCFAllocatorNull,
+        customBlockSource: nil, offsetToData: 0, dataLength: count, flags: 0,
+        blockBufferOut: &blockBuffer)
+    }
+    return blockBuffer!
   }
 }

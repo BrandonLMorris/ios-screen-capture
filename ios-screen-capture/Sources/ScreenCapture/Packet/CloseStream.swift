@@ -10,11 +10,11 @@ internal class CloseAudioStream: ScreenCapturePacket {
     """
   }()
   private let clock: CFTypeID
-  
+
   init(clock: CFTypeID) {
     self.clock = clock
   }
-  
+
   lazy var data: Data = {
     return header.serialized
   }()
@@ -27,7 +27,7 @@ internal class CloseVideoStream: ScreenCapturePacket {
     [HPD0] Video stream termination
     """
   }()
-  
+
   lazy var data: Data = {
     return header.serialized
   }()

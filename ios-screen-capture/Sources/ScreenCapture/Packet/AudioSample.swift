@@ -13,7 +13,7 @@ class AudioSample: ScreenCapturePacket {
   init?(header: Header, wholePacket: Data) {
     self.header = header
     self.data = wholePacket
-    guard let sample = MediaChunk(data.from(20)) else {
+    guard let sample = MediaChunk(data.from(20), mediaType: .audio) else {
       return nil
     }
     self.sample = sample

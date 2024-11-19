@@ -1,3 +1,4 @@
+import CoreMedia
 import Foundation
 
 /// A hunk of audio or video data.
@@ -8,16 +9,26 @@ struct MediaChunk {
   private(set) var sampleTiming = [TimingData]()  // stia
   private(set) var sampleData = Data(count: 0)  // sdat, aka nalu
   private(set) var sampleCount = UInt32(0)  // nsmp
-  private(set) var sampleSize = [UInt32]()  // ssiz
+  private(set) var sampleSize = [Int]()  // ssiz
   private(set) var formatDescription: FormatDescription? = nil  // fdsc
   private(set) var attachments = Array()  // satt
   private(set) var sampleReady = Array()  // sary
-  
-  init(_ fdesc: FormatDescription) {
-    self.formatDescription = fdesc
+
+  private var samplesProcessed = 0
+
+  enum ChunkType {
+    case video
+    case audio
   }
-  
-  init?(_ data: Data) {
+  private(set) var mediaType: ChunkType
+
+  init(_ fdesc: FormatDescription, mediaType: ChunkType = .video) {
+    self.formatDescription = fdesc
+    self.mediaType = mediaType
+  }
+
+  init?(_ data: Data, mediaType: ChunkType = .video) {
+    self.mediaType = mediaType
     var idx = 0
     guard let prefix = Prefix(data), prefix.type == .mediaChunk else {
       logger.error("Failed to parse MediaChunk (sbuf). Invalid prefix")
@@ -45,7 +56,7 @@ struct MediaChunk {
         self.outputPresentation = time
 
       case .sampleTiming:
-        self.sampleTiming = MediaChunk.parseSampleTiming(data.from(idx + Prefix.size))
+        self.sampleTiming = MediaChunk.parseSampleTiming(data.from(idx))
 
       case .sampleData:
         self.sampleData = Data(data.from(idx + Prefix.size))
@@ -58,10 +69,10 @@ struct MediaChunk {
         self.sampleCount = data[uint32: idx + Prefix.size]
 
       case .sampleSize:
-        var sizes = [UInt32]()
+        var sizes = [Int]()
         var subIdx = idx + Prefix.size
         while subIdx < idx + Int(segmentPrefix.length) {
-          sizes.append(data[uint32: subIdx])
+          sizes.append(Int(data[uint32: subIdx]))
           subIdx += 4
         }
         self.sampleSize = sizes
@@ -73,7 +84,7 @@ struct MediaChunk {
       case .sampleReady:
         guard let readyArray = Array(data.from(idx + Prefix.size)) else { return nil }
         self.sampleReady = readyArray
-        
+
       case .free:
         // Empty block
         break
@@ -85,6 +96,28 @@ struct MediaChunk {
       }
       idx += Int(segmentPrefix.length)
     }
+  }
+
+  func sampleBuffer(_ pts: CMTime, _ lastPts: CMTime?, fd: CMFormatDescription? = nil)
+    -> CMSampleBuffer
+  {
+    var sampleSize = sampleSize
+    var timingInfo = sampleTiming.toCmSampleTimingInfo(pts, lastPts)
+    var sampleBuffer: CMSampleBuffer?
+    CMSampleBufferCreate(
+      allocator: kCFAllocatorDefault,
+      dataBuffer: sampleData.blockBuffer,
+      dataReady: true,
+      makeDataReadyCallback: nil,
+      refcon: nil,
+      formatDescription: formatDescription?.toCMFormatDescription() ?? fd,
+      sampleCount: CMItemCount(sampleCount),
+      sampleTimingEntryCount: timingInfo.count,
+      sampleTimingArray: &timingInfo,
+      sampleSizeEntryCount: sampleSize.count,
+      sampleSizeArray: &sampleSize,
+      sampleBufferOut: &sampleBuffer)
+    return sampleBuffer!
   }
 
   private static func parseSampleTiming(_ data: Data) -> [TimingData] {
@@ -115,6 +148,20 @@ internal struct TimingData {
     self.duration = duration
     self.presentation = presentation
     self.decode = decode
+  }
+
+  func sampleTiming(_ pts: CMTime, _ lastPts: CMTime? = nil) -> CMSampleTimingInfo {
+    var dur = CMTime(seconds: (1.0 / 60.0), preferredTimescale: 1_000_000_000)
+    if let lastPts = lastPts { dur = CMTimeSubtract(pts, lastPts) }
+    return CMSampleTimingInfo(
+      duration: dur, presentationTimeStamp: pts,
+      decodeTimeStamp: decode.toCMTime())
+  }
+}
+
+extension Swift.Array where Element == TimingData {
+  fileprivate func toCmSampleTimingInfo(_ pts: CMTime, _ lastPts: CMTime?) -> [CMSampleTimingInfo] {
+    self.map { $0.sampleTiming(pts, lastPts) }
   }
 }
 

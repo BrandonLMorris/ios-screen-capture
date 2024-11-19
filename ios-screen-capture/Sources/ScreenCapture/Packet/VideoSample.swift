@@ -14,7 +14,7 @@ class VideoSample: ScreenCapturePacket {
     self.header = header
     self.data = wholePacket
 
-    guard let sample = MediaChunk(data.from(20)) else {
+    guard let sample = MediaChunk(data.from(20), mediaType: .video) else {
       return nil
     }
     self.sample = sample
