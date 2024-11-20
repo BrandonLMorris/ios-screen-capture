@@ -1,32 +1,26 @@
 import Foundation
 
-internal class CloseAudioStream: ScreenCapturePacket {
+internal class CloseStream: ScreenCapturePacket {
+  private let clock: CFTypeID?
   lazy var header = {
-    Header(length: 20, type: .async, subtype: .audioTermination, payload: self.clock)
+    if let clock = clock {
+      return Header(length: 20, type: .async, subtype: .audioTermination, payload: clock)
+    } else {
+      return Header(length: 20, type: .async, subtype: .videoTermination)
+    }
   }()
-  lazy var description: String = {
-    """
-    [HPA0] Audio stream termination
-    """
-  }()
-  private let clock: CFTypeID
 
-  init(clock: CFTypeID) {
+  lazy var description: String = {
+    let packetId = if clock == nil { "HPD0" } else { "HPA0" }
+    let mediaType = if clock == nil { "Video" } else { "Audio" }
+    return """
+      [\(packetId)] \(mediaType) stream termination
+      """
+  }()
+
+  init(clock: CFTypeID? = nil) {
     self.clock = clock
   }
-
-  lazy var data: Data = {
-    return header.serialized
-  }()
-}
-
-internal class CloseVideoStream: ScreenCapturePacket {
-  lazy var header = Header(length: 20, type: .async, subtype: .videoTermination)
-  lazy var description: String = {
-    """
-    [HPD0] Video stream termination
-    """
-  }()
 
   lazy var data: Data = {
     return header.serialized

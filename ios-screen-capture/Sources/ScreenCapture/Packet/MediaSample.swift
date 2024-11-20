@@ -31,4 +31,3 @@ class MediaSample: ScreenCapturePacket {
     self.sample = sample
   }
 }
-

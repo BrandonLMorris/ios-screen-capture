@@ -42,8 +42,8 @@ class Recorder {
       throw RecordingError.recordingUninitialized("Cannot stop() recording that never started!")
     }
     logger.info("Closing stream...")
-    try device.sendPacket(packet: CloseAudioStream(clock: audioClockRef))
-    try device.sendPacket(packet: CloseVideoStream())
+    try device.sendPacket(packet: CloseStream(clock: audioClockRef))
+    try device.sendPacket(packet: CloseStream())
     let closeResult = closeStreamGroup.wait(wallTimeout: .now() + .seconds(3))
     switch closeResult {
     case .timedOut:
