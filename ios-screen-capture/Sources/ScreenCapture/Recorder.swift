@@ -139,16 +139,17 @@ class Recorder {
       let reply = skewRequest.reply(withSkew: calculatedSkew)
       try device.sendPacket(packet: reply)
 
-    case let videoSample as VideoSample:  // feed
-      let sample = videoSample.sample
-      self.output.sendVideo(sample)
-      try device.sendPacket(packet: self.videoRequest)
-
-    case let audioSamplePacket as AudioSample:  // eat!
-      self.localAudioLatest = Time.now().since(self.audioStartTime)
-      self.deviceAudioLatest = audioSamplePacket.sample.outputPresentation ?? Time.NULL
-      if deviceAudioStart == nil {
-        self.deviceAudioStart = deviceAudioLatest
+    case let mediaSample as MediaSample:
+      switch mediaSample.mediaType {
+      case .video:
+        self.output.sendVideo(mediaSample.sample)
+        try device.sendPacket(packet: self.videoRequest)
+      case .audio:
+        self.localAudioLatest = Time.now().since(self.audioStartTime)
+        self.deviceAudioLatest = mediaSample.sample.outputPresentation ?? Time.NULL
+        if deviceAudioStart == nil {
+          self.deviceAudioStart = deviceAudioLatest
+        }
       }
 
     case _ as SetProperty:

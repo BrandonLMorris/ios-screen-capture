@@ -97,9 +97,9 @@ class PacketParser {
   {
     switch header.subtype {
     case .videoSample:
-      return VideoSample(header: header, wholePacket: wholePacket)!
+      return MediaSample(header: header, wholePacket: wholePacket, .video)!
     case .audioSample:
-      return AudioSample(header: header, wholePacket: wholePacket)!
+      return MediaSample(header: header, wholePacket: wholePacket, .audio)!
     case .setProperty:
       return SetProperty(header: header, wholePacket: wholePacket)!
     case .timeBase, .timeJump, .setRate, .release:

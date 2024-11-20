@@ -8,7 +8,7 @@ final class VideoSampleTests {
   )!
 
   @Test func fixtureParsing() throws {
-    let packet = try PacketParser.parse(from: fixture) as! VideoSample
+    let packet = try PacketParser.parse(from: fixture) as! MediaSample
 
     let idx19 = try #require(packet.sample.attachments[19])
     guard case let .bool(idx19Value) = idx19 else {
