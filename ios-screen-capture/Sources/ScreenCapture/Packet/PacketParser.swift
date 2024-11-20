@@ -18,10 +18,8 @@ class PacketParser {
       }
       return ping
     case .sync:
-      logger.debug("Received sync packet (subytpe=\(header.subtype.rawValue))")
       return try parseSync(header, payload)
     case .async:
-      logger.debug("Received async packet (subytpe=\(header.subtype.rawValue))")
       return try parseAsync(header, payload)
     case .reply:
       logger.error("Reply packets are only sent! Not parsing")
@@ -78,17 +76,8 @@ class PacketParser {
           "Failed to parse skew request: \(wholePacket.base64EncodedString())")
       }
       return skewReq
-    case .streamDesciption:
-      // Should only be sent
-      throw PacketParsingError.generic("Unexpected host description (HPA1) packet")
-    case .hostDescription:
-      // Should only be sent
-      throw PacketParsingError.generic("Unexpected host description (HPD1) packet")
-    case .videoDataRequest:
-      // Should only be sent
-      throw PacketParsingError.generic("Unexpected video request (NEED) packet")
     default:
-      throw PacketParsingError.generic("Unknown subtype: \(header.subtype)")
+      throw PacketParsingError.generic("Unexpected/unknown subtype: \(header.subtype)")
     }
   }
 

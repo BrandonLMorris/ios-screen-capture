@@ -7,6 +7,7 @@ class Recorder {
   private var startTime: UInt64 = 0
   // private let output: MediaReceiver = VideoFile(to: "/tmp/recording.h264")!
   private let output: MediaReceiver = AVAssetReceiver(to: "/tmp/recording.mp4")!
+  private let verbose: Bool
 
   private var audioStartTime: Time! = nil
   private var deviceAudioStart: Time! = nil
@@ -16,13 +17,17 @@ class Recorder {
   private var videoRequest: VideoDataRequest! = nil
   private let closeStreamGroup = DispatchGroup()
   private var audioClockRef: CFTypeID = 0
+  
+  init(verbose: Bool = false) {
+    self.verbose = verbose
+  }
 
   func start(forDeviceWithId udid: String) throws {
     var screenCaptureDevice = try ScreenCaptureDevice.obtainDevice(withUdid: udid)
     screenCaptureDevice = try screenCaptureDevice.activate()
     logger.info("Activated. We are clear for launch.")
 
-    screenCaptureDevice.initializeRecording()
+    screenCaptureDevice.initializeRecording(verboseLogging: verbose)
     let packet = try screenCaptureDevice.readPackets().first!
     guard let ping = packet as? Ping else {
       throw RecordingError.unrecognizedPacket(
@@ -76,7 +81,7 @@ class Recorder {
   }
 
   private func handle(_ packet: ScreenCapturePacket) throws {
-    logger.debug("\(packet.description)")
+    if verbose { logger.debug("\(packet.description)") }
     switch packet {
     case _ as Ping:
       try device.ping()

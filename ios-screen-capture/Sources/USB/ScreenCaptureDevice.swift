@@ -15,6 +15,7 @@ struct ScreenCaptureDevice {
   private let reconnectProvider: (any DeviceProvider)?
   private var iface: InterfaceInterface? = nil
   private var endpoints: Endpoints? = nil
+  private var verbose: Bool = false
 
   public static func obtainDevice(
     withUdid udid: String, from provider: any DeviceProvider = USBDeviceProvider()
@@ -57,7 +58,8 @@ struct ScreenCaptureDevice {
     controlActivation(activate: false)
   }
 
-  mutating func initializeRecording() {
+  mutating func initializeRecording(verboseLogging: Bool) {
+    self.verbose = verboseLogging
     guard
       let iface = device.getInterface(
         withSubclass: recordingInterfaceSubclass, withAlt: recordingInterfaceAlt)
@@ -85,6 +87,9 @@ struct ScreenCaptureDevice {
     }
     guard let raw = iface.read(endpoint: endpoints.in) else {
       throw ScreenCaptureError.readError("Failed to read from device!")
+    }
+    if verbose {
+      logger.debug("Read \(raw.count) bytes from device")
     }
     let statedLength = Int(raw[uint32: 0])
     if statedLength == raw.count {
@@ -130,7 +135,9 @@ struct ScreenCaptureDevice {
     guard iface.write(packet.data, to: endpoints.out) else {
       throw ScreenCaptureError.writeError("Failed to write to device!")
     }
-    logger.debug("Wrote \(packet.data.count) bytes")
+    if verbose {
+      logger.debug("Wrote \(packet.data.count) bytes")
+    }
   }
 
   /// Sends a ping packet to the device.

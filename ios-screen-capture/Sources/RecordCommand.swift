@@ -5,9 +5,12 @@ import Foundation
 struct RecordCommand: ParsableCommand {
   @Option(name: .shortAndLong, help: "The UDID of the device to record (find with idevice_id -l)")
   var udid: String
+  
+  @Option(name: .shortAndLong, help: "Enable extra logging")
+  var verbose: Bool = false
 
   mutating func run() throws {
-    let recorder = Recorder()
+    let recorder = Recorder(verbose: verbose)
     DispatchQueue.global().async { [self] in
       do {
         // I solemnly swear I am up to no good...

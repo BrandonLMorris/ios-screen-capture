@@ -390,7 +390,6 @@ extension InterfaceInterface: CustomStringConvertible {
       totalRead += Int(readLen)
       buffer.append(extra.prefix(Int(readLen)))
     }
-    logger.debug("Read \(totalRead) bytes")
     return buffer.prefix(totalRead)
   }
 
