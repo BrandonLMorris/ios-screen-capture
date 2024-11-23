@@ -164,10 +164,3 @@ extension Swift.Array where Element == TimingData {
     self.map { $0.sampleTiming(pts, lastPts) }
   }
 }
-
-extension Prefix {
-  /// Obtain the payload of a segment (the data after the prefix).
-  fileprivate func segmentPayload(_ fullData: Data) -> Data {
-    fullData.subdata(in: Prefix.size..<Int(self.length))
-  }
-}
