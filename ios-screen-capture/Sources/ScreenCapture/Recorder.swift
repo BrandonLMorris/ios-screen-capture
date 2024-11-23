@@ -80,98 +80,130 @@ class Recorder {
     }
   }
 
+
   private func handle(_ packet: ScreenCapturePacket) throws {
     if verbose { logger.debug("\(packet.description)") }
     switch packet {
     case _ as Ping:
       try device.ping()
-
     case let controlPacket as ControlPacket:
-      if controlPacket.header.subtype == .goRequest {
-        let goReply = controlPacket.reply()
-        logger.debug("Sending go reply: \(goReply.description)")
-        try device.sendPacket(packet: goReply)
-      }
-      if controlPacket.header.subtype == .stopRequest {
-        let stopReply = controlPacket.reply()
-        logger.debug("Sending stop reply: \(stopReply.description)")
-        try device.sendPacket(packet: stopReply)
-      }
-
-    case let audioClockPacket as AudioClock:  // cwpa
-      let desc = HostDescription()
-      logger.debug("Sending host description packet\n\(desc.description)")
-      try device.sendPacket(packet: desc)
-      logger.debug("Sending stream desc")
-      audioClockRef = audioClockPacket.clock.clock
-      try device.sendPacket(packet: StreamDescription(clock: audioClockRef))
-      self.audioStartTime = Time.now()
-      let audioClockReply = Reply(
-        correlationId: audioClockPacket.clock.correlationId,
-        clock: audioClockPacket.clock.clock + 1000)
-      logger.debug("Sending audio clock reply\n\(audioClockReply.description)")
-      try device.sendPacket(packet: audioClockReply)
-
-    case let audioFormatPacket as AudioFormat:  // afmt
+      try handle(controlPacket)
+    case let audioClockPacket as AudioClock:
+      try handle(audioClockPacket)
+    case let audioFormatPacket as AudioFormat:
       let audioFormatReply = audioFormatPacket.reply()
       logger.debug("Sending audio format reply: \(audioFormatReply.description)")
       try device.sendPacket(packet: audioFormatPacket.reply())
-
-    case let videoClockPacket as VideoClock:  // cvrp
-      self.videoRequest = VideoDataRequest(clock: videoClockPacket.clockPacket.clock)
-      logger.debug("Sending video data request\n\(self.videoRequest.description)")
-      try device.sendPacket(packet: videoRequest)
-      let videoClockReply = videoClockPacket.reply(
-        withClock: videoClockPacket.clockPacket.clock + 0x1000AF)
-      logger.debug("Sending video clock reply\n\(videoClockReply.description)")
-      try device.sendPacket(packet: videoClockReply)
-      logger.debug("Sending video data request\n\(self.videoRequest.description)")
-      try device.sendPacket(packet: videoRequest)
-
-    case let clockRequest as HostClockRequest:  // clok
-      self.startTime = DispatchTime.now().uptimeNanoseconds
-      let hostClockId = clockRequest.clock + 0x10000
-      let reply = clockRequest.reply(withClock: hostClockId)
-      logger.debug("Sending host clock reply\n\(reply.description)")
-      try device.sendPacket(packet: reply)
-
-    case let timeRequest as TimeRequest:  // time
-      logger.debug("Sending time reply")
-      let now = DispatchTime.now().uptimeNanoseconds
-      let reply = timeRequest.reply(withTime: Time(nanoseconds: now - startTime))
-      try device.sendPacket(packet: reply)
-
-    case let skewRequest as SkewRequest:  // skew
-      logger.debug("Sending skew reply")
-      let calculatedSkew = skew(
-        localDuration: self.localAudioLatest, deviceDuration: self.deviceAudioLatest)
-      let reply = skewRequest.reply(withSkew: calculatedSkew)
-      try device.sendPacket(packet: reply)
-
+    case let videoClockPacket as VideoClock:
+      try handle(videoClockPacket)
+    case let clockRequest as HostClockRequest:
+      try handle(clockRequest)
+    case let timeRequest as TimeRequest:
+      try handle(timeRequest)
+    case let skewRequest as SkewRequest:
+      try handle(skewRequest)
     case let mediaSample as MediaSample:
-      switch mediaSample.mediaType {
-      case .video:
-        self.output.sendVideo(mediaSample.sample)
-        try device.sendPacket(packet: self.videoRequest)
-      case .audio:
-        self.localAudioLatest = Time.now().since(self.audioStartTime)
-        self.deviceAudioLatest = mediaSample.sample.outputPresentation ?? Time.NULL
-        if deviceAudioStart == nil {
-          self.deviceAudioStart = deviceAudioLatest
-        }
-      }
-
+      try handle(mediaSample)
     case _ as SetProperty:
       // Nothing to do
       break
     case let packet as AsyncPacket:
-      // Nothing to do
       if packet.header.subtype == .release {
         closeStreamGroup.leave()
       }
-
     default:
       logger.error("Unexpected packet received \(packet.data.base64EncodedString())")
+    }
+  }
+
+  // MARK: Control (go/stop) packet handling
+
+  private func handle(_ controlPacket: ControlPacket) throws {
+    if controlPacket.header.subtype == .goRequest {
+      let goReply = controlPacket.reply()
+      logger.debug("Sending go reply: \(goReply.description)")
+      try device.sendPacket(packet: goReply)
+    }
+    if controlPacket.header.subtype == .stopRequest {
+      let stopReply = controlPacket.reply()
+      logger.debug("Sending stop reply: \(stopReply.description)")
+      try device.sendPacket(packet: stopReply)
+    }
+  }
+
+  // MARK: Audio clock (cwpa) packet handling
+
+  private func handle(_ audioClockPacket: AudioClock) throws {
+    let desc = HostDescription()
+    logger.debug("Sending host description packet\n\(desc.description)")
+    try device.sendPacket(packet: desc)
+    logger.debug("Sending stream desc")
+    audioClockRef = audioClockPacket.clock.clock
+    try device.sendPacket(packet: StreamDescription(clock: audioClockRef))
+    self.audioStartTime = Time.now()
+    let audioClockReply = Reply(
+      correlationId: audioClockPacket.clock.correlationId,
+      clock: audioClockPacket.clock.clock + 1000)
+    logger.debug("Sending audio clock reply\n\(audioClockReply.description)")
+    try device.sendPacket(packet: audioClockReply)
+  }
+  
+  // MARK: Video clock (cvrp) packet handling
+  
+  private func handle(_ videoClockPacket: VideoClock) throws {
+    self.videoRequest = VideoDataRequest(clock: videoClockPacket.clockPacket.clock)
+    logger.debug("Sending video data request\n\(self.videoRequest.description)")
+    try device.sendPacket(packet: videoRequest)
+    let videoClockReply = videoClockPacket.reply(
+      withClock: videoClockPacket.clockPacket.clock + 0x1000AF)
+    logger.debug("Sending video clock reply\n\(videoClockReply.description)")
+    try device.sendPacket(packet: videoClockReply)
+    logger.debug("Sending video data request\n\(self.videoRequest.description)")
+    try device.sendPacket(packet: videoRequest)
+  }
+  
+  // MARK: Host clock (clok) request
+
+  private func handle(_ clockRequest: HostClockRequest) throws {
+    self.startTime = DispatchTime.now().uptimeNanoseconds
+    let hostClockId = clockRequest.clock + 0x10000
+    let reply = clockRequest.reply(withClock: hostClockId)
+    logger.debug("Sending host clock reply\n\(reply.description)")
+    try device.sendPacket(packet: reply)
+  }
+
+  // MARK: Time request (time)
+
+  private func handle(_ timeRequest: TimeRequest) throws {
+    logger.debug("Sending time reply")
+    let now = DispatchTime.now().uptimeNanoseconds
+    let reply = timeRequest.reply(withTime: Time(nanoseconds: now - startTime))
+    try device.sendPacket(packet: reply)
+  }
+  
+  // MARK: Skew request (skew)
+
+  private func handle(_ skewRequest: SkewRequest) throws {
+    logger.debug("Sending skew reply")
+    let calculatedSkew = skew(
+      localDuration: self.localAudioLatest, deviceDuration: self.deviceAudioLatest)
+    let reply = skewRequest.reply(withSkew: calculatedSkew)
+    try device.sendPacket(packet: reply)
+  }
+  
+  // MARK: Media sample (feed, eat)
+  
+  private func handle(_ mediaSample: MediaSample) throws {
+    switch mediaSample.mediaType {
+    case .video:
+      self.output.sendVideo(mediaSample.sample)
+      try device.sendPacket(packet: self.videoRequest)
+    case .audio:
+      self.localAudioLatest = Time.now().since(self.audioStartTime)
+      self.deviceAudioLatest = mediaSample.sample.outputPresentation ?? Time.NULL
+      if deviceAudioStart == nil {
+        self.deviceAudioStart = deviceAudioLatest
+      }
     }
   }
 }
