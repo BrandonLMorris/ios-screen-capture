@@ -10,15 +10,16 @@ final class GoRequestTests {
   @Test func requestFixtureParsing() throws {
     let serialized = Data(base64Encoded: requestFixture)!
 
-    let parsed = try! PacketParser.parse(from: serialized) as! GoRequest
+    let parsed = try! PacketParser.parse(from: serialized) as! ControlPacket
 
+    #expect(parsed.header.subtype == .goRequest)
     #expect(0x7FBA_3542_5FF0 == parsed.clock)
     #expect(correlationId == parsed.correlationId)
   }
 
   @Test func responseFixtureParsing() throws {
     let serialized = Data(base64Encoded: requestFixture)!
-    let parsed = try! PacketParser.parse(from: serialized) as! GoRequest
+    let parsed = try! PacketParser.parse(from: serialized) as! ControlPacket
 
     let reply = parsed.reply()
 

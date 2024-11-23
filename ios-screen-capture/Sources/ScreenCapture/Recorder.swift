@@ -86,40 +86,45 @@ class Recorder {
     case _ as Ping:
       try device.ping()
 
-    case let packet as GoRequest:
-      let reply = packet.reply()
-      logger.debug("Sending go reply: \(reply.description)")
-      try device.sendPacket(packet: reply)
+    case let controlPacket as ControlPacket:
+      if controlPacket.header.subtype == .goRequest {
+        let goReply = controlPacket.reply()
+        logger.debug("Sending go reply: \(goReply.description)")
+        try device.sendPacket(packet: goReply)
+      }
+      if controlPacket.header.subtype == .stopRequest {
+        let stopReply = controlPacket.reply()
+        logger.debug("Sending stop reply: \(stopReply.description)")
+        try device.sendPacket(packet: stopReply)
+      }
 
-    case let packet as StopRequest:
-      let reply = packet.reply()
-      logger.debug("Sending stop reply: \(reply.description)")
-      try device.sendPacket(packet: reply)
-
-    case let packet as AudioClock:  // cwpa
+    case let audioClockPacket as AudioClock:  // cwpa
       let desc = HostDescription()
       logger.debug("Sending host description packet\n\(desc.description)")
       try device.sendPacket(packet: desc)
       logger.debug("Sending stream desc")
-      audioClockRef = packet.clock.clock
+      audioClockRef = audioClockPacket.clock.clock
       try device.sendPacket(packet: StreamDescription(clock: audioClockRef))
       self.audioStartTime = Time.now()
-      let reply = Reply(correlationId: packet.clock.correlationId, clock: packet.clock.clock + 1000)
-      logger.debug("Sending audio clock reply\n\(reply.description)")
-      try device.sendPacket(packet: reply)
+      let audioClockReply = Reply(
+        correlationId: audioClockPacket.clock.correlationId,
+        clock: audioClockPacket.clock.clock + 1000)
+      logger.debug("Sending audio clock reply\n\(audioClockReply.description)")
+      try device.sendPacket(packet: audioClockReply)
 
-    case let packet as AudioFormat:  // afmt
-      let reply = packet.reply()
-      logger.debug("Sending audio format reply: \(reply.description)")
-      try device.sendPacket(packet: packet.reply())
+    case let audioFormatPacket as AudioFormat:  // afmt
+      let audioFormatReply = audioFormatPacket.reply()
+      logger.debug("Sending audio format reply: \(audioFormatReply.description)")
+      try device.sendPacket(packet: audioFormatPacket.reply())
 
-    case let packet as VideoClock:  // cvrp
-      self.videoRequest = VideoDataRequest(clock: packet.clockPacket.clock)
+    case let videoClockPacket as VideoClock:  // cvrp
+      self.videoRequest = VideoDataRequest(clock: videoClockPacket.clockPacket.clock)
       logger.debug("Sending video data request\n\(self.videoRequest.description)")
       try device.sendPacket(packet: videoRequest)
-      let reply = packet.reply(withClock: packet.clockPacket.clock + 0x1000AF)
-      logger.debug("Sending video clock reply\n\(reply.description)")
-      try device.sendPacket(packet: reply)
+      let videoClockReply = videoClockPacket.reply(
+        withClock: videoClockPacket.clockPacket.clock + 0x1000AF)
+      logger.debug("Sending video clock reply\n\(videoClockReply.description)")
+      try device.sendPacket(packet: videoClockReply)
       logger.debug("Sending video data request\n\(self.videoRequest.description)")
       try device.sendPacket(packet: videoRequest)
 

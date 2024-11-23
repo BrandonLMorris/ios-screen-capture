@@ -3,6 +3,7 @@ import Foundation
 class TimeRequest: ScreenCapturePacket {
   var header: Header
   var data: Data
+
   lazy var description: String = {
     """
     [TIME] Clock time request

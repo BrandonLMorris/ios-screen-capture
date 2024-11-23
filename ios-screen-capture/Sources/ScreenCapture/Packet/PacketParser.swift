@@ -59,13 +59,13 @@ class PacketParser {
       }
       return timeReq
     case .goRequest:
-      guard let goReq = GoRequest(header: header, wholePacket: wholePacket) else {
+      guard let goReq = ControlPacket(header: header, wholePacket: wholePacket) else {
         throw PacketParsingError.generic(
           "Failed to parse go request: \(wholePacket.base64EncodedString())")
       }
       return goReq
     case .stopRequest:
-      guard let stopReq = StopRequest(header: header, wholePacket: wholePacket) else {
+      guard let stopReq = ControlPacket(header: header, wholePacket: wholePacket) else {
         throw PacketParsingError.generic(
           "Failed to parse stop request: \(wholePacket.base64EncodedString())")
       }
