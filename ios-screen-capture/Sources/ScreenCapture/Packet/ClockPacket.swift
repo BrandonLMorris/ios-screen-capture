@@ -17,7 +17,9 @@ class ClockPacket {
 
   init?(data: Data) {
     guard data.count >= ClockPacket.minLength else {
-      logger.error("Failed to parse clock packet: Not enough data (expected at least \(ClockPacket.minLength) bytes)")
+      logger.error(
+        "Failed to parse clock packet: Not enough data (expected at least \(ClockPacket.minLength) bytes)"
+      )
       return nil
     }
     correlationId = data.subdata(in: ClockPacket.corrIdRange).base64EncodedString()
@@ -36,7 +38,7 @@ class AudioClock: ScreenCapturePacket {
     \(self.clock)
     """
   }()
-  
+
   init?(header: Header, data: Data) {
     self.header = header
     self.data = data

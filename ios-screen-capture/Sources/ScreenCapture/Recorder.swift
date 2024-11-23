@@ -17,7 +17,7 @@ class Recorder {
   private var videoRequest: VideoDataRequest! = nil
   private let closeStreamGroup = DispatchGroup()
   private var audioClockRef: CFTypeID = 0
-  
+
   init(verbose: Bool = false) {
     self.verbose = verbose
   }

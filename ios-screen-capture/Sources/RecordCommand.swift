@@ -5,7 +5,7 @@ import Foundation
 struct RecordCommand: ParsableCommand {
   @Option(name: .shortAndLong, help: "The UDID of the device to record (find with idevice_id -l)")
   var udid: String
-  
+
   @Option(name: .shortAndLong, help: "Enable extra logging")
   var verbose: Bool = false
 

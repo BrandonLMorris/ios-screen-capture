@@ -52,6 +52,14 @@ extension Dictionary {
     return data[strType: keyTypeOffset] == String(DataType.stringKey.rawValue.reversed())
   }
 
+  static func create(_ kvs: (String, DictValue)...) -> Dictionary {
+    var result = Dictionary()
+    for (k, v) in kvs {
+      result[k] = v
+    }
+    return result
+  }
+
   init?(_ data: Data) {
     let data = Data(data)
     self.init()
