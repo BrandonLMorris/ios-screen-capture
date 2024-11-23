@@ -19,28 +19,6 @@ class GoRequest: ScreenCapturePacket {
   }
 
   func reply() -> any ScreenCapturePacket {
-    GoReply(from: self)
+    Reply(correlationId: correlationId, clock: nil)
   }
-}
-
-private class GoReply: ScreenCapturePacket {
-  let header = Header(length: 24, type: .reply)
-  let originator: GoRequest
-  lazy var description: String = {
-    """
-    [RPLY(GO)] Audio format reply
-        corrId=\(originator.correlationId)
-    """
-  }()
-
-  init(from originator: GoRequest) {
-    self.originator = originator
-  }
-
-  lazy var data: Data = {
-    var res = Data(count: header.length)
-    res.copyInto(at: 0, from: header.serialized)
-    res.copyInto(at: 8, from: Data(base64Encoded: self.originator.correlationId)!)
-    return res
-  }()
 }

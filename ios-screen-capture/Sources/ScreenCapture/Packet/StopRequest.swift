@@ -21,28 +21,6 @@ class StopRequest: ScreenCapturePacket {
   }
 
   func reply() -> any ScreenCapturePacket {
-    StopReply(from: self)
+    Reply(correlationId: correlationId, clock: nil)
   }
-}
-
-private class StopReply: ScreenCapturePacket {
-  let header = Header(length: 24, type: .reply)
-  let originator: StopRequest
-  lazy var description: String = {
-    """
-    [RPLY(STOP)]
-        corrId=\(originator.correlationId)
-    """
-  }()
-
-  init(from originator: StopRequest) {
-    self.originator = originator
-  }
-
-  lazy var data: Data = {
-    var res = Data(count: header.length)
-    res.copyInto(at: 0, from: header.serialized)
-    res.copyInto(at: 8, from: Data(base64Encoded: self.originator.correlationId)!)
-    return res
-  }()
 }
