@@ -11,7 +11,7 @@ struct RecordCommand: ParsableCommand {
 
   mutating func run() throws {
     let recorder = Recorder(verbose: verbose)
-    DispatchQueue.global().async { [self] in
+    let task = DispatchWorkItem { [self] in
       do {
         // I solemnly swear I am up to no good...
         try recorder.start(forDeviceWithId: udid)
@@ -19,12 +19,14 @@ struct RecordCommand: ParsableCommand {
         print("Error starting the recording! \(error)")
       }
     }
+    DispatchQueue.global().async(execute: task)
 
     print("Press enter to stop...", terminator: "")
     _ = readLine()
 
     // ...mischief managed.
     try recorder.stop()
+    task.cancel()
   }
 }
 
