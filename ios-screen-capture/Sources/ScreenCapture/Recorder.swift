@@ -98,14 +98,13 @@ class Recorder {
 
     case let packet as AudioClock:  // cwpa
       let desc = HostDescription()
-      logger.debug("Sending host description packet (2x)\n\(desc.description)")
-      try device.sendPacket(packet: desc)
+      logger.debug("Sending host description packet\n\(desc.description)")
       try device.sendPacket(packet: desc)
       logger.debug("Sending stream desc")
-      audioClockRef = packet.clock
-      try device.sendPacket(packet: StreamDescription(clock: packet.clock))
+      audioClockRef = packet.clock.clock
+      try device.sendPacket(packet: StreamDescription(clock: audioClockRef))
       self.audioStartTime = Time.now()
-      let reply = Reply(correlationId: packet.correlationId, clock: packet.clock + 1000)
+      let reply = Reply(correlationId: packet.clock.correlationId, clock: packet.clock.clock + 1000)
       logger.debug("Sending audio clock reply\n\(reply.description)")
       try device.sendPacket(packet: reply)
 
@@ -115,10 +114,10 @@ class Recorder {
       try device.sendPacket(packet: packet.reply())
 
     case let packet as VideoClock:  // cvrp
-      self.videoRequest = VideoDataRequest(clock: packet.clock)
+      self.videoRequest = VideoDataRequest(clock: packet.clockPacket.clock)
       logger.debug("Sending video data request\n\(self.videoRequest.description)")
       try device.sendPacket(packet: videoRequest)
-      let reply = packet.reply(withClock: packet.clock + 0x1000AF)
+      let reply = packet.reply(withClock: packet.clockPacket.clock + 0x1000AF)
       logger.debug("Sending video clock reply\n\(reply.description)")
       try device.sendPacket(packet: reply)
       logger.debug("Sending video data request\n\(self.videoRequest.description)")

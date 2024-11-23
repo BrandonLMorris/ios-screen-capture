@@ -9,6 +9,6 @@ final class AudioClockTests {
 
     let p = try #require(AudioClock(header: Header(binary)!, data: binary))
 
-    #expect(clock == Int(p.clock))
+    #expect(clock == Int(p.clock.clock))
   }
 }

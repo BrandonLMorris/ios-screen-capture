@@ -157,6 +157,7 @@ internal class AVAssetReceiver: MediaReceiver {
       mediaType: .video, outputSettings: nil,
       sourceFormatHint: cmFormatDescription)
     videoInput.expectsMediaDataInRealTime = true
+    videoInput.mediaTimeScale = 1_000_000_000
     guard self.assetWriter.canAdd(videoInput) else {
       logger.error("AVAssetWriter cannot add input!")
       return

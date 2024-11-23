@@ -3,16 +3,13 @@ import Foundation
 /// This packet tells the recording host (the device) info about the video
 /// stream we're expecting.
 class HostDescription: ScreenCapturePacket {
-  var header: Header
-  var data: Data
   let description = "[HPD1] Host description dict"
 
-  init() {
-    data = HostDescription.initializeData()
-    header = Header(length: Int(data[uint32: 0]), type: .async)
-  }
+  lazy var header: Header = {
+    Header(self.data)!
+  }()
 
-  private static func initializeData() -> Data {
+  lazy var data: Data  = {
     var deviceInfo = Dictionary()
     deviceInfo["Valeria"] = .bool(true)
     deviceInfo["HEVCDecoderSupports444"] = .bool(true)
@@ -27,5 +24,5 @@ class HostDescription: ScreenCapturePacket {
     header.append(dictPayload)
 
     return header
-  }
+  }()
 }
