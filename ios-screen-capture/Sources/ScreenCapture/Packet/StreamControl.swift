@@ -3,12 +3,12 @@ import Foundation
 class ControlPacket: ScreenCapturePacket {
   var header: Header
   var data: Data
-  lazy var description =  {
+  lazy var description = {
     let packetId = header.subtype == .goRequest ? "GO" : "STOP"
     return """
-    [\(packetId)]
-        corrId=\(correlationId)
-    """
+      [\(packetId)]
+          corrId=\(correlationId)
+      """
   }()
 
   internal let correlationId: String
@@ -25,4 +25,3 @@ class ControlPacket: ScreenCapturePacket {
     Reply(correlationId: correlationId, clock: nil)
   }
 }
-

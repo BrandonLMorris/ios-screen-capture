@@ -59,7 +59,8 @@ struct MediaChunk {
         self.sampleTiming = MediaChunk.parseSampleTiming(data.from(idx))
 
       case .sampleData:
-        self.sampleData = Data(data.from(idx + Prefix.size))
+        self.sampleData = Data(
+          data.subdata(in: (idx + Prefix.size)..<(idx + Int(segmentPrefix.length))))
 
       case .formatDesc:
         guard let fdesc = FormatDescription(data.from(idx)) else { return nil }
@@ -98,11 +99,11 @@ struct MediaChunk {
     }
   }
 
-  func sampleBuffer(_ pts: CMTime, _ lastPts: CMTime?, fd: CMFormatDescription? = nil)
+  func sampleBuffer(_ bufferCount: Int, fd: CMFormatDescription? = nil)
     -> CMSampleBuffer
   {
     var sampleSize = sampleSize
-    var timingInfo = sampleTiming.toCmSampleTimingInfo(pts, lastPts)
+    var timingInfo = sampleTiming.toCmSampleTimingInfo(bufferCount)
     var sampleBuffer: CMSampleBuffer?
     CMSampleBufferCreate(
       allocator: kCFAllocatorDefault,
@@ -150,17 +151,17 @@ internal struct TimingData {
     self.decode = decode
   }
 
-  func sampleTiming(_ pts: CMTime, _ lastPts: CMTime? = nil) -> CMSampleTimingInfo {
-    var dur = CMTime(seconds: (1.0 / 60.0), preferredTimescale: 1_000_000_000)
-    if let lastPts = lastPts { dur = CMTimeSubtract(pts, lastPts) }
-    return CMSampleTimingInfo(
-      duration: dur, presentationTimeStamp: pts,
-      decodeTimeStamp: decode.toCMTime())
+  func sampleTiming(_ frameCount: Int) -> CMSampleTimingInfo {
+    let timestamp = frameCount * 1000
+    let pts = CMTime(value: CMTimeValue(timestamp), timescale: 60_000)
+    let dts = CMTime(value: CMTimeValue(timestamp - 4017), timescale: 60_000)
+    let duration = CMTime(value: 1000, timescale: 60_000)
+    return CMSampleTimingInfo(duration: duration, presentationTimeStamp: pts, decodeTimeStamp: dts)
   }
 }
 
 extension Swift.Array where Element == TimingData {
-  fileprivate func toCmSampleTimingInfo(_ pts: CMTime, _ lastPts: CMTime?) -> [CMSampleTimingInfo] {
-    self.map { $0.sampleTiming(pts, lastPts) }
+  fileprivate func toCmSampleTimingInfo(_ bufferCount: Int) -> [CMSampleTimingInfo] {
+    self.map { $0.sampleTiming(bufferCount) }
   }
 }

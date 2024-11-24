@@ -98,15 +98,18 @@ extension Data {
   }
 
   var blockBuffer: CMBlockBuffer {
+    let cfData = self as CFData
+    let dataLength = CFDataGetLength(cfData)
     var blockBuffer: CMBlockBuffer?
-    _ = self.withUnsafeBytes { (samplePtr: UnsafeRawBufferPointer) in
-      CMBlockBufferCreateWithMemoryBlock(
-        allocator: kCFAllocatorDefault,
-        memoryBlock: UnsafeMutableRawPointer(mutating: samplePtr.baseAddress!),
-        blockLength: count, blockAllocator: kCFAllocatorNull,
-        customBlockSource: nil, offsetToData: 0, dataLength: count, flags: 0,
-        blockBufferOut: &blockBuffer)
-    }
+    CMBlockBufferCreateWithMemoryBlock(
+      allocator: kCFAllocatorDefault,
+      memoryBlock: nil,  // Core Foundation will allocate for us
+      blockLength: dataLength, blockAllocator: kCFAllocatorDefault,
+      customBlockSource: nil, offsetToData: 0, dataLength: dataLength, flags: 0,
+      blockBufferOut: &blockBuffer)
+    CMBlockBufferReplaceDataBytes(
+      with: CFDataGetBytePtr(cfData), blockBuffer: blockBuffer!, offsetIntoDestination: 0,
+      dataLength: dataLength)
     return blockBuffer!
   }
 }

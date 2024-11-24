@@ -76,6 +76,7 @@ internal class AVAssetReceiver: MediaReceiver {
   private var startedInput: Bool = false
   private var lastPts: CMTime! = nil
   private var presentationTimestamp: CMTime! = nil
+  private var bufferCount = 0
 
   init?(to filePath: String) {
     AVAssetReceiver.deleteIfExists(filePath)
@@ -93,7 +94,7 @@ internal class AVAssetReceiver: MediaReceiver {
     self.lastPts = self.presentationTimestamp
     self.presentationTimestamp = CMClock.hostTimeClock.time
     if !startedInput {
-      self.assetWriter.startSession(atSourceTime: presentationTimestamp)
+      self.assetWriter.startSession(atSourceTime: .zero)
       startedInput = true
     }
     guard self.assetWriter.status == .writing else {
@@ -102,8 +103,7 @@ internal class AVAssetReceiver: MediaReceiver {
     }
     guard let assetWriterInput = self.assetWriterInput else { return }
 
-    let sampleBuffer = chunk.sampleBuffer(
-      presentationTimestamp, lastPts, fd: self.formatDescription)
+    let sampleBuffer = chunk.sampleBuffer(bufferCount, fd: self.formatDescription)
     guard CMSampleBufferIsValid(sampleBuffer) else {
       logger.error("Sample buffer is invalid! dropping")
       return
@@ -116,7 +116,7 @@ internal class AVAssetReceiver: MediaReceiver {
       logger.error("Asset writer input is not ready for more media data; dropping buffer")
       return
     }
-    if !assetWriterInput.append(sampleBuffer) {
+    guard assetWriterInput.append(sampleBuffer) else {
       logger.error(
         """
         Failed to append sample buffer!
@@ -124,13 +124,16 @@ internal class AVAssetReceiver: MediaReceiver {
           error: \(String(describing: self.assetWriter.error))
         """
       )
+      return
     }
+    bufferCount += 1
   }
 
   func end() {
     assetWriterInput?.markAsFinished()
     let writer = assetWriter
-    writer.endSession(atSourceTime: presentationTimestamp)
+    writer.endSession(
+      atSourceTime: CMTime(value: CMTimeValue(bufferCount * 1000), timescale: 60_000))
     writer.finishWriting { [weak writer] in
       if writer?.status == .completed {
         logger.info("Successfully wrote media output")
@@ -157,7 +160,7 @@ internal class AVAssetReceiver: MediaReceiver {
       mediaType: .video, outputSettings: nil,
       sourceFormatHint: cmFormatDescription)
     videoInput.expectsMediaDataInRealTime = true
-    videoInput.mediaTimeScale = 1_000_000_000
+    videoInput.mediaTimeScale = 60_000
     guard self.assetWriter.canAdd(videoInput) else {
       logger.error("AVAssetWriter cannot add input!")
       return

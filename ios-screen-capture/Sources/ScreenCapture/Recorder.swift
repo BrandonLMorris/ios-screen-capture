@@ -80,7 +80,6 @@ class Recorder {
     }
   }
 
-
   private func handle(_ packet: ScreenCapturePacket) throws {
     if verbose { logger.debug("\(packet.description)") }
     switch packet {
@@ -147,9 +146,9 @@ class Recorder {
     logger.debug("Sending audio clock reply\n\(audioClockReply.description)")
     try device.sendPacket(packet: audioClockReply)
   }
-  
+
   // MARK: Video clock (cvrp) packet handling
-  
+
   private func handle(_ videoClockPacket: VideoClock) throws {
     self.videoRequest = VideoDataRequest(clock: videoClockPacket.clockPacket.clock)
     logger.debug("Sending video data request\n\(self.videoRequest.description)")
@@ -161,7 +160,7 @@ class Recorder {
     logger.debug("Sending video data request\n\(self.videoRequest.description)")
     try device.sendPacket(packet: videoRequest)
   }
-  
+
   // MARK: Host clock (clok) request
 
   private func handle(_ clockRequest: HostClockRequest) throws {
@@ -180,7 +179,7 @@ class Recorder {
     let reply = timeRequest.reply(withTime: Time(nanoseconds: now - startTime))
     try device.sendPacket(packet: reply)
   }
-  
+
   // MARK: Skew request (skew)
 
   private func handle(_ skewRequest: SkewRequest) throws {
@@ -190,9 +189,9 @@ class Recorder {
     let reply = skewRequest.reply(withSkew: calculatedSkew)
     try device.sendPacket(packet: reply)
   }
-  
+
   // MARK: Media sample (feed, eat)
-  
+
   private func handle(_ mediaSample: MediaSample) throws {
     switch mediaSample.mediaType {
     case .video:
