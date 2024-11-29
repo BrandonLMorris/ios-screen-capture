@@ -4,11 +4,11 @@ import Foundation
 /// stream we're expecting.
 class HostDescription: ScreenCapturePacket {
   let description = "[HPD1] Host description dict"
-  static let dimensions = Dictionary.create(
+  nonisolated(unsafe) static let dimensions = Dictionary.create(
     ("Width", .number(Number(float64: 1920.0))),
     ("Height", .number(Number(float64: 1200.0)))
   )
-  static let deviceInfo = Dictionary.create(
+  nonisolated(unsafe) static let deviceInfo = Dictionary.create(
     ("Valeria", .bool(true)),
     ("HEVCDecoderSupports444", .bool(true)),
     ("DisplaySize", .dict(HostDescription.dimensions))
@@ -31,7 +31,7 @@ class StreamDescription: ScreenCapturePacket {
   var header: Header
   private(set) var data: Data
   lazy var description = "[HPA1] Stream description dict"
-  private static let payload = Dictionary.create(
+  nonisolated(unsafe) private static let payload = Dictionary.create(
     ("BufferAheadInterval", .number(Number(float64: 0.07300000000000001))),
     ("deviceUID", .string("Valeria")),
     ("ScreenLatency", .number(Number(float64: 0.04))),

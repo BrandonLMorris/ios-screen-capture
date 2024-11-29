@@ -6,7 +6,7 @@ class Ping: ScreenCapturePacket {
 
   var description: String = "[PING]"
 
-  static let instance: Ping = {
+  nonisolated(unsafe) static let instance: Ping = {
     let data = Data(base64Encoded: "EAAAAGduaXAAAAAAAQAAAA==")!
     return Ping(header: Header(data)!, data: data)!
   }()

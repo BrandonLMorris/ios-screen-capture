@@ -24,16 +24,17 @@ let disableRecordingIndex: UInt16 = 0x0
 let recordingUsbConfiguration = 6
 
 // UUIDs for matching to our USB types.
-let kIOUSBDeviceUserClientTypeID = CFUUIDCreateFromString(
-  kCFAllocatorDefault, "9dc7b780-9ec0-11d4-a54f-000a27052861" as CFString)
-let kIOUSBInterfaceUserClientTypeID = CFUUIDCreateFromString(
-  kCFAllocatorDefault, "2d9786c6-9ef3-11D4-ad51-000a27052861" as CFString)
-let kIOUSBDeviceInterfaceID = CFUUIDCreateFromString(
-  kCFAllocatorDefault, "5c8187d0-9ef3-11D4-8b45-000a27052861" as CFString)
-let kIOCFPlugInInterfaceID = CFUUIDCreateFromString(
-  kCFAllocatorDefault, "C244E858-109C-11D4-91D4-0050E4C6426F" as CFString)
-let kIOUSBInterfaceInterfaceID = CFUUIDCreateFromString(
-  kCFAllocatorDefault, "73c97ae8-9ef3-11d4-b1d0-000a27052861" as CFString)
+let kIOUSBDeviceUserClientTypeID = NSUUID(uuidString: "9dc7b780-9ec0-11d4-a54f-000a27052861")!
+let kIOUSBInterfaceUserClientTypeID = NSUUID(uuidString: "2d9786c6-9ef3-11D4-ad51-000a27052861")!
+let kIOUSBDeviceInterfaceID = NSUUID(uuidString: "5c8187d0-9ef3-11D4-8b45-000a27052861")!
+let kIOCFPlugInInterfaceID = NSUUID(uuidString: "C244E858-109C-11D4-91D4-0050E4C6426F")!
+let kIOUSBInterfaceInterfaceID = NSUUID(uuidString: "73c97ae8-9ef3-11d4-b1d0-000a27052861")!
+
+extension NSUUID {
+  var cfuuid: CFUUID {
+    CFUUIDCreateFromString(kCFAllocatorDefault, uuidString as CFString)!
+  }
+}
 
 /// Generic iterator for IOKit objects.
 internal struct IOIterator: IteratorProtocol, Sequence {

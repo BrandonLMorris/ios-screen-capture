@@ -134,13 +134,9 @@ internal class AVAssetReceiver: MediaReceiver {
     let writer = assetWriter
     writer.endSession(
       atSourceTime: CMTime(value: CMTimeValue(bufferCount * 1000), timescale: 60_000))
-    writer.finishWriting { [weak writer] in
-      if writer?.status == .completed {
-        logger.info("Successfully wrote media output")
-      } else {
-        let status: Int = writer?.status.rawValue ?? 0
-        logger.error("Failed to shutdown media output stream: \(status)")
-      }
+
+    writer.finishWriting {
+      logger.error("Completed writing media output (if successful)")
     }
   }
 

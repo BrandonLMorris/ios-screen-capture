@@ -181,7 +181,8 @@ extension PluginInterface {
     // Do a little type system dance to work with C's void* while we query the interface.
     let kr = withUnsafeMutablePointer(to: &deviceInterface.wrapped) {
       $0.withMemoryRebound(to: Optional<LPVOID>.self, capacity: 1) { voidStar in
-        unwrapped.QueryInterface(wrapped, CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID), voidStar)
+        unwrapped.QueryInterface(
+          wrapped, CFUUIDGetUUIDBytes(kIOUSBDeviceInterfaceID.cfuuid), voidStar)
       }
     }
     guard kr == S_OK else {
@@ -197,7 +198,8 @@ extension PluginInterface {
     // Do a little type system dance to work with C's void* while we query the interface.
     let kr = withUnsafeMutablePointer(to: &interfaceInterface.wrapped) {
       $0.withMemoryRebound(to: Optional<LPVOID>.self, capacity: 1) { voidStar in
-        unwrapped.QueryInterface(wrapped, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID), voidStar)
+        unwrapped.QueryInterface(
+          wrapped, CFUUIDGetUUIDBytes(kIOUSBInterfaceInterfaceID.cfuuid), voidStar)
       }
     }
     guard kr == S_OK else {
@@ -215,7 +217,7 @@ extension USBDevice {
     var pluginInterface = PluginInterface()
     var score: sint32 = 0
     let kr = IOCreatePlugInInterfaceForService(
-      self.serviceHandle, kIOUSBDeviceUserClientTypeID, kIOCFPlugInInterfaceID,
+      self.serviceHandle, kIOUSBDeviceUserClientTypeID.cfuuid, kIOCFPlugInInterfaceID.cfuuid,
       &pluginInterface.wrapped, &score)
     guard kr == KERN_SUCCESS else {
       throw USBError.generic("Failed to create plugin interface: \(kr)")
@@ -235,7 +237,7 @@ extension USBDevice {
     var pluginInterface = PluginInterface()
     var score: sint32 = 0
     let kr = IOCreatePlugInInterfaceForService(
-      ifaceHandle, kIOUSBInterfaceUserClientTypeID, kIOCFPlugInInterfaceID,
+      ifaceHandle, kIOUSBInterfaceUserClientTypeID.cfuuid, kIOCFPlugInInterfaceID.cfuuid,
       &pluginInterface.wrapped, &score)
     guard kr == KERN_SUCCESS else {
       throw USBError.generic("Failed to create plugin interface: \(kr)")
