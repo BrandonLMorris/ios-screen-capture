@@ -1,4 +1,7 @@
 import Foundation
+import Logging
+
+private let logger = Logger(label: "Prefix")
 
 struct Prefix {
   static let size = 8
@@ -13,7 +16,7 @@ struct Prefix {
 
   init?(_ data: Data) {
     if data.count < 8 {
-      logger.error("Cannot parse prefix from only \(data.count) bytes!")
+      logger.warning("Cannot parse prefix from only \(data.count) bytes!")
       return nil
     }
     self.length = data[uint32: 0]

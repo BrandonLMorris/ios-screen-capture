@@ -1,4 +1,7 @@
 import Foundation
+import Logging
+
+private let logger = Logger(label: "Array")
 
 /// Similar to `Dictionary`, an associative collection of packet data objects.
 /// All keys are integers, but is **not** a contiguous collection like a
@@ -15,8 +18,12 @@ internal class Array: Equatable {
     // TODO Merge with dictionary parsing
     let length = data[uint32: 0]
     guard data.count >= length else {
-      logger.error(
-        "Could not parse packet array: Stated length of \(length) but only \(data.count) bytes!"
+      logger.warning(
+        "Could not parse packet array: invalid length",
+        metadata: [
+          "stated": "\(length)",
+          "actual": "\(data.count)",
+        ]
       )
       return nil
     }

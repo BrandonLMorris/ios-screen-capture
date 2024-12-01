@@ -1,8 +1,6 @@
 import Foundation
 import os.log
 
-let logger = Logger(subsystem: "dev.brandonmorris.screencapture", category: "tool")
-
 /// Generic for a pointer to a pointer to an object.
 ///
 /// IOKit uses the extra indirection to abstract both creation and memory management.

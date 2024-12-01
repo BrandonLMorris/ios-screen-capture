@@ -1,4 +1,7 @@
 import Foundation
+import Logging
+
+private let logger = Logger(label: "Dictionary")
 
 typealias Dictionary = [String: DictValue]
 
@@ -65,8 +68,12 @@ extension Dictionary {
     self.init()
     let length = data[uint32: 0]
     guard data.count >= length else {
-      logger.error(
-        "Could not parse packet dictionary: Stated length of \(length) but only \(data.count) bytes!"
+      logger.warning(
+        "Could not parse packet dictionary: invalid length",
+        metadata: [
+          "stated": "\(length)",
+          "actual": "\(data.count)",
+        ]
       )
       return nil
     }

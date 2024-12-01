@@ -1,6 +1,7 @@
 import AVFoundation
 import CoreMedia
 import Foundation
+import Logging
 
 internal protocol MediaReceiver {
   func sendVideo(_: MediaChunk)
@@ -10,6 +11,7 @@ internal protocol MediaReceiver {
 internal class VideoFile: MediaReceiver {
   private static let startCode = Data([0x00, 0x00, 0x00, 0x01])
   private let outStream: OutputStream
+  private let logger = Logger(label: "VideoFile")
 
   init?(to filePath: String) {
     guard let outStream = OutputStream(toFileAtPath: filePath, append: false) else {
@@ -47,7 +49,7 @@ internal class VideoFile: MediaReceiver {
 
   private func writeWithStartCode(_ data: Data) {
     if let err = self.outStream.streamError {
-      logger.error("Stream in error state, not writing: \(err.localizedDescription)")
+      logger.warning("Stream in error state, not writing: \(err.localizedDescription)")
       return
     }
 
@@ -55,16 +57,25 @@ internal class VideoFile: MediaReceiver {
       self.outStream.write(startCodePtr.baseAddress!, maxLength: VideoFile.startCode.count)
     }
     if startCodeBytesWritten != VideoFile.startCode.count {
-      logger.error("Error writing start code: \(startCodeBytesWritten) bytes written instead of 4")
-      logger.error("\(self.outStream.streamError!.localizedDescription)")
+      logger.warning(
+        "Error writing start code: should have written 4 bytes",
+        metadata: [
+          "bytesWritten": "\(startCodeBytesWritten)",
+          "errorDesc": "\(self.outStream.streamError!.localizedDescription)",
+        ])
     }
 
     let dataWritten = data.withUnsafeBytes {
       self.outStream.write($0.baseAddress!, maxLength: data.count)
     }
     if dataWritten != data.count {
-      logger.error("Error writing data: \(dataWritten) bytes written instead of \(data.count)")
-      logger.error("\(self.outStream.streamError!.localizedDescription)")
+      logger.warning(
+        "Incorrect ammount of data written",
+        metadata: [
+          "bytesWritten": "\(dataWritten)",
+          "bytesToWrite": "\(data.count)",
+          "errorDesc": "\(self.outStream.streamError!.localizedDescription)",
+        ])
     }
   }
 }
@@ -77,6 +88,7 @@ internal class AVAssetReceiver: MediaReceiver {
   private var lastPts: CMTime! = nil
   private var presentationTimestamp: CMTime! = nil
   private var bufferCount = 0
+  private lazy var logger = Logger(label: "AVAssetReceiver")
 
   init?(to filePath: String) {
     AVAssetReceiver.deleteIfExists(filePath)
@@ -98,14 +110,14 @@ internal class AVAssetReceiver: MediaReceiver {
       startedInput = true
     }
     guard self.assetWriter.status == .writing else {
-      logger.error("Unexpected asset writer status: \(self.assetWriter.status.rawValue)")
+      logger.warning("Unexpected asset writer status: \(self.assetWriter.status.rawValue)")
       return
     }
     guard let assetWriterInput = self.assetWriterInput else { return }
 
     let sampleBuffer = chunk.sampleBuffer(bufferCount, fd: self.formatDescription)
     guard CMSampleBufferIsValid(sampleBuffer) else {
-      logger.error("Sample buffer is invalid! dropping")
+      logger.warning("Sample buffer is invalid! dropping")
       return
     }
     guard startedInput else {
@@ -113,16 +125,15 @@ internal class AVAssetReceiver: MediaReceiver {
       return
     }
     guard assetWriterInput.isReadyForMoreMediaData else {
-      logger.error("Asset writer input is not ready for more media data; dropping buffer")
+      logger.warning("Asset writer input is not ready for more media data; dropping buffer")
       return
     }
     guard assetWriterInput.append(sampleBuffer) else {
-      logger.error(
-        """
-        Failed to append sample buffer!
-          status: \(self.assetWriter.status.rawValue)
-          error: \(String(describing: self.assetWriter.error))
-        """
+      logger.warning("Failed to append sample buffer!",
+        metadata: [
+          "osstatus": "\(self.assetWriter.status.rawValue)",
+          "error": "\(String(describing: self.assetWriter.error))"
+        ]
       )
       return
     }
@@ -135,9 +146,7 @@ internal class AVAssetReceiver: MediaReceiver {
     writer.endSession(
       atSourceTime: CMTime(value: CMTimeValue(bufferCount * 1000), timescale: 60_000))
 
-    writer.finishWriting {
-      logger.error("Completed writing media output (if successful)")
-    }
+    writer.finishWriting {}
   }
 
   private func initializeAssetWriterInput(_ chunk: MediaChunk) {
@@ -163,12 +172,11 @@ internal class AVAssetReceiver: MediaReceiver {
     }
     self.assetWriter.add(videoInput)
     guard self.assetWriter.startWriting() else {
-      logger.error(
-        """
-        Failed to start writing AVAssetWriter!
-          status: \(self.assetWriter.status.rawValue)
-          error: \(self.assetWriter.error?.localizedDescription ?? "none")
-        """
+      logger.error("Failed to start writing AVAssetWriter!",
+        metadata: [
+          "status": "\(self.assetWriter.status.rawValue)",
+          "error": "\(self.assetWriter.error?.localizedDescription ?? "none")"
+        ]
       )
       return
     }
@@ -182,7 +190,7 @@ internal class AVAssetReceiver: MediaReceiver {
     do {
       try fm.removeItem(atPath: file)
     } catch {
-      logger.error("Failed to delete file at \(file): \(error)")
+      Logger(label: "AVAssetReceiver").error("Failed to delete file at \(file): \(error)")
     }
   }
 }

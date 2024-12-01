@@ -1,5 +1,8 @@
 import CoreMedia
 import Foundation
+import Logging
+
+private let logger = Logger(label: "FormatDescription")
 
 /// Metadata about the video/audio, e.g. the h264 PPS/SPS.
 ///
@@ -26,64 +29,64 @@ class FormatDescription: Equatable {
   init?(_ data: Data) {
     var idx = 0
     guard let formatDescriptionPrefix = Prefix(data.from(idx)) else {
-      logger.error("Failed to parse format description prefix")
+      logger.warning("Failed to parse format description prefix")
       return nil
     }
     guard formatDescriptionPrefix.type == .formatDesc else {
       logger.error(
-        """
-        Unexpected format description prefix type!
-          wanted \(DataType.formatDesc.rawValue) but got \(formatDescriptionPrefix.type.rawValue)
-        """
+        "Unexpected format description prefix type!",
+        metadata: [
+          "expected": "\(DataType.formatDesc.rawValue)",
+          "actual": "\(formatDescriptionPrefix.type.rawValue)",
+        ]
       )
       return nil
     }
     idx += Prefix.size
 
     guard Prefix(data.from(idx)) != nil else {
-      logger.error("Failed to parse format description media type prefix")
+      logger.warning("Failed to parse format description media type prefix")
       return nil
     }
     idx += Prefix.size
     let mediaType = data[strType: idx]
     self.mediaMarker = mediaType
     idx += mediaType.count
+    // TODO: Break out audio/video parsing
     if mediaType == audioMarker {
-      logger.info("Continuing format description parsing for audio")
       let descriptorPrefix = Prefix(data.from(idx))!
       guard descriptorPrefix.type == .audioDescriptor else {
         return nil
       }
       if let audioDetails = AudioDetails.parse(from: data.from(idx + Prefix.size)) {
-        logger.info("Parsed audio details")
+        logger.debug("Parsed audio details")
         self.audioDetails = audioDetails
       }
       return
     }
 
     guard mediaType == videoMarker else {
-      logger.warning("Unexpected media type found! (\(mediaType)) Cannot parse format description")
+      logger.warning(
+        "Unexpected media type found! (\(mediaType)) Cannot parse format description")
       return nil
     }
-    logger.info("Continuing format description parsing for video")
 
     let (width, height) = getVideoDimensions(data.from(idx))
     idx += 16  // 8b prefix + 2x4b integers
-    logger.info("Parsed format description video dimensions (\(width)x\(height))")
+    logger.debug("Parsed format description video dimensions (\(width)x\(height))")
 
-    let codec = getVideoCodec(data.from(idx))
+    let _ = getVideoCodec(data.from(idx))
     idx += 12  // 8b prefix + 4b codec
-    logger.info("Parsed format description video codec \(codec)")
 
     guard let extensions = Array(data.from(idx)) else {
-      logger.error("Error parsing format description extensions array!")
+      logger.warning("Error parsing format description extensions array!")
       return nil
     }
     guard let (pps, sps) = getParameterSets(extensions) else {
-      logger.error("Error parsing format description parameter sets!")
+      logger.warning("Error parsing format description parameter sets!")
       return nil
     }
-    logger.info("Successfully parsed picture/sequence parameter sets")
+    logger.debug("Successfully parsed picture/sequence parameter sets")
     self.pictureParameterSequence = Data(pps)
     self.sequenceParameterSequence = Data(sps)
   }
@@ -117,7 +120,9 @@ class FormatDescription: Equatable {
       }
     }
     guard status == noErr else {
-      logger.error("Failed to create CMFormatDescription for H264 video! \(status)")
+      logger.warning(
+        "Failed to create CMFormatDescription for H264 video! \(status)",
+        metadata: ["osstatus": "\(status)"])
       return nil
     }
     return formatDesc
@@ -182,7 +187,12 @@ internal struct AudioDetails {
 
   static func parse(from data: Data) -> AudioDetails? {
     guard data.count >= 36 else {
-      logger.error("Not enough data to parse AudioDetails! aborting")
+      logger.warning(
+        "Not enough data to parse AudioDetails",
+        metadata: [
+          "expected": "\(36)",
+          "actual": "\(data.count)",
+        ])
       return nil
     }
     var idx = 0

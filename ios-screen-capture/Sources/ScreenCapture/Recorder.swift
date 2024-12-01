@@ -1,5 +1,8 @@
 import CoreMedia
 import Foundation
+import Logging
+
+private let logger = Logger(label: "Recorder")
 
 class Recorder {
   private var device: ScreenCaptureDevice! = nil
@@ -25,16 +28,17 @@ class Recorder {
   func start(forDeviceWithId udid: String) throws {
     var screenCaptureDevice = try ScreenCaptureDevice.obtainDevice(withUdid: udid)
     screenCaptureDevice = try screenCaptureDevice.activate()
-    logger.info("Activated. We are clear for launch.")
+    logger.info("Activated. We are clear for launch.", metadata: ["udid": "\(udid)"])
 
     screenCaptureDevice.initializeRecording(verboseLogging: verbose)
     let packet = try screenCaptureDevice.readPackets().first!
-    guard let ping = packet as? Ping else {
-      throw RecordingError.unrecognizedPacket(
-        "Fixme: Unexpected first packet; was looking for ping. base64: \(packet.data.base64EncodedString())"
-      )
+    guard let _ = packet as? Ping else {
+      // TODO: There should be a way to recover or restart the stream
+      logger.error(
+        "Non-ping packet received", metadata: ["base64": "\(packet.data.base64EncodedString())"])
+      throw RecordingError.unrecognizedPacket("Unexpected first packet; was looking for ping")
     }
-    logger.info("We've been pinged! \(ping.data.base64EncodedString())")
+    logger.debug("Ping packet received; continuing init", metadata: ["udid": "\(udid)"])
     self.device = screenCaptureDevice
 
     try device.ping()
@@ -44,9 +48,10 @@ class Recorder {
   func stop() throws {
     self.output.end()
     guard let device = device else {
-      throw RecordingError.recordingUninitialized("Cannot stop() recording that never started!")
+      logger.warning("Recorder never started; nothing to stop()")
+      return
     }
-    logger.info("Closing stream...")
+    logger.info("Beginning recorder shutdown...")
     try device.sendPacket(packet: CloseStream(clock: audioClockRef))
     try device.sendPacket(packet: CloseStream())
     let closeResult = closeStreamGroup.wait(wallTimeout: .now() + .seconds(3))
@@ -70,18 +75,17 @@ class Recorder {
     }
     sessionActive = true
     while sessionActive {
-      guard let packets = try? device.readPackets() else {
-        logger.error("Failed to read packet")
+      do {
+        try device.readPackets().forEach { try handle($0) }
+      } catch {
+        logger.warning("Failed to read one or more packets: \(error.localizedDescription)")
         continue
-      }
-      for packet in packets {
-        try handle(packet)
       }
     }
   }
 
   private func handle(_ packet: ScreenCapturePacket) throws {
-    if verbose { logger.debug("\(packet.description)") }
+    logger.trace("Handling \(type(of: packet)) packet", metadata: ["desc": "\(packet)"])
     switch packet {
     case _ as Ping:
       try device.ping()
@@ -91,7 +95,8 @@ class Recorder {
       try handle(audioClockPacket)
     case let audioFormatPacket as AudioFormat:
       let audioFormatReply = audioFormatPacket.reply()
-      logger.debug("Sending audio format reply: \(audioFormatReply.description)")
+      logger.debug(
+        "Sending audio format reply", metadata: ["desc": "\(audioFormatReply.description)"])
       try device.sendPacket(packet: audioFormatPacket.reply())
     case let videoClockPacket as VideoClock:
       try handle(videoClockPacket)
@@ -111,7 +116,8 @@ class Recorder {
         closeStreamGroup.leave()
       }
     default:
-      logger.error("Unexpected packet received \(packet.data.base64EncodedString())")
+      logger.warning(
+        "Unexpected packet received!", metadata: ["base64": "\(packet.data.base64EncodedString())"])
     }
   }
 
@@ -120,12 +126,12 @@ class Recorder {
   private func handle(_ controlPacket: ControlPacket) throws {
     if controlPacket.header.subtype == .goRequest {
       let goReply = controlPacket.reply()
-      logger.debug("Sending go reply: \(goReply.description)")
+      logger.debug("Sending go reply", metadata: ["desc": "\(goReply.description)"])
       try device.sendPacket(packet: goReply)
     }
     if controlPacket.header.subtype == .stopRequest {
       let stopReply = controlPacket.reply()
-      logger.debug("Sending stop reply: \(stopReply.description)")
+      logger.debug("Sending stop reply", metadata: ["desc": "\(stopReply.description)"])
       try device.sendPacket(packet: stopReply)
     }
   }
@@ -134,7 +140,7 @@ class Recorder {
 
   private func handle(_ audioClockPacket: AudioClock) throws {
     let desc = HostDescription()
-    logger.debug("Sending host description packet\n\(desc.description)")
+    logger.debug("Sending host description packet", metadata: ["desc": "\(desc.description)"])
     try device.sendPacket(packet: desc)
     logger.debug("Sending stream desc")
     audioClockRef = audioClockPacket.clock.clock
@@ -143,7 +149,7 @@ class Recorder {
     let audioClockReply = Reply(
       correlationId: audioClockPacket.clock.correlationId,
       clock: audioClockPacket.clock.clock + 1000)
-    logger.debug("Sending audio clock reply\n\(audioClockReply.description)")
+    logger.debug("Sending audio clock reply", metadata: ["desc": "\(audioClockReply.description)"])
     try device.sendPacket(packet: audioClockReply)
   }
 
@@ -151,13 +157,15 @@ class Recorder {
 
   private func handle(_ videoClockPacket: VideoClock) throws {
     self.videoRequest = VideoDataRequest(clock: videoClockPacket.clockPacket.clock)
-    logger.debug("Sending video data request\n\(self.videoRequest.description)")
+    logger.debug(
+      "Sending video data request", metadata: ["desc": "\(self.videoRequest.description)"])
     try device.sendPacket(packet: videoRequest)
     let videoClockReply = videoClockPacket.reply(
       withClock: videoClockPacket.clockPacket.clock + 0x1000AF)
-    logger.debug("Sending video clock reply\n\(videoClockReply.description)")
+    logger.debug("Sending video clock reply", metadata: ["desc": "\(videoClockReply.description)"])
     try device.sendPacket(packet: videoClockReply)
-    logger.debug("Sending video data request\n\(self.videoRequest.description)")
+    logger.debug(
+      "Sending video data request", metadata: ["desc": "\(self.videoRequest.description)"])
     try device.sendPacket(packet: videoRequest)
   }
 
@@ -167,7 +175,7 @@ class Recorder {
     self.startTime = DispatchTime.now().uptimeNanoseconds
     let hostClockId = clockRequest.clock + 0x10000
     let reply = clockRequest.reply(withClock: hostClockId)
-    logger.debug("Sending host clock reply\n\(reply.description)")
+    logger.debug("Sending host clock reply", metadata: ["desc": "\(reply.description)"])
     try device.sendPacket(packet: reply)
   }
 

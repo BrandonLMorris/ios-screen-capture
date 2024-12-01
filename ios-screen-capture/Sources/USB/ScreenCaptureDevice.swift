@@ -2,7 +2,10 @@ import Foundation
 import IOKit
 import IOKit.usb
 import IOKit.usb.IOUSBLib
+import Logging
 import os.log
+
+private let logger = Logger(label: "ScreenCaptureDevice")
 
 private let udidRegistryKey = "USB Serial Number"
 private let recordingConfig = UInt8(6)
@@ -31,12 +34,12 @@ struct ScreenCaptureDevice {
     guard !matching.isEmpty else {
       throw ScreenCaptureError.deviceNotFound("Could not find device with udid \(udid)")
     }
-    guard matching.count == 1 else {
+    guard matching.count == 1, let device = matching.first else {
       throw ScreenCaptureError.multipleDevicesFound(
         "\(matching.count) services matching udid \(udid). Unsure how to proceed; aborting.")
     }
     return ScreenCaptureDevice(
-      udid: udidNoHyphens, device: matching.first!, reconnectProvider: provider)
+      udid: udidNoHyphens, device: device, reconnectProvider: provider)
   }
 
   /// Enable the USB configuration for screen recording.
@@ -48,7 +51,7 @@ struct ScreenCaptureDevice {
     let newRef = try obtain(
       withRetries: 10, recordingInterface: true, withBackoff: reconnectBackoff)
     newRef.device.setConfiguration(config: recordingConfig)
-    logger.info("Current configuration is \(newRef.device.activeConfig(refresh: false))")
+    logger.debug("Current configuration is \(newRef.device.activeConfig(refresh: false))")
     try! newRef.device.open()
     return newRef
   }
@@ -64,7 +67,7 @@ struct ScreenCaptureDevice {
       let iface = device.getInterface(
         withSubclass: recordingInterfaceSubclass, withAlt: recordingInterfaceAlt)
     else {
-      logger.error("Failed to obtain the recording interface")
+      logger.warning("Failed to obtain the recording interface")
       return
     }
     iface.open()
@@ -72,7 +75,7 @@ struct ScreenCaptureDevice {
     // 0 is control endpoint on every interface, so if it hasn't changed we
     // know we missed it.
     if endpoints.in == 0 || endpoints.out == 0 {
-      logger.error("Failed to find the endpoints for bulk transfer!")
+      logger.warning("Failed to find the endpoints for bulk transfer!")
       return
     }
     self.iface = iface
@@ -88,9 +91,7 @@ struct ScreenCaptureDevice {
     guard let raw = iface.read(endpoint: endpoints.in) else {
       throw ScreenCaptureError.readError("Failed to read from device!")
     }
-    if verbose {
-      logger.debug("Read \(raw.count) bytes from device")
-    }
+    logger.trace("Read \(raw.count) bytes from device")
     let statedLength = Int(raw[uint32: 0])
     if statedLength == raw.count {
       // We read exactly 1 packet
@@ -135,9 +136,8 @@ struct ScreenCaptureDevice {
     guard iface.write(packet.data, to: endpoints.out) else {
       throw ScreenCaptureError.writeError("Failed to write to device!")
     }
-    if verbose {
-      logger.debug("Wrote \(packet.data.count) bytes")
-    }
+    logger.trace(
+      "Wrote \(packet.data.count) bytes", metadata: ["packet-type": "\(type(of: packet))"])
   }
 
   /// Sends a ping packet to the device.
@@ -194,7 +194,8 @@ struct ScreenCaptureDevice {
     guard newDevice != nil else {
       throw ScreenCaptureError.recordingConfigError("Unable to connect")
     }
-    logger.info("There are now \(newDevice!.device.configCount) configurations")
+    logger.debug(
+      "There are now \(String(describing: newDevice?.device.configCount)) configurations")
     return newDevice!
   }
 }

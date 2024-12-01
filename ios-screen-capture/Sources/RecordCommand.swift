@@ -1,7 +1,9 @@
 import ArgumentParser
 import Foundation
+import Logging
 
-@main
+private let logger = Logger(label: "RecordCommand")
+
 struct RecordCommand: ParsableCommand {
   @Option(name: .shortAndLong, help: "The UDID of the device to record (find with idevice_id -l)")
   var udid: String
@@ -16,16 +18,17 @@ struct RecordCommand: ParsableCommand {
         // I solemnly swear I am up to no good...
         try recorder.start(forDeviceWithId: udid)
       } catch {
-        print("Error starting the recording! \(error)")
+        logger.error("Error starting the recording! \(error)", metadata: ["udid": "\(udid)"])
       }
     }
     DispatchQueue.global().async(execute: task)
 
-    print("Press enter to stop...", terminator: "")
+    logger.info("Press enter to stop...")
     _ = readLine()
 
     // ...mischief managed.
     try recorder.stop()
+    logger.info("Recorder stopped", metadata: ["udid": "\(udid)"])
     task.cancel()
   }
 }

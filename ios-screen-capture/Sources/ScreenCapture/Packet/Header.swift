@@ -1,4 +1,7 @@
 import Foundation
+import Logging
+
+private let logger = Logger(label: "Header")
 
 struct Header: Equatable {
   let length: Int
@@ -37,7 +40,12 @@ struct Header: Equatable {
 
   public init?(_ source: Data) {
     if source.count < minLength {
-      logger.error("Failed to parse packet header: Not enough data (\(source.count) bytes)")
+      logger.error(
+        "Failed to parse packet header: Not enough data",
+        metadata: [
+          "base64": "\(String(describing: source.base64EncodedString))",
+          "count": "\(source.count)",
+        ])
       return nil
     }
     length = Int(source[uint32: 0])

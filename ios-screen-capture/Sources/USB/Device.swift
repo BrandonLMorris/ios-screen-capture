@@ -2,11 +2,12 @@ import Foundation
 import IOKit
 import IOKit.usb
 import IOKit.usb.IOUSBLib
-import os.log
+import Logging
 
+private let logger = Logger(label: "Device")
 private let transmissionSize: Int = 4096
 
-public protocol Device {
+protocol Device {
   var isOpen: Bool { get }
   var configCount: Int { get }
 
@@ -22,7 +23,7 @@ public protocol Device {
   func registryEntry(forKey: String) -> String?
 }
 
-public protocol DeviceProvider {
+protocol DeviceProvider {
   func connected() throws -> [any Device]
 }
 
@@ -83,7 +84,7 @@ final internal class USBDevice: Device {
   var configCount: Int {
     let count = deviceInterface.configCount
     if count == 0 {
-      logger.error("Failed to get the number of configurations")
+      logger.warning("Failed to get the number of configurations")
       return -1
     }
     return Int(count)
@@ -98,7 +99,7 @@ final internal class USBDevice: Device {
     // No actual payload in our request.
 
     if case let res = deviceInterface.deviceRequest(req), res != kIOReturnSuccess {
-      logger.error("Error sending control message! \(returnString(res))")
+      logger.warning("Error sending control message! \(returnString(res))")
     }
   }
 
@@ -141,21 +142,24 @@ extension USBDevice {
 
   func close() {
     if case let res = deviceInterface.close(), res != kIOReturnSuccess {
-      logger.error("Error closing the device: \(returnString(res))")
+      logger.warning("Error closing the device",
+                     metadata: ["returnString": "\(returnString(res))"])
     }
     isOpen = false
   }
 
   func reset() {
     if case let res = deviceInterface.reset(), res != kIOReturnSuccess {
-      logger.error("Error resetting the device: \(returnString(res))")
+      logger.warning("Error resetting the device",
+                     metadata: ["retString": "\(returnString(res))"])
     }
     isOpen = false
   }
 
   func hardReset() {
     if case let res = deviceInterface.hardReset(), res != kIOReturnSuccess {
-      logger.error("Error resetting the device: \(returnString(res))")
+      logger.warning("Error resetting the device",
+                     metadata: ["retString": "\(returnString(res))"])
     }
     isOpen = false
     Thread.sleep(forTimeInterval: TimeInterval(0.5))
@@ -163,14 +167,14 @@ extension USBDevice {
 
   func setConfiguration(config: UInt8) {
     if case let cnt = configCount, cnt < config {
-      logger.error("Cannot set configuration \(config); only \(cnt) found")
+      logger.warning("Cannot set configuration \(config); only \(cnt) found")
       return
     }
     if case let res = deviceInterface.setConfiguration(config: config), res != kIOReturnSuccess {
-      logger.error("Error settting configuration \(config): \(returnString(res))")
+      logger.warning("Error settting configuration \(config): \(returnString(res))")
       return
     }
-    logger.info("Configuration \(config) successfully set")
+    logger.debug("Configuration \(config) successfully set")
   }
 }
 
@@ -187,7 +191,7 @@ extension PluginInterface {
     }
     guard kr == S_OK else {
       let code = String(format: "0x%08x", kr)
-      logger.error("Error querying the device interface: \(code)")
+      logger.warning("Error querying the device interface: \(code)")
       return nil
     }
     return deviceInterface
@@ -204,7 +208,7 @@ extension PluginInterface {
     }
     guard kr == S_OK else {
       let code = String(format: "0x%08x", kr)
-      logger.error("Error querying the interface interface: \(code)")
+      logger.warning("Error querying the interface interface: \(code)")
       return nil
     }
     return interfaceInterface
@@ -247,7 +251,7 @@ extension USBDevice {
     guard let interfaceInterface = pluginInterface.interfaceInterface else {
       throw USBError.generic("Error obtaining the interface interface")
     }
-    logger.info("Successfully obtianed the interface interface: \(interfaceInterface)")
+    logger.debug("Successfully obtianed the interface interface: \(interfaceInterface)")
     return interfaceInterface
   }
 }
@@ -277,7 +281,7 @@ extension DeviceInterface {
   var configuration: UInt8 {
     var config: UInt8 = 0
     if case let res = unwrapped.GetConfiguration(wrapped, &config), res != kIOReturnSuccess {
-      logger.error("Error getting the current configuration: (\(returnString(res)))")
+      logger.warning("Error getting the current configuration: (\(returnString(res)))")
       return 0
     }
     return config
@@ -290,7 +294,7 @@ extension DeviceInterface {
     if case let res = unwrapped.CreateInterfaceIterator(wrapped, &req, &itr),
       res != kIOReturnSuccess
     {
-      logger.error("Failed to create the interface iterator: \(returnString(res))")
+      logger.warning("Failed to create the interface iterator: \(returnString(res))")
       return IOIterator()
     }
     return IOIterator(itr: itr)
@@ -307,7 +311,7 @@ extension InterfaceInterface: CustomStringConvertible {
   var clazz: UInt8 {
     var count = UInt8(0)
     if case let res = unwrapped.GetInterfaceClass(wrapped, &count), res != kIOReturnSuccess {
-      logger.error("Failed to get the interface class: \(returnString(res))")
+      logger.warning("Failed to get the interface class: \(returnString(res))")
       return UInt8(0)
     }
     return count
@@ -316,7 +320,7 @@ extension InterfaceInterface: CustomStringConvertible {
   var subclass: UInt8 {
     var subclass = UInt8(0)
     if case let res = unwrapped.GetInterfaceSubClass(wrapped, &subclass), res != kIOReturnSuccess {
-      logger.error("Failed to get the interface subclass: \(returnString(res))")
+      logger.warning("Failed to get the interface subclass: \(returnString(res))")
       return UInt8(0)
     }
     return subclass
@@ -325,7 +329,7 @@ extension InterfaceInterface: CustomStringConvertible {
   var proto: UInt8 {
     var proto = UInt8(0)
     if case let res = unwrapped.GetInterfaceProtocol(wrapped, &proto), res != kIOReturnSuccess {
-      logger.error("Failed to get the interface protocol: \(returnString(res))")
+      logger.warning("Failed to get the interface protocol: \(returnString(res))")
       return UInt8(0)
     }
     return proto
@@ -334,7 +338,7 @@ extension InterfaceInterface: CustomStringConvertible {
   var alt: UInt8 {
     var alt = UInt8(0)
     if case let res = unwrapped.GetInterfaceProtocol(wrapped, &alt), res != kIOReturnSuccess {
-      logger.error("Failed to get the interface protocol: \(returnString(res))")
+      logger.warning("Failed to get the interface protocol: \(returnString(res))")
       return UInt8(0)
     }
     return alt
@@ -343,7 +347,7 @@ extension InterfaceInterface: CustomStringConvertible {
   var endpointCount: UInt8 {
     var count = UInt8(0)
     if case let res = unwrapped.GetNumEndpoints(wrapped, &count), res != kIOReturnSuccess {
-      logger.error("Failed to get the number of endpoints: \(returnString(res))")
+      logger.warning("Failed to get the number of endpoints: \(returnString(res))")
       return UInt8(0)
     }
     return count
@@ -351,7 +355,7 @@ extension InterfaceInterface: CustomStringConvertible {
 
   func open() {
     if case let res = unwrapped.USBInterfaceOpen(wrapped), res != kIOReturnSuccess {
-      logger.error("Failed to open the interface: \(returnString(res))")
+      logger.warning("Failed to open the interface: \(returnString(res))")
     }
   }
 
@@ -362,7 +366,7 @@ extension InterfaceInterface: CustomStringConvertible {
       &props.interval),
       res != kIOReturnSuccess
     {
-      logger.error("Failed to get endpoint properties: \(returnString(res))")
+      logger.warning("Failed to get endpoint properties: \(returnString(res))")
       return nil
     }
     return props
@@ -376,7 +380,7 @@ extension InterfaceInterface: CustomStringConvertible {
       unwrapped.ReadPipe(wrapped, endpoint, $0.baseAddress!, &readLen)
     }
     if res != kIOReturnSuccess {
-      logger.error("Error reading from the endpoint: \(returnString(res))")
+      logger.warning("Error reading from the endpoint: \(returnString(res))")
       return nil
     }
     totalRead += Int(readLen)
@@ -402,7 +406,7 @@ extension InterfaceInterface: CustomStringConvertible {
       unwrapped.WritePipe(wrapped, endpoint, $0.baseAddress!, UInt32(toSend.count))
     }
     if res != kIOReturnSuccess {
-      logger.error("Error writing to the endpoint: \(returnString(res))")
+      logger.warning("Error writing to the endpoint: \(returnString(res))")
       return false
     }
     return true

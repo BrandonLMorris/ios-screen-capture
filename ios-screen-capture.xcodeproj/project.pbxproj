@@ -95,6 +95,10 @@
 		E7B550A12CF1674200B1989E /* ClockPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B5509F2CF1674200B1989E /* ClockPacket.swift */; };
 		E7B550A22CF1674200B1989E /* ClockPacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B5509F2CF1674200B1989E /* ClockPacket.swift */; };
 		E7B864A22C5593D0009640B6 /* VideoClockTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B864A12C5593D0009640B6 /* VideoClockTests.swift */; };
+		E7B8FE4F2CFB735000404CEA /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = E7B8FE4E2CFB735000404CEA /* Logging */; };
+		E7B8FE512CFB8E2500404CEA /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = E7B8FE502CFB8E2500404CEA /* Logging */; };
+		E7B8FE532CFB8E3600404CEA /* Logging in Frameworks */ = {isa = PBXBuildFile; productRef = E7B8FE522CFB8E3600404CEA /* Logging */; };
+		E7B8FE552CFBE4D100404CEA /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B8FE542CFBE4D100404CEA /* main.swift */; };
 		E7B9EEBE2BA772D7006631E7 /* ScreenCaptureDevice.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7D372EA2B856B8B004EE79D /* ScreenCaptureDevice.swift */; };
 		E7B9EEC12BA7C9A3006631E7 /* Recorder.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */; };
 		E7B9EEC32BAF45A9006631E7 /* ScreenCapturePacket.swift in Sources */ = {isa = PBXBuildFile; fileRef = E77DFCE42BA39E9C005601D7 /* ScreenCapturePacket.swift */; };
@@ -219,6 +223,7 @@
 		E7B4A6D22CA8AD67007B245E /* AudioFormatTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AudioFormatTests.swift; sourceTree = "<group>"; };
 		E7B5509F2CF1674200B1989E /* ClockPacket.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ClockPacket.swift; sourceTree = "<group>"; };
 		E7B864A12C5593D0009640B6 /* VideoClockTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VideoClockTests.swift; sourceTree = "<group>"; };
+		E7B8FE542CFBE4D100404CEA /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		E7B9EEC02BA7C9A3006631E7 /* Recorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Recorder.swift; sourceTree = "<group>"; };
 		E7C0B6ED2BD489D60068BB4A /* protocol-reference.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = "protocol-reference.md"; sourceTree = "<group>"; };
 		E7D372E52B856733004EE79D /* RecordCommand.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordCommand.swift; sourceTree = "<group>"; };
@@ -243,6 +248,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7B8FE4F2CFB735000404CEA /* Logging in Frameworks */,
 				E7D372E22B8563C0004EE79D /* ArgumentParser in Frameworks */,
 				E7D372E42B8563C0004EE79D /* generate-manual in Frameworks */,
 			);
@@ -252,6 +258,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7B8FE532CFB8E3600404CEA /* Logging in Frameworks */,
 				E75237F32BA672F7002C44F8 /* ArgumentParser in Frameworks */,
 				E75237E12BA628FB002C44F8 /* libIOKitInterposer.dylib in Frameworks */,
 			);
@@ -268,6 +275,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E7B8FE512CFB8E2500404CEA /* Logging in Frameworks */,
 				E77DFCF72BA3AF95005601D7 /* ArgumentParser in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -428,6 +436,7 @@
 				E7D372E92B856AF1004EE79D /* USB */,
 				E7D372E82B856AC9004EE79D /* ScreenCapture */,
 				E7D372E52B856733004EE79D /* RecordCommand.swift */,
+				E7B8FE542CFBE4D100404CEA /* main.swift */,
 			);
 			path = Sources;
 			sourceTree = "<group>";
@@ -487,6 +496,7 @@
 			packageProductDependencies = (
 				E7D372E12B8563C0004EE79D /* ArgumentParser */,
 				E7D372E32B8563C0004EE79D /* generate-manual */,
+				E7B8FE4E2CFB735000404CEA /* Logging */,
 			);
 			productName = "ios-screen-capture";
 			productReference = E74ED4CE2B85629A0079AE68 /* ios-screen-capture */;
@@ -511,6 +521,7 @@
 			name = ScreenCaptureDeviceTests;
 			packageProductDependencies = (
 				E75237F22BA672F7002C44F8 /* ArgumentParser */,
+				E7B8FE522CFB8E3600404CEA /* Logging */,
 			);
 			productName = ScreenCaptureDeviceTests;
 			productReference = E75237CC2BA6257C002C44F8 /* ScreenCaptureDeviceTests.xctest */;
@@ -550,6 +561,7 @@
 			name = ScreenCaptureTests;
 			packageProductDependencies = (
 				E77DFCF62BA3AF95005601D7 /* ArgumentParser */,
+				E7B8FE502CFB8E2500404CEA /* Logging */,
 			);
 			productName = ScreenCaptureTests;
 			productReference = E77DFCEE2BA3A58B005601D7 /* ScreenCaptureTests.xctest */;
@@ -590,6 +602,7 @@
 			mainGroup = E74ED4C52B85629A0079AE68;
 			packageReferences = (
 				E7D372E02B8563C0004EE79D /* XCRemoteSwiftPackageReference "swift-argument-parser" */,
+				E7B8FE4D2CFB72E900404CEA /* XCRemoteSwiftPackageReference "swift-log" */,
 			);
 			productRefGroup = E74ED4CF2B85629A0079AE68 /* Products */;
 			projectDirPath = "";
@@ -658,6 +671,7 @@
 				E7D372FA2B93E5DA004EE79D /* Device.swift in Sources */,
 				E7F2B5CE2CA9988300AD4CB7 /* HostClockRequest.swift in Sources */,
 				E79E42EA2CED6B2A009CC5D1 /* MediaReceiver.swift in Sources */,
+				E7B8FE552CFBE4D100404CEA /* main.swift in Sources */,
 				E7F2B5C82CA8D59000AD4CB7 /* SetProperty.swift in Sources */,
 				E76B12BA2CA9C8640003E398 /* Time.swift in Sources */,
 				E77DFCE52BA39E9C005601D7 /* ScreenCapturePacket.swift in Sources */,
@@ -1099,6 +1113,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		E7B8FE4D2CFB72E900404CEA /* XCRemoteSwiftPackageReference "swift-log" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/apple/swift-log.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.6.2;
+			};
+		};
 		E7D372E02B8563C0004EE79D /* XCRemoteSwiftPackageReference "swift-argument-parser" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/apple/swift-argument-parser.git";
@@ -1134,6 +1156,21 @@
 			isa = XCSwiftPackageProductDependency;
 			package = E7D372E02B8563C0004EE79D /* XCRemoteSwiftPackageReference "swift-argument-parser" */;
 			productName = ArgumentParser;
+		};
+		E7B8FE4E2CFB735000404CEA /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E7B8FE4D2CFB72E900404CEA /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
+		};
+		E7B8FE502CFB8E2500404CEA /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E7B8FE4D2CFB72E900404CEA /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
+		};
+		E7B8FE522CFB8E3600404CEA /* Logging */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = E7B8FE4D2CFB72E900404CEA /* XCRemoteSwiftPackageReference "swift-log" */;
+			productName = Logging;
 		};
 		E7D372E12B8563C0004EE79D /* ArgumentParser */ = {
 			isa = XCSwiftPackageProductDependency;

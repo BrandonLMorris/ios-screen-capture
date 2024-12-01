@@ -1,5 +1,8 @@
 import CoreMedia
 import Foundation
+import Logging
+
+private let logger = Logger(label: "MediaChunk")
 
 /// A hunk of audio or video data.
 ///
@@ -13,8 +16,6 @@ struct MediaChunk {
   private(set) var formatDescription: FormatDescription? = nil  // fdsc
   private(set) var attachments = Array()  // satt
   private(set) var sampleReady = Array()  // sary
-
-  private var samplesProcessed = 0
 
   enum ChunkType {
     case video
@@ -36,7 +37,11 @@ struct MediaChunk {
     }
     guard prefix.length <= data.count else {
       logger.error(
-        "Failed to parse MediaChunk (sbuf). Invalid length (expected \(prefix.length), got \(data.count))"
+        "Failed to parse MediaChunk (sbuf). Invalid length",
+        metadata: [
+          "expected": "\(prefix.length)",
+          "actual": "\(data.count)",
+        ]
       )
       return nil
     }
@@ -44,7 +49,7 @@ struct MediaChunk {
 
     while idx < data.count {
       guard let segmentPrefix = Prefix(data.from(idx)) else {
-        logger.error("Error parsing media chunk segment prefix at index \(idx)")
+        logger.warning("Error parsing media chunk segment prefix at index \(idx)")
         return nil
       }
       switch segmentPrefix.type {
