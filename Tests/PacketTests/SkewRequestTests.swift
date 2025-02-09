@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+@testable import Packet
 
 final class SkewRequestTests {
   private let fixture = Data(base64Encoded: "HAAAAGNueXPwX0I1un8AAHdla3Nguf0CAQAAAA==")!

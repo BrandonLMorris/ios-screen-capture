@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+@testable import Packet
 
 final class HostDescriptionTests {
   @Test func hostDescriptionFixture() throws {

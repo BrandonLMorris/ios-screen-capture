@@ -95,7 +95,7 @@ public class Array: Equatable {
   }
 
   /// Subscript to mimic the interface of a conventional array.
-  subscript(_ idx: Int) -> DictValue? {
+  public subscript(_ idx: Int) -> DictValue? {
     get {
       guard let value = backingMap[idx] else { return nil }
       return value

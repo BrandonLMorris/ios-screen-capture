@@ -75,6 +75,23 @@ let package = Package(
         .target(
             name: "Util",
             path: "Sources/Util"
+        ),
+        .testTarget(
+            name: "ObjectTests",
+            dependencies: ["Object"],
+            path: "Tests/ObjectTests"
+        ),
+        .testTarget(
+            name: "PacketTests",
+            dependencies: ["Packet"],
+            path: "Tests/PacketTests"
+        ),
+        .testTarget(
+            name: "USBTests",
+            dependencies: [
+                "USB",
+            ],
+            path: "Tests/USBTests"
         )
     ]
 )

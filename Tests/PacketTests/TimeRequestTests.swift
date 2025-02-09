@@ -1,5 +1,7 @@
 import Foundation
 import Testing
+@testable import Object
+@testable import Packet
 
 final class TimeRequestTests {
   let fixture = "HAAAAGNueXOAecF8pn8AAGVtaXRQPSITAQAAAA=="

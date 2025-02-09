@@ -1,6 +1,5 @@
 import Testing
-
-@testable import ios_screen_capture
+@testable import USB
 
 let defaultUdid = "abcd1234"
 

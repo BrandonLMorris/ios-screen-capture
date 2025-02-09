@@ -1,7 +1,6 @@
 import Foundation
 import Testing
-
-@testable import ios_screen_capture
+@testable import Object
 
 final class TimeTests {
   let fixture = "4eFCxGK6AAAAypo7AQAAAAAAAAAAAAAA"

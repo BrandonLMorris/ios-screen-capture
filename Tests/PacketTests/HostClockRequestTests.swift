@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+@testable import Packet
 
 final class HostClockRequestTests {
   let fixture = "HAAAAGNueXNQAtFspn8AAGtvbGNwSVgTAQAAAA=="

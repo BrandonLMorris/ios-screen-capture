@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+@testable import Packet
 
 final class StopRequestTests {
   private let fixture = "HAAAAGNueXPwX0I1un8AAHBvdHMQSf0CAQAAAA=="

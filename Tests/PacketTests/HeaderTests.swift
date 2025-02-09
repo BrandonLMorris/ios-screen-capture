@@ -1,4 +1,5 @@
 import Testing
+@testable import Packet
 
 final class HeaderTests {
 

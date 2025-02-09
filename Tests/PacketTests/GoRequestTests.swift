@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+@testable import Packet
 
 let requestFixture = "IAAAAGNueXPwX0I1un8AACAhb2cwL9MCAQAAAAEAAAA="
 let replyFixture = "GAAAAHlscHIwL9MCAQAAAAAAAAAAAAAA"

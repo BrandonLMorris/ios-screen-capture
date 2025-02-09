@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+@testable import Packet
 
 final class StreamTerminationTests {
   let terminateVideoFixture = Data(base64Encoded: "FAAAAG55c2EAAAAAAAAAADBkcGg=")!

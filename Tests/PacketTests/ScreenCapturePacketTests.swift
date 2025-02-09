@@ -1,7 +1,7 @@
 import Foundation
 import Testing
-
-@testable import ios_screen_capture
+@testable import Object
+@testable import Packet
 
 final class ScreenCapturePacketTests {
   // The ping packet is constant; both sending and receiving

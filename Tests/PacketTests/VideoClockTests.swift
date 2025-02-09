@@ -1,7 +1,6 @@
 import Foundation
 import Testing
-
-@testable import ios_screen_capture
+@testable import Packet
 
 /// Tests for the video clock (cvrp) packet.
 final class VideoClockTests {
