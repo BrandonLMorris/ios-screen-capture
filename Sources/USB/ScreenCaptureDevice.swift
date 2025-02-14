@@ -3,9 +3,9 @@ import IOKit
 import IOKit.usb
 import IOKit.usb.IOUSBLib
 import Logging
-import os.log
-import Util
 import Packet
+import Util
+import os.log
 
 private let logger = Logger(label: "ScreenCaptureDevice")
 

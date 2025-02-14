@@ -130,10 +130,11 @@ public class AVAssetReceiver: MediaReceiver {
       return
     }
     guard assetWriterInput.append(sampleBuffer) else {
-      logger.warning("Failed to append sample buffer!",
+      logger.warning(
+        "Failed to append sample buffer!",
         metadata: [
           "osstatus": "\(self.assetWriter.status.rawValue)",
-          "error": "\(String(describing: self.assetWriter.error))"
+          "error": "\(String(describing: self.assetWriter.error))",
         ]
       )
       return
@@ -173,10 +174,11 @@ public class AVAssetReceiver: MediaReceiver {
     }
     self.assetWriter.add(videoInput)
     guard self.assetWriter.startWriting() else {
-      logger.error("Failed to start writing AVAssetWriter!",
+      logger.error(
+        "Failed to start writing AVAssetWriter!",
         metadata: [
           "status": "\(self.assetWriter.status.rawValue)",
-          "error": "\(self.assetWriter.error?.localizedDescription ?? "none")"
+          "error": "\(self.assetWriter.error?.localizedDescription ?? "none")",
         ]
       )
       return

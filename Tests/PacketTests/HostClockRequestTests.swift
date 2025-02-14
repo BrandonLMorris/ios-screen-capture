@@ -1,12 +1,13 @@
 import Foundation
 import Testing
+
 @testable import Packet
 
 final class HostClockRequestTests {
   let fixture = "HAAAAGNueXNQAtFspn8AAGtvbGNwSVgTAQAAAA=="
   let replyFixture = "HAAAAHlscHJwSVgTAQAAAAAAAACAecF8pn8AAA=="
 
-  func fixtureParsing() throws {
+  @Test func fixtureParsing() throws {
     let fixture = try PacketParser.parse(from: Data(base64Encoded: fixture)!) as! HostClockRequest
 
     // Values taken from fixture
@@ -14,7 +15,7 @@ final class HostClockRequestTests {
     #expect(fixture.correlationId == "cElYEwEAAAA=")
   }
 
-  func replyFixtureParsing() throws {
+  @Test func replyFixtureParsing() throws {
     let fixture = try PacketParser.parse(from: Data(base64Encoded: fixture)!) as! HostClockRequest
 
     // Taken from fixture

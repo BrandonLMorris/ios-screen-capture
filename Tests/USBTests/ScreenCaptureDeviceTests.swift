@@ -1,4 +1,5 @@
 import Testing
+
 @testable import USB
 
 let defaultUdid = "abcd1234"

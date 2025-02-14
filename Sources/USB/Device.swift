@@ -143,24 +143,27 @@ extension USBDevice {
 
   func close() {
     if case let res = deviceInterface.close(), res != kIOReturnSuccess {
-      logger.warning("Error closing the device",
-                     metadata: ["returnString": "\(returnString(res))"])
+      logger.warning(
+        "Error closing the device",
+        metadata: ["returnString": "\(returnString(res))"])
     }
     isOpen = false
   }
 
   func reset() {
     if case let res = deviceInterface.reset(), res != kIOReturnSuccess {
-      logger.warning("Error resetting the device",
-                     metadata: ["retString": "\(returnString(res))"])
+      logger.warning(
+        "Error resetting the device",
+        metadata: ["retString": "\(returnString(res))"])
     }
     isOpen = false
   }
 
   func hardReset() {
     if case let res = deviceInterface.hardReset(), res != kIOReturnSuccess {
-      logger.warning("Error resetting the device",
-                     metadata: ["retString": "\(returnString(res))"])
+      logger.warning(
+        "Error resetting the device",
+        metadata: ["retString": "\(returnString(res))"])
     }
     isOpen = false
     Thread.sleep(forTimeInterval: TimeInterval(0.5))

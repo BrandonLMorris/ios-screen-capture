@@ -23,10 +23,14 @@ public class SetProperty: ScreenCapturePacket {
     let payloadLength = Int(data[uint32: idx])
     guard data.count >= idx + payloadLength else { return nil }
 
-    guard let kvPrefix = Prefix(data.from(idx)), kvPrefix.type == DataType.keyValue else { return nil }
+    guard let kvPrefix = Prefix(data.from(idx)), kvPrefix.type == DataType.keyValue else {
+      return nil
+    }
     idx += 8
 
-    guard let keyPrefix = Prefix(data.from(idx)), keyPrefix.type == DataType.stringKey else { return nil }
+    guard let keyPrefix = Prefix(data.from(idx)), keyPrefix.type == DataType.stringKey else {
+      return nil
+    }
     let keyRange = (idx + 8)..<(idx + Int(keyPrefix.length))
     guard let property = String(data: data.subdata(in: keyRange), encoding: .ascii) else {
       return nil

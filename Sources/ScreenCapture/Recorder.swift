@@ -1,11 +1,11 @@
 import CoreMedia
 import Foundation
 import Logging
+import Object
 import Packet
 import Stream
-import Object
-import Util
 import USB
+import Util
 
 private let logger = Logger(label: "Recorder")
 
@@ -37,7 +37,7 @@ public class Recorder {
 
     screenCaptureDevice.initializeRecording(verboseLogging: verbose)
     let packet = try screenCaptureDevice.readPackets().first!
-    guard let _ = packet as? Ping else {
+    guard packet as? Ping != nil else {
       // TODO: There should be a way to recover or restart the stream
       logger.error(
         "Non-ping packet received", metadata: ["base64": "\(packet.data.base64EncodedString())"])

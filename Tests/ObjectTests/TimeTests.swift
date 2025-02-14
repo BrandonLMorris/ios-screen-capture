@@ -1,5 +1,6 @@
 import Foundation
 import Testing
+
 @testable import Object
 
 final class TimeTests {
@@ -20,6 +21,32 @@ final class TimeTests {
     let serialized = time.serialize()
 
     #expect(serialized.base64EncodedString() == fixture)
+  }
+
+  @Test func nanosecondConstructorConsistent() throws {
+    let time = Time(value: 12_345_678, scale: 1_000_000_000)
+    let time2 = Time(nanoseconds: 12_345_678)
+
+    #expect(time.toNanos().value == time2.toNanos().value)
+  }
+
+  @Test func nowUsesNanoseconds() throws {
+    let rightNow = Time.now()
+
+    #expect(rightNow.value > 0)
+    #expect(rightNow.scale == 1_000_000_000)
+  }
+
+  @Test func cmTimeIsValid() throws {
+    #expect(Time.now().toCMTime().isValid)
+  }
+
+  @Test func rescalingWorks() throws {
+    let fps = Time(value: 60, scale: 1)
+    let rescaled = fps.rescale(to: 100)
+
+    #expect(rescaled.scale == 100)
+    #expect(rescaled.value == 6000)
   }
 }
 
