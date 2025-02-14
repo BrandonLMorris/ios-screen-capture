@@ -63,7 +63,7 @@ public class VideoClock: ScreenCapturePacket {
   public lazy var description: String = {
     """
     [CVRP] Video clock
-    \(clockPacket)
+    \(clockPacket.description)
     """
   }()
 

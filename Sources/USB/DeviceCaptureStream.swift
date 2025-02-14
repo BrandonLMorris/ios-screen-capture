@@ -14,7 +14,20 @@ private let recordingConfig = UInt8(6)
 private let recordingInterfaceSubclass: UInt8 = 0x2a
 private let recordingInterfaceAlt: UInt8 = 0xff
 
-public struct ScreenCaptureDevice {
+public protocol CaptureStream {
+  func activate(reconnectBackoff: TimeInterval) throws -> any CaptureStream
+  func deactivate() throws
+  func readPackets() throws -> [any ScreenCapturePacket]
+  func send(packet: any ScreenCapturePacket) throws
+}
+
+public extension CaptureStream {
+  func createDeviceCaptureStream() -> DeviceCaptureStream {
+    //todo
+  }
+}
+
+public struct DeviceCaptureStream : CaptureStream {
   private let udid: String
   private let device: Device
   private let reconnectProvider: (any DeviceProvider)?
@@ -24,7 +37,7 @@ public struct ScreenCaptureDevice {
 
   public static func obtainDevice(
     withUdid udid: String, from provider: any DeviceProvider = USBDeviceProvider()
-  ) throws -> ScreenCaptureDevice {
+  ) throws -> DeviceCaptureStream {
     // Hyphens are removed in the USB properties
     let udidNoHyphens = udid.replacingOccurrences(of: "-", with: "")
 
@@ -40,7 +53,7 @@ public struct ScreenCaptureDevice {
       throw ScreenCaptureError.multipleDevicesFound(
         "\(matching.count) services matching udid \(udid). Unsure how to proceed; aborting.")
     }
-    return ScreenCaptureDevice(
+    return DeviceCaptureStream(
       udid: udidNoHyphens, device: device, reconnectProvider: provider)
   }
 
@@ -48,7 +61,7 @@ public struct ScreenCaptureDevice {
   ///
   /// N.b. This action causes a disconnect, and it takes about 1 second before we can reconnect.
   /// Any previous reference to the device are invalid and should not be used.
-  public func activate(reconnectBackoff: TimeInterval = 0.4) throws -> ScreenCaptureDevice {
+  public func activate(reconnectBackoff: TimeInterval = 0.4) throws -> any CaptureStream {
     controlActivation(activate: true)
     let newRef = try obtain(
       withRetries: 10, recordingInterface: true, withBackoff: reconnectBackoff)
@@ -129,7 +142,7 @@ public struct ScreenCaptureDevice {
     throw ScreenCaptureError.readError("This should never happen")
   }
 
-  public func sendPacket(packet: any ScreenCapturePacket) throws {
+  public func send(packet: any ScreenCapturePacket) throws {
     guard let iface = iface, let endpoints = endpoints else {
       throw ScreenCaptureError.uninitialized(
         "Endpoints (\(String(describing: endpoints))) and/or interface (\(String(describing: iface)) nil; device not initialized for reading."
@@ -144,7 +157,7 @@ public struct ScreenCaptureDevice {
 
   /// Sends a ping packet to the device.
   public func ping() throws {
-    try sendPacket(packet: Ping.instance)
+    try send(packet: Ping.instance)
   }
 
   private func getEndpoints(for iface: InterfaceInterface) -> Endpoints {
@@ -174,13 +187,13 @@ public struct ScreenCaptureDevice {
     withRetries maxAttempts: Int = 0, recordingInterface: Bool = false,
     withBackoff backoff: TimeInterval = 0.4
   ) throws
-    -> ScreenCaptureDevice
+    -> DeviceCaptureStream
   {
-    var newDevice: ScreenCaptureDevice? = nil
+    var newDevice: DeviceCaptureStream? = nil
     var attemptCount = 0
     let provider = reconnectProvider ?? USBDeviceProvider()
     repeat {
-      newDevice = try? ScreenCaptureDevice.obtainDevice(withUdid: self.udid, from: provider)
+      newDevice = try? DeviceCaptureStream.obtainDevice(withUdid: self.udid, from: provider)
       try? newDevice?.device.open()
       attemptCount += 1
       if let d = newDevice, recordingInterface && d.device.configCount >= 6 {

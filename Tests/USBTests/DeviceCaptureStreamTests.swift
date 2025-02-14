@@ -4,13 +4,14 @@ import Testing
 
 let defaultUdid = "abcd1234"
 
-final class ScreenCaptureDeviceTests {
+final class DeviceCaptureStreamTests {
 
   // MARK: Obtain device tests
 
   @Test func obtainDevice_happyPath_worksFine() throws {
     #expect(throws: Never.self) {
-      try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: FakeDeviceProvider())
+      try createDeviceCaptureStream(
+        withUdid: defaultUdid, from: FakeDeviceProvider(), withBackoff: 0.0)
     }
   }
 
@@ -18,7 +19,7 @@ final class ScreenCaptureDeviceTests {
     let provider = FakeDeviceProvider()
     provider.devices = []
     #expect(throws: ScreenCaptureError.self) {
-      try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider)
+      try createDeviceCaptureStream(withUdid: defaultUdid, from: provider, withBackoff: 0.0)
     }
   }
 
@@ -26,14 +27,15 @@ final class ScreenCaptureDeviceTests {
     let provider = FakeDeviceProvider()
     provider.devices = [FakeDevice(), FakeDevice()]
     #expect(throws: ScreenCaptureError.self) {
-      try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider)
+      try createDeviceCaptureStream(withUdid: defaultUdid, from: provider, withBackoff: 0.0)
     }
   }
 
   @Test func obtainDevice_udidWithHyphens_removesForMatching() throws {
     let hyphenated = "--a-b-c-d-1-2-3-4--"
     #expect(throws: Never.self) {
-      try ScreenCaptureDevice.obtainDevice(withUdid: hyphenated, from: FakeDeviceProvider())
+      try createDeviceCaptureStream(
+        withUdid: hyphenated, from: FakeDeviceProvider(), withBackoff: 0.0)
     }
   }
 
@@ -42,9 +44,10 @@ final class ScreenCaptureDeviceTests {
   @Test func activate_normalFlow_sendsControl() throws {
     let provider = FakeDeviceProvider()
     let fake = provider.devices.first!
-    let device = try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider)
+    let device = try createDeviceCaptureStream(
+      withUdid: defaultUdid, from: provider, withBackoff: 0.0)
 
-    _ = try device.activate(reconnectBackoff: 0.0)
+    _ = try device.activate()
 
     #expect(fake.controlCallCount == 1)
   }
@@ -52,9 +55,10 @@ final class ScreenCaptureDeviceTests {
   @Test func activate_normalFlow_reconnectsProperly() throws {
     let provider = FakeDeviceProvider()
     let reconnect = provider.reconnectDevices.first!
-    let device = try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider)
+    let device = try createDeviceCaptureStream(
+      withUdid: defaultUdid, from: provider, withBackoff: 0.0)
 
-    _ = try device.activate(reconnectBackoff: 0.0)
+    _ = try device.activate()
 
     #expect(reconnect.openCallCount > 0)
   }
@@ -62,9 +66,10 @@ final class ScreenCaptureDeviceTests {
   @Test func activate_normalFlow_setsConfigurationAfterReconnect() throws {
     let provider = FakeDeviceProvider()
     let reconnect = provider.reconnectDevices.first!
-    let device = try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider)
+    let device = try createDeviceCaptureStream(
+      withUdid: defaultUdid, from: provider, withBackoff: 0.0)
 
-    _ = try device.activate(reconnectBackoff: 0.0)
+    _ = try device.activate()
 
     #expect(reconnect.config == 6)
   }
@@ -72,9 +77,10 @@ final class ScreenCaptureDeviceTests {
   @Test func testActivate_cannotReconect_failsWithError() throws {
     let provider = FakeDeviceProvider()
     provider.reconnectDevices = []  // Nothing to reconnect to
-    let device = try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider)
+    let device = try createDeviceCaptureStream(
+      withUdid: defaultUdid, from: provider, withBackoff: 0.0)
 
-    #expect(throws: ScreenCaptureError.self) { try device.activate(reconnectBackoff: 0.0) }
+    #expect(throws: ScreenCaptureError.self) { try device.activate() }
   }
 
   // MARK: Deactivation tests
@@ -82,7 +88,8 @@ final class ScreenCaptureDeviceTests {
   @Test func deactivate_normalFlow_sendsControl() throws {
     let provider = FakeDeviceProvider()
     let fake = provider.devices.first!
-    let device = try ScreenCaptureDevice.obtainDevice(withUdid: defaultUdid, from: provider)
+    let device = try createDeviceCaptureStream(
+      withUdid: defaultUdid, from: provider, withBackoff: 0.0)
 
     device.deactivate()
 
