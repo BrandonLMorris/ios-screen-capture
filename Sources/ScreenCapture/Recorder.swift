@@ -10,10 +10,9 @@ import Util
 private let logger = Logger(label: "Recorder")
 
 public class Recorder {
-  private var device: ScreenCaptureDevice! = nil
+  private var device: CaptureStream! = nil
   private var sessionActive = false
   private var startTime: UInt64 = 0
-  // private let output: MediaReceiver = VideoFile(to: "/tmp/recording.h264")!
   private let output: MediaReceiver = AVAssetReceiver(to: "/tmp/recording.mp4")!
   private let verbose: Bool
 
@@ -31,11 +30,10 @@ public class Recorder {
   }
 
   public func start(forDeviceWithId udid: String) throws {
-    var screenCaptureDevice = try ScreenCaptureDevice.obtainDevice(withUdid: udid)
+    var screenCaptureDevice: CaptureStream = try createDeviceCaptureStream(withUdid: udid)
     screenCaptureDevice = try screenCaptureDevice.activate()
     logger.info("Activated. We are clear for launch.", metadata: ["udid": "\(udid)"])
 
-    screenCaptureDevice.initializeRecording(verboseLogging: verbose)
     let packet = try screenCaptureDevice.readPackets().first!
     guard packet as? Ping != nil else {
       // TODO: There should be a way to recover or restart the stream
@@ -57,8 +55,8 @@ public class Recorder {
       return
     }
     logger.info("Beginning recorder shutdown...")
-    try device.sendPacket(packet: CloseStream(clock: audioClockRef))
-    try device.sendPacket(packet: CloseStream())
+    try device.send(packet: CloseStream(clock: audioClockRef))
+    try device.send(packet: CloseStream())
     let closeResult = closeStreamGroup.wait(wallTimeout: .now() + .seconds(3))
     switch closeResult {
     case .timedOut:
@@ -102,7 +100,7 @@ public class Recorder {
       let audioFormatReply = audioFormatPacket.reply()
       logger.debug(
         "Sending audio format reply", metadata: ["desc": "\(audioFormatReply.description)"])
-      try device.sendPacket(packet: audioFormatPacket.reply())
+      try device.send(packet: audioFormatPacket.reply())
     case let videoClockPacket as VideoClock:
       try handle(videoClockPacket)
     case let clockRequest as HostClockRequest:
@@ -132,12 +130,12 @@ public class Recorder {
     if controlPacket.header.subtype == PacketSubtype.goRequest {
       let goReply = controlPacket.reply()
       logger.debug("Sending go reply", metadata: ["desc": "\(goReply.description)"])
-      try device.sendPacket(packet: goReply)
+      try device.send(packet: goReply)
     }
     if controlPacket.header.subtype == PacketSubtype.stopRequest {
       let stopReply = controlPacket.reply()
       logger.debug("Sending stop reply", metadata: ["desc": "\(stopReply.description)"])
-      try device.sendPacket(packet: stopReply)
+      try device.send(packet: stopReply)
     }
   }
 
@@ -146,16 +144,16 @@ public class Recorder {
   private func handle(_ audioClockPacket: AudioClock) throws {
     let desc = HostDescription()
     logger.debug("Sending host description packet", metadata: ["desc": "\(desc.description)"])
-    try device.sendPacket(packet: desc)
+    try device.send(packet: desc)
     logger.debug("Sending stream desc")
     audioClockRef = audioClockPacket.clock.clock
-    try device.sendPacket(packet: StreamDescription(clock: audioClockRef))
+    try device.send(packet: StreamDescription(clock: audioClockRef))
     self.audioStartTime = Time.now()
     let audioClockReply = Reply(
       correlationId: audioClockPacket.clock.correlationId,
       clock: audioClockPacket.clock.clock + 1000)
     logger.debug("Sending audio clock reply", metadata: ["desc": "\(audioClockReply.description)"])
-    try device.sendPacket(packet: audioClockReply)
+    try device.send(packet: audioClockReply)
   }
 
   // MARK: Video clock (cvrp) packet handling
@@ -164,14 +162,14 @@ public class Recorder {
     self.videoRequest = VideoDataRequest(clock: videoClockPacket.clockPacket.clock)
     logger.debug(
       "Sending video data request", metadata: ["desc": "\(self.videoRequest.description)"])
-    try device.sendPacket(packet: videoRequest)
+    try device.send(packet: videoRequest)
     let videoClockReply = videoClockPacket.reply(
       withClock: videoClockPacket.clockPacket.clock + 0x1000AF)
     logger.debug("Sending video clock reply", metadata: ["desc": "\(videoClockReply.description)"])
-    try device.sendPacket(packet: videoClockReply)
+    try device.send(packet: videoClockReply)
     logger.debug(
       "Sending video data request", metadata: ["desc": "\(self.videoRequest.description)"])
-    try device.sendPacket(packet: videoRequest)
+    try device.send(packet: videoRequest)
   }
 
   // MARK: Host clock (clok) request
@@ -181,7 +179,7 @@ public class Recorder {
     let hostClockId = clockRequest.clock + 0x10000
     let reply = clockRequest.reply(withClock: hostClockId)
     logger.debug("Sending host clock reply", metadata: ["desc": "\(reply.description)"])
-    try device.sendPacket(packet: reply)
+    try device.send(packet: reply)
   }
 
   // MARK: Time request (time)
@@ -190,7 +188,7 @@ public class Recorder {
     logger.debug("Sending time reply")
     let now = DispatchTime.now().uptimeNanoseconds
     let reply = timeRequest.reply(withTime: Time(nanoseconds: now - startTime))
-    try device.sendPacket(packet: reply)
+    try device.send(packet: reply)
   }
 
   // MARK: Skew request (skew)
@@ -200,7 +198,7 @@ public class Recorder {
     let calculatedSkew = skew(
       localDuration: self.localAudioLatest, deviceDuration: self.deviceAudioLatest)
     let reply = skewRequest.reply(withSkew: calculatedSkew)
-    try device.sendPacket(packet: reply)
+    try device.send(packet: reply)
   }
 
   // MARK: Media sample (feed, eat)
@@ -209,7 +207,7 @@ public class Recorder {
     switch mediaSample.mediaType {
     case .video:
       self.output.sendVideo(mediaSample.sample)
-      try device.sendPacket(packet: self.videoRequest)
+      try device.send(packet: self.videoRequest)
     case .audio:
       self.localAudioLatest = Time.now().since(self.audioStartTime)
       self.deviceAudioLatest = mediaSample.sample.outputPresentation ?? Time.NULL
