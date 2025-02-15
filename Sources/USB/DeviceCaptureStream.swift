@@ -87,7 +87,7 @@ internal class DeviceCaptureStream: CaptureStream {
     newRef.device.setConfiguration(config: recordingConfig)
     logger.debug("Current configuration is \(newRef.device.activeConfig(refresh: false))")
     try! newRef.device.open()
-    claimEndpoints(verboseLogging: false)
+    newRef.claimEndpoints(verboseLogging: false)
     return newRef
   }
 

@@ -11,6 +11,7 @@ private let logger = Logger(label: "Recorder")
 
 public class Recorder {
   private var device: CaptureStream! = nil
+  private var context: RecordingContext! = nil
   private var sessionActive = false
   private var startTime: UInt64 = 0
   private let output: MediaReceiver = AVAssetReceiver(to: "/tmp/recording.mp4")!
@@ -77,6 +78,7 @@ public class Recorder {
       return
     }
     sessionActive = true
+    context = RecordingContext(device, output)
     while sessionActive {
       do {
         try device.readPackets().forEach { try handle($0) }
@@ -90,10 +92,10 @@ public class Recorder {
   private func handle(_ packet: ScreenCapturePacket) throws {
     logger.trace("Handling \(type(of: packet)) packet", metadata: ["desc": "\(packet)"])
     switch packet {
-    case _ as Ping:
-      try device.ping()
+    case let p as Ping:
+      try p.onReceive(context)
     case let controlPacket as ControlPacket:
-      try handle(controlPacket)
+      try controlPacket.onReceive(context)
     case let audioClockPacket as AudioClock:
       try handle(audioClockPacket)
     case let audioFormatPacket as AudioFormat:
@@ -215,6 +217,28 @@ public class Recorder {
         self.deviceAudioStart = deviceAudioLatest
       }
     }
+  }
+}
+
+protocol RecordingPacket {
+  func onReceive(_ context: RecordingContext) throws
+}
+
+struct RecordingContext {
+  private let device: CaptureStream
+  private let mediaReceiver: MediaReceiver
+
+  internal init(_ device: CaptureStream, _ mediaReceiver: MediaReceiver) {
+    self.device = device
+    self.mediaReceiver = mediaReceiver
+  }
+
+  func send(packet: any ScreenCapturePacket) throws {
+    try device.send(packet: packet)
+  }
+
+  func recordVideoSample(_ mediaSample: MediaSample) throws {
+    mediaReceiver.sendVideo(mediaSample.sample)
   }
 }
 
