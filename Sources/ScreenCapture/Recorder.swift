@@ -16,8 +16,6 @@ public class Recorder {
   private let output: MediaReceiver = AVAssetReceiver(to: "/tmp/recording.mp4")!
   private let verbose: Bool
 
-  private var deviceAudioStart: Time! = nil
-
   private let closeStreamGroup = DispatchGroup()
 
   public init(verbose: Bool = false) {
@@ -88,8 +86,6 @@ public class Recorder {
     switch packet {
     case let recordingPacket as RecordingPacket:
       try recordingPacket.onReceive(&context)
-    case let mediaSample as MediaSample:
-      try handle(mediaSample)
     case _ as SetProperty:
       // Nothing to do
       break
@@ -100,22 +96,6 @@ public class Recorder {
     default:
       logger.warning(
         "Unexpected packet received!", metadata: ["base64": "\(packet.data.base64EncodedString())"])
-    }
-  }
-
-  // MARK: Media sample (feed, eat)
-
-  private func handle(_ mediaSample: MediaSample) throws {
-    switch mediaSample.mediaType {
-    case .video:
-      self.output.sendVideo(mediaSample.sample)
-      try device.send(packet: context.videoRequest)
-    case .audio:
-      context.localAudioLatest = Time.now().since(context.audioStartTime)
-      context.deviceAudioLatest = mediaSample.sample.outputPresentation ?? Time.NULL
-      if deviceAudioStart == nil {
-        self.deviceAudioStart = context.deviceAudioLatest
-      }
     }
   }
 }
@@ -134,6 +114,7 @@ struct RecordingContext {
   public var startTime: UInt64 = 0
   public var localAudioLatest: Time! = nil
   public var deviceAudioLatest: Time! = nil
+  public var deviceAudioStart: Time! = nil
 
   internal init(_ device: CaptureStream, _ mediaReceiver: MediaReceiver) {
     self.device = device

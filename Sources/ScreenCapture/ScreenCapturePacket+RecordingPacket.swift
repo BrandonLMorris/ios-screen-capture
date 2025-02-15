@@ -89,3 +89,19 @@ extension SkewRequest: RecordingPacket {
     try context.send(packet: reply(withSkew: calculatedSkew))
   }
 }
+
+extension MediaSample: RecordingPacket {
+  func onReceive(_ context: inout RecordingContext) throws {
+    switch mediaType {
+    case .video:
+      try context.recordVideoSample(self)
+      try context.send(packet: context.videoRequest)
+    case .audio:
+      context.localAudioLatest = Time.now().since(context.audioStartTime)
+      context.deviceAudioLatest = sample.outputPresentation ?? Time.NULL
+      if context.deviceAudioStart == nil {
+        context.deviceAudioStart = context.deviceAudioLatest
+      }
+    }
+  }
+}
