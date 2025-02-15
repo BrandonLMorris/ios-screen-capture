@@ -71,3 +71,12 @@ extension HostClockRequest: RecordingPacket {
     try context.send(packet: reply)
   }
 }
+
+extension TimeRequest: RecordingPacket {
+  func onReceive(_ context: inout RecordingContext) throws {
+    logger.debug("Sending time reply")
+    let now = DispatchTime.now().uptimeNanoseconds
+    let reply = reply(withTime: Time(nanoseconds: now - context.startTime))
+    try context.send(packet: reply)
+  }
+}

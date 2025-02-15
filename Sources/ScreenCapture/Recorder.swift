@@ -90,10 +90,6 @@ public class Recorder {
     switch packet {
     case let recordingPacket as RecordingPacket:
       try recordingPacket.onReceive(&context)
-    case let clockRequest as HostClockRequest:
-      try handle(clockRequest)
-    case let timeRequest as TimeRequest:
-      try handle(timeRequest)
     case let skewRequest as SkewRequest:
       try handle(skewRequest)
     case let mediaSample as MediaSample:
@@ -109,15 +105,6 @@ public class Recorder {
       logger.warning(
         "Unexpected packet received!", metadata: ["base64": "\(packet.data.base64EncodedString())"])
     }
-  }
-
-  // MARK: Time request (time)
-
-  private func handle(_ timeRequest: TimeRequest) throws {
-    logger.debug("Sending time reply")
-    let now = DispatchTime.now().uptimeNanoseconds
-    let reply = timeRequest.reply(withTime: Time(nanoseconds: now - context.startTime))
-    try device.send(packet: reply)
   }
 
   // MARK: Skew request (skew)
