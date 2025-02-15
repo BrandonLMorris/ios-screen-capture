@@ -34,6 +34,14 @@ extension AudioClock: RecordingPacket {
       clock: clock.clock + 1000)
     logger.debug("Sending audio clock reply", metadata: ["desc": "\(audioClockReply.description)"])
     try context.send(packet: audioClockReply)
+  }
+}
 
+extension AudioFormat: RecordingPacket {
+  func onReceive(_ context: inout RecordingContext) throws {
+    let audioFormatReply = reply()
+    logger.debug(
+      "Sending audio format reply", metadata: ["desc": "\(audioFormatReply.description)"])
+    try context.send(packet: audioFormatReply)
   }
 }

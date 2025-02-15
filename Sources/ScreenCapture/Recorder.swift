@@ -90,17 +90,8 @@ public class Recorder {
   private func handle(_ packet: ScreenCapturePacket) throws {
     logger.trace("Handling \(type(of: packet)) packet", metadata: ["desc": "\(packet)"])
     switch packet {
-    case let p as Ping:
-      try p.onReceive(&context)
-    case let controlPacket as ControlPacket:
-      try controlPacket.onReceive(&context)
-    case let audioClockPacket as AudioClock:
-      try audioClockPacket.onReceive(&context)
-    case let audioFormatPacket as AudioFormat:
-      let audioFormatReply = audioFormatPacket.reply()
-      logger.debug(
-        "Sending audio format reply", metadata: ["desc": "\(audioFormatReply.description)"])
-      try device.send(packet: audioFormatPacket.reply())
+    case let recordingPacket as RecordingPacket:
+      try recordingPacket.onReceive(&context)
     case let videoClockPacket as VideoClock:
       try handle(videoClockPacket)
     case let clockRequest as HostClockRequest:
