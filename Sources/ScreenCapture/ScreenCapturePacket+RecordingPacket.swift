@@ -80,3 +80,12 @@ extension TimeRequest: RecordingPacket {
     try context.send(packet: reply)
   }
 }
+
+extension SkewRequest: RecordingPacket {
+  func onReceive(_ context: inout RecordingContext) throws {
+    logger.debug("Sending skew reply")
+    let calculatedSkew = skew(
+      localDuration: context.localAudioLatest, deviceDuration: context.deviceAudioLatest)
+    try context.send(packet: reply(withSkew: calculatedSkew))
+  }
+}

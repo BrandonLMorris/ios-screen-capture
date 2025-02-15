@@ -17,8 +17,6 @@ public class Recorder {
   private let verbose: Bool
 
   private var deviceAudioStart: Time! = nil
-  private var localAudioLatest: Time! = nil
-  private var deviceAudioLatest: Time! = nil
 
   private let closeStreamGroup = DispatchGroup()
 
@@ -90,8 +88,6 @@ public class Recorder {
     switch packet {
     case let recordingPacket as RecordingPacket:
       try recordingPacket.onReceive(&context)
-    case let skewRequest as SkewRequest:
-      try handle(skewRequest)
     case let mediaSample as MediaSample:
       try handle(mediaSample)
     case _ as SetProperty:
@@ -107,16 +103,6 @@ public class Recorder {
     }
   }
 
-  // MARK: Skew request (skew)
-
-  private func handle(_ skewRequest: SkewRequest) throws {
-    logger.debug("Sending skew reply")
-    let calculatedSkew = skew(
-      localDuration: self.localAudioLatest, deviceDuration: self.deviceAudioLatest)
-    let reply = skewRequest.reply(withSkew: calculatedSkew)
-    try device.send(packet: reply)
-  }
-
   // MARK: Media sample (feed, eat)
 
   private func handle(_ mediaSample: MediaSample) throws {
@@ -125,10 +111,10 @@ public class Recorder {
       self.output.sendVideo(mediaSample.sample)
       try device.send(packet: context.videoRequest)
     case .audio:
-      self.localAudioLatest = Time.now().since(context.audioStartTime)
-      self.deviceAudioLatest = mediaSample.sample.outputPresentation ?? Time.NULL
+      context.localAudioLatest = Time.now().since(context.audioStartTime)
+      context.deviceAudioLatest = mediaSample.sample.outputPresentation ?? Time.NULL
       if deviceAudioStart == nil {
-        self.deviceAudioStart = deviceAudioLatest
+        self.deviceAudioStart = context.deviceAudioLatest
       }
     }
   }
@@ -146,6 +132,8 @@ struct RecordingContext {
   public var audioStartTime: Time = Time.NULL!
   public var videoRequest: VideoDataRequest! = nil
   public var startTime: UInt64 = 0
+  public var localAudioLatest: Time! = nil
+  public var deviceAudioLatest: Time! = nil
 
   internal init(_ device: CaptureStream, _ mediaReceiver: MediaReceiver) {
     self.device = device
