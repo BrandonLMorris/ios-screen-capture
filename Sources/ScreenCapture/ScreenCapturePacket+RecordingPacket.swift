@@ -61,3 +61,13 @@ extension VideoClock: RecordingPacket {
 
   }
 }
+
+extension HostClockRequest: RecordingPacket {
+  func onReceive(_ context: inout RecordingContext) throws {
+    context.startTime = DispatchTime.now().uptimeNanoseconds
+    let hostClockId = clock + 0x10000
+    let reply = reply(withClock: hostClockId)
+    logger.debug("Sending host clock reply", metadata: ["desc": "\(reply.description)"])
+    try context.send(packet: reply)
+  }
+}

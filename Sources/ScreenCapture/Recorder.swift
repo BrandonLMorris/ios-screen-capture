@@ -13,7 +13,6 @@ public class Recorder {
   private var device: CaptureStream! = nil
   private var context: RecordingContext! = nil
   private var sessionActive = false
-  private var startTime: UInt64 = 0
   private let output: MediaReceiver = AVAssetReceiver(to: "/tmp/recording.mp4")!
   private let verbose: Bool
 
@@ -112,22 +111,12 @@ public class Recorder {
     }
   }
 
-  // MARK: Host clock (clok) request
-
-  private func handle(_ clockRequest: HostClockRequest) throws {
-    self.startTime = DispatchTime.now().uptimeNanoseconds
-    let hostClockId = clockRequest.clock + 0x10000
-    let reply = clockRequest.reply(withClock: hostClockId)
-    logger.debug("Sending host clock reply", metadata: ["desc": "\(reply.description)"])
-    try device.send(packet: reply)
-  }
-
   // MARK: Time request (time)
 
   private func handle(_ timeRequest: TimeRequest) throws {
     logger.debug("Sending time reply")
     let now = DispatchTime.now().uptimeNanoseconds
-    let reply = timeRequest.reply(withTime: Time(nanoseconds: now - startTime))
+    let reply = timeRequest.reply(withTime: Time(nanoseconds: now - context.startTime))
     try device.send(packet: reply)
   }
 
@@ -169,6 +158,7 @@ struct RecordingContext {
   public var audioClockRef: CFTypeID = 0
   public var audioStartTime: Time = Time.NULL!
   public var videoRequest: VideoDataRequest! = nil
+  public var startTime: UInt64 = 0
 
   internal init(_ device: CaptureStream, _ mediaReceiver: MediaReceiver) {
     self.device = device
