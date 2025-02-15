@@ -14,47 +14,80 @@ private let recordingConfig = UInt8(6)
 private let recordingInterfaceSubclass: UInt8 = 0x2a
 private let recordingInterfaceAlt: UInt8 = 0xff
 
-public struct ScreenCaptureDevice {
+public protocol CaptureStream {
+  /// Set up the stream for interaction.
+  func activate() throws -> any CaptureStream
+
+  /// Tear down the stream.
+  func deactivate()
+
+  /// Receive one or more packets from the stream.
+  func readPackets() throws -> [any ScreenCapturePacket]
+
+  /// Write a packet to the stream.
+  func send(packet: any ScreenCapturePacket) throws
+}
+
+public func createDeviceCaptureStream(
+  withUdid udid: String, from provider: any DeviceProvider = USBDeviceProvider(),
+  withBackoff backoff: TimeInterval = 0.4
+) throws -> CaptureStream {
+  // Hyphens are removed in the USB properties
+  let udidNoHyphens = udid.replacingOccurrences(of: "-", with: "")
+
+  let matching = try provider.connected().filter {
+    // Match on udid in the device's service registry
+    $0.registryEntry(forKey: udidRegistryKey) == udidNoHyphens
+  }
+
+  guard !matching.isEmpty else {
+    throw ScreenCaptureError.deviceNotFound("Could not find device with udid \(udid)")
+  }
+  guard matching.count == 1, let device = matching.first else {
+    throw ScreenCaptureError.multipleDevicesFound(
+      "\(matching.count) services matching udid \(udid). Unsure how to proceed; aborting.")
+  }
+  return DeviceCaptureStream(
+    udid: udidNoHyphens, device: device, reconnectProvider: provider, withBackoff: backoff)
+}
+
+extension CaptureStream {
+  public func ping() throws {
+    try send(packet: Ping.instance)
+  }
+}
+
+internal class DeviceCaptureStream: CaptureStream {
   private let udid: String
   private let device: Device
   private let reconnectProvider: (any DeviceProvider)?
+  private let reconnectBackoff: TimeInterval
   private var iface: InterfaceInterface? = nil
   private var endpoints: Endpoints? = nil
   private var verbose: Bool = false
 
-  public static func obtainDevice(
-    withUdid udid: String, from provider: any DeviceProvider = USBDeviceProvider()
-  ) throws -> ScreenCaptureDevice {
-    // Hyphens are removed in the USB properties
-    let udidNoHyphens = udid.replacingOccurrences(of: "-", with: "")
-
-    let matching = try provider.connected().filter {
-      // Match on udid in the device's service registry
-      $0.registryEntry(forKey: udidRegistryKey) == udidNoHyphens
-    }
-
-    guard !matching.isEmpty else {
-      throw ScreenCaptureError.deviceNotFound("Could not find device with udid \(udid)")
-    }
-    guard matching.count == 1, let device = matching.first else {
-      throw ScreenCaptureError.multipleDevicesFound(
-        "\(matching.count) services matching udid \(udid). Unsure how to proceed; aborting.")
-    }
-    return ScreenCaptureDevice(
-      udid: udidNoHyphens, device: device, reconnectProvider: provider)
+  internal init(
+    udid: String, device: Device, reconnectProvider: (any DeviceProvider)?,
+    withBackoff reconnectBackoff: TimeInterval
+  ) {
+    self.udid = udid
+    self.device = device
+    self.reconnectProvider = reconnectProvider
+    self.reconnectBackoff = reconnectBackoff
   }
 
   /// Enable the USB configuration for screen recording.
   ///
   /// N.b. This action causes a disconnect, and it takes about 1 second before we can reconnect.
   /// Any previous reference to the device are invalid and should not be used.
-  public func activate(reconnectBackoff: TimeInterval = 0.4) throws -> ScreenCaptureDevice {
+  public func activate() throws -> any CaptureStream {
     controlActivation(activate: true)
     let newRef = try obtain(
       withRetries: 10, recordingInterface: true, withBackoff: reconnectBackoff)
     newRef.device.setConfiguration(config: recordingConfig)
     logger.debug("Current configuration is \(newRef.device.activeConfig(refresh: false))")
     try! newRef.device.open()
+    newRef.claimEndpoints(verboseLogging: false)
     return newRef
   }
 
@@ -63,7 +96,7 @@ public struct ScreenCaptureDevice {
     controlActivation(activate: false)
   }
 
-  public mutating func initializeRecording(verboseLogging: Bool) {
+  internal func claimEndpoints(verboseLogging: Bool) {
     self.verbose = verboseLogging
     guard
       let iface = device.getInterface(
@@ -129,7 +162,7 @@ public struct ScreenCaptureDevice {
     throw ScreenCaptureError.readError("This should never happen")
   }
 
-  public func sendPacket(packet: any ScreenCapturePacket) throws {
+  public func send(packet: any ScreenCapturePacket) throws {
     guard let iface = iface, let endpoints = endpoints else {
       throw ScreenCaptureError.uninitialized(
         "Endpoints (\(String(describing: endpoints))) and/or interface (\(String(describing: iface)) nil; device not initialized for reading."
@@ -144,7 +177,7 @@ public struct ScreenCaptureDevice {
 
   /// Sends a ping packet to the device.
   public func ping() throws {
-    try sendPacket(packet: Ping.instance)
+    try send(packet: Ping.instance)
   }
 
   private func getEndpoints(for iface: InterfaceInterface) -> Endpoints {
@@ -174,13 +207,14 @@ public struct ScreenCaptureDevice {
     withRetries maxAttempts: Int = 0, recordingInterface: Bool = false,
     withBackoff backoff: TimeInterval = 0.4
   ) throws
-    -> ScreenCaptureDevice
+    -> DeviceCaptureStream
   {
-    var newDevice: ScreenCaptureDevice? = nil
+    var newDevice: DeviceCaptureStream? = nil
     var attemptCount = 0
     let provider = reconnectProvider ?? USBDeviceProvider()
     repeat {
-      newDevice = try? ScreenCaptureDevice.obtainDevice(withUdid: self.udid, from: provider)
+      newDevice =
+        try? createDeviceCaptureStream(withUdid: self.udid, from: provider) as? DeviceCaptureStream
       try? newDevice?.device.open()
       attemptCount += 1
       if let d = newDevice, recordingInterface && d.device.configCount >= 6 {

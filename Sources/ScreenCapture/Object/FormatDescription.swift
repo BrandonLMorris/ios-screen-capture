@@ -92,6 +92,13 @@ public class FormatDescription: Equatable {
     self.sequenceParameterSequence = Data(sps)
   }
 
+  // for testing
+  init(pps: Data, sps: Data) {
+    pictureParameterSequence = pps
+    sequenceParameterSequence = sps
+    self.mediaMarker = videoMarker
+  }
+
   public func toCMFormatDescription() -> CMFormatDescription? {
     guard self.mediaMarker == videoMarker else {
       // TODO: Support CMFormatDescription for audio
