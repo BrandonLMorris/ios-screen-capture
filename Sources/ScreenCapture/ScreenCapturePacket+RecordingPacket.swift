@@ -45,3 +45,19 @@ extension AudioFormat: RecordingPacket {
     try context.send(packet: audioFormatReply)
   }
 }
+
+extension VideoClock: RecordingPacket {
+  func onReceive(_ context: inout RecordingContext) throws {
+    context.videoRequest = VideoDataRequest(clock: clockPacket.clock)
+    logger.debug(
+      "Sending video data request", metadata: ["desc": "\(description)"])
+    try context.send(packet: context.videoRequest)
+    let videoClockReply = reply(withClock: clockPacket.clock + 0x1000AF)
+    logger.debug("Sending video clock reply", metadata: ["desc": "\(videoClockReply.description)"])
+    try context.send(packet: videoClockReply)
+    logger.debug(
+      "Sending video data request", metadata: ["desc": "\(context.videoRequest.description)"])
+    try context.send(packet: context.videoRequest)
+
+  }
+}

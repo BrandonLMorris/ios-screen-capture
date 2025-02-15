@@ -21,7 +21,6 @@ public class Recorder {
   private var localAudioLatest: Time! = nil
   private var deviceAudioLatest: Time! = nil
 
-  private var videoRequest: VideoDataRequest! = nil
   private let closeStreamGroup = DispatchGroup()
 
   public init(verbose: Bool = false) {
@@ -92,8 +91,6 @@ public class Recorder {
     switch packet {
     case let recordingPacket as RecordingPacket:
       try recordingPacket.onReceive(&context)
-    case let videoClockPacket as VideoClock:
-      try handle(videoClockPacket)
     case let clockRequest as HostClockRequest:
       try handle(clockRequest)
     case let timeRequest as TimeRequest:
@@ -113,22 +110,6 @@ public class Recorder {
       logger.warning(
         "Unexpected packet received!", metadata: ["base64": "\(packet.data.base64EncodedString())"])
     }
-  }
-
-  // MARK: Video clock (cvrp) packet handling
-
-  private func handle(_ videoClockPacket: VideoClock) throws {
-    self.videoRequest = VideoDataRequest(clock: videoClockPacket.clockPacket.clock)
-    logger.debug(
-      "Sending video data request", metadata: ["desc": "\(self.videoRequest.description)"])
-    try device.send(packet: videoRequest)
-    let videoClockReply = videoClockPacket.reply(
-      withClock: videoClockPacket.clockPacket.clock + 0x1000AF)
-    logger.debug("Sending video clock reply", metadata: ["desc": "\(videoClockReply.description)"])
-    try device.send(packet: videoClockReply)
-    logger.debug(
-      "Sending video data request", metadata: ["desc": "\(self.videoRequest.description)"])
-    try device.send(packet: videoRequest)
   }
 
   // MARK: Host clock (clok) request
@@ -166,7 +147,7 @@ public class Recorder {
     switch mediaSample.mediaType {
     case .video:
       self.output.sendVideo(mediaSample.sample)
-      try device.send(packet: self.videoRequest)
+      try device.send(packet: context.videoRequest)
     case .audio:
       self.localAudioLatest = Time.now().since(context.audioStartTime)
       self.deviceAudioLatest = mediaSample.sample.outputPresentation ?? Time.NULL
@@ -187,6 +168,7 @@ struct RecordingContext {
 
   public var audioClockRef: CFTypeID = 0
   public var audioStartTime: Time = Time.NULL!
+  public var videoRequest: VideoDataRequest! = nil
 
   internal init(_ device: CaptureStream, _ mediaReceiver: MediaReceiver) {
     self.device = device
